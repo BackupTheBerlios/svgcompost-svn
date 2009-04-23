@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="SvgCompost Editor"
+            extensions="svg"
+            icon="icons/sample.gif"
+            contributorClass="de.berlios.svgcompost.contributor.SVGEditorActionBarContributor"
+            class="de.berlios.svgcompost.editor.SVGEditor"
+            id="svgcompost.editors.SVGEditor">
+      </editor>
+   </extension>
+</plugin>
