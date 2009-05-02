@@ -27,7 +27,7 @@ import org.eclipse.gef.RequestConstants;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.requests.ChangeBoundsRequest;
 
-import de.berlios.svgcompost.model.ChildElement;
+import de.berlios.svgcompost.model.EditableElement;
 
 
 
@@ -47,9 +47,9 @@ public class TransformSVGElementCommand extends Command {
 	private final ChangeBoundsRequest request;
 
 	/** SVGElement to manipulate. */
-	private final ChildElement element;
+	private final EditableElement element;
 	
-	public TransformSVGElementCommand(ChildElement element, ChangeBoundsRequest req, 
+	public TransformSVGElementCommand(EditableElement element, ChangeBoundsRequest req, 
 			Rectangle newBounds, BridgeContext ctx) {
 		if (element == null || req == null || newBounds == null) {
 			throw new IllegalArgumentException();

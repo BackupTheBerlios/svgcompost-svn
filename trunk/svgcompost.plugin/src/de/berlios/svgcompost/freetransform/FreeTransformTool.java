@@ -23,9 +23,12 @@ import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.Handle;
 import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
 import org.eclipse.gef.tools.PanningSelectionTool;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
-import de.berlios.svgcompost.model.ParentElement;
-import de.berlios.svgcompost.part.ParentElementPart;
+import de.berlios.svgcompost.model.EditableElement;
+import de.berlios.svgcompost.model.BackgroundElement;
+import de.berlios.svgcompost.part.BackgroundElementPart;
 
 
 
@@ -102,14 +105,24 @@ public class FreeTransformTool extends PanningSelectionTool {
 		if(editPart instanceof ScalableFreeformRootEditPart) {
 			// up one level
 			ScalableFreeformRootEditPart root = (ScalableFreeformRootEditPart) editPart;
-			ParentElementPart parentPart = (ParentElementPart) root.getChildren().get(0);
-			ParentElement parent = (ParentElement) parentPart.getModel();
+			BackgroundElementPart parentPart = (BackgroundElementPart) root.getChildren().get(0);
+//			ParentElement parent = (ParentElement) parentPart.getModel();
 			// TODO: change children on model, fire change and have parent call refreshChildren();
+			Element svgElement = ((BackgroundElement)parentPart.getModel()).getElement();
+			Node parentElement = svgElement.getParentNode();
+			if( parentElement != null && parentElement instanceof Element ) {
+				System.out.println( "parentElement = "+( (Element) parentElement ).getAttribute("id") );
+				parentPart.getViewer().setContents(new BackgroundElement( (Element) parentElement, parentPart.getCtx() ));
+			}
+
 		}
 		else {
 			// open part for editing of inner components
 			FigureCanvas canvas = (FigureCanvas)getCurrentViewer().getControl();
-			
+			BackgroundElementPart parentPart = (BackgroundElementPart) editPart.getParent();
+			Element svgElement = ((EditableElement)editPart.getModel()).getElement();
+			System.out.println( "svgElement = "+svgElement.getAttribute("id") );
+			parentPart.getViewer().setContents(new BackgroundElement( svgElement, parentPart.getCtx() ));
 
 		}
 		return super.handleDoubleClick(button);

@@ -48,10 +48,12 @@ import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
 import org.eclipse.gef.palette.PaletteRoot;
 import org.eclipse.gef.requests.CreationFactory;
 import org.eclipse.gef.requests.SimpleFactory;
+import org.eclipse.gef.ui.actions.ActionRegistry;
 import org.eclipse.gef.ui.palette.PaletteViewer;
 import org.eclipse.gef.ui.palette.PaletteViewerProvider;
 import org.eclipse.gef.ui.parts.GraphicalEditorWithFlyoutPalette;
 import org.eclipse.gef.ui.parts.GraphicalViewerKeyHandler;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.TransferDropTargetListener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
@@ -61,10 +63,11 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.w3c.dom.Element;
 import org.w3c.dom.svg.SVGDocument;
 
-
 import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 
-import de.berlios.svgcompost.model.ParentElement;
+import de.berlios.svgcompost.copy.CopyAction;
+import de.berlios.svgcompost.copy.PasteAction;
+import de.berlios.svgcompost.model.BackgroundElement;
 import de.berlios.svgcompost.part.SingleLevelFactory;
 import de.berlios.svgcompost.provider.SVGEditorContextMenuProvider;
 import de.berlios.svgcompost.provider.SVGEditorPaletteFactory;
@@ -118,6 +121,19 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette {
 	public void commandStackChanged(EventObject event) {
 		firePropertyChange(IEditorPart.PROP_DIRTY);
 		super.commandStackChanged(event);
+	}
+
+	@Override
+	public void createActions() {
+		super.createActions();
+		ActionRegistry registry = getActionRegistry();
+		IAction action;
+		action = new CopyAction(this);
+		registry.registerAction(action);
+		getSelectionActions().add(action.getId());
+		action = new PasteAction(this);
+		registry.registerAction(action);
+		getSelectionActions().add(action.getId());
 	}
 
 	protected PaletteViewerProvider createPaletteViewerProvider() {
@@ -183,6 +199,10 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette {
 		firePropertyChange(PROP_DIRTY);
 	}
 
+	public ActionRegistry getRegistry() {
+		return getActionRegistry();
+	}
+
 
 	public void doSaveAs() {
 		// Show a SaveAs dialog
@@ -203,7 +223,7 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette {
 
 	public Object getAdapter(Class type) {
 		if (type == IContentOutlinePage.class) {
-			outline = new SVGTreeOutlinePage();
+			outline = new SVGTreeOutlinePage(this);
 			System.out.println( "outline: "+outline );
 			outline.setInput(doc);
 			return outline;
@@ -261,7 +281,7 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette {
 
 		Element root = doc.getRootElement();
 		System.out.println( "gNode for root: "+ctx.getGraphicsNode(root) );
-		viewer.setContents( new ParentElement( doc.getRootElement(), ctx ) );
+		viewer.setContents( new BackgroundElement( doc.getRootElement(), ctx ) );
 		
 	}
 

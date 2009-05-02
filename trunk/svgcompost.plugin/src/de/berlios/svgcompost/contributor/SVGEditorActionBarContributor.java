@@ -16,13 +16,14 @@
 
 package de.berlios.svgcompost.contributor;
 
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.ui.actions.ActionFactory;
-
 import org.eclipse.gef.ui.actions.ActionBarContributor;
 import org.eclipse.gef.ui.actions.DeleteRetargetAction;
 import org.eclipse.gef.ui.actions.RedoRetargetAction;
 import org.eclipse.gef.ui.actions.UndoRetargetAction;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.RetargetAction;
 
 /**
  * Contributes editing actions like undo and redo to the toolbar.
@@ -34,12 +35,17 @@ public class SVGEditorActionBarContributor extends ActionBarContributor {
 		addRetargetAction(new DeleteRetargetAction());
 		addRetargetAction(new UndoRetargetAction());
 		addRetargetAction(new RedoRetargetAction());
+		IWorkbenchWindow iww = getPage().getWorkbenchWindow();
+		addRetargetAction((RetargetAction)ActionFactory.COPY.create(iww));
+		addRetargetAction((RetargetAction)ActionFactory.PASTE.create(iww));
 	}
 	
 	@Override
 	public void contributeToToolBar(IToolBarManager toolBarManager) {
 		toolBarManager.add(getAction(ActionFactory.UNDO.getId()));
 		toolBarManager.add(getAction(ActionFactory.REDO.getId()));
+		toolBarManager.add(getAction(ActionFactory.COPY.getId()));
+		toolBarManager.add(getAction(ActionFactory.PASTE.getId()));
 	}
 	
 	@Override

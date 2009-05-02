@@ -16,11 +16,16 @@
 
 package de.berlios.svgcompost.provider;
 
+import org.eclipse.gef.ui.actions.ActionRegistry;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import de.berlios.svgcompost.editor.SVGEditor;
 
 
 /**
@@ -32,8 +37,11 @@ public class SVGTreeOutlinePage extends ContentOutlinePage {
 
 	private Element root;
 	
-	public SVGTreeOutlinePage() {
+	private SVGEditor editor;
+	
+	public SVGTreeOutlinePage(SVGEditor editor) {
 		super();
+		this.editor = editor;
 	}
 	
 	public void setInput(Document doc) {
@@ -60,7 +68,12 @@ public class SVGTreeOutlinePage extends ContentOutlinePage {
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
+		IActionBars bars = getSite().getActionBars();
+		ActionRegistry ar = editor.getRegistry();
+		bars.setGlobalActionHandler(ActionFactory.COPY.getId(), ar.getAction(ActionFactory.COPY.getId()));
+		bars.setGlobalActionHandler(ActionFactory.PASTE.getId(), ar.getAction(ActionFactory.PASTE.getId()));
 		initTreeViewer();
 	}
+	
 
 }

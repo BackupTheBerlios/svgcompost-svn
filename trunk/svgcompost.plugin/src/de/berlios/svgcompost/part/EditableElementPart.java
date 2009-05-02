@@ -45,7 +45,7 @@ import org.w3c.dom.Element;
 
 import de.berlios.svgcompost.figure.MapModeImageFigure;
 import de.berlios.svgcompost.freetransform.FreeTransformHelper;
-import de.berlios.svgcompost.model.ChildElement;
+import de.berlios.svgcompost.model.EditableElement;
 import de.berlios.svgcompost.render.GVTRenderer;
 
 
@@ -55,17 +55,17 @@ import de.berlios.svgcompost.render.GVTRenderer;
  * @author Gerrit Karius
  *
  */
-class ChildElementPart extends SVGEditPart implements PropertyChangeListener { //EventListener {
+public class EditableElementPart extends SVGEditPart implements PropertyChangeListener { //EventListener {
 	
 	public static final String EVENT_TYPE = "DOMAttrModified";
 
 	protected GVTRenderer renderer = new GVTRenderer();
 
-	private ChildElement childElement;
+	private EditableElement editableElement;
 	
-	public ChildElementPart(ChildElement element, BridgeContext ctx) {
+	public EditableElementPart(EditableElement element, BridgeContext ctx) {
 		super();
-		this.childElement = element;
+		this.editableElement = element;
 		this.ctx = ctx;
 	}
 	
@@ -73,7 +73,7 @@ class ChildElementPart extends SVGEditPart implements PropertyChangeListener { /
 	public void activate() {
 		if (!isActive()) {
 			super.activate();
-			childElement.addPropertyChangeListener(this);
+			editableElement.addPropertyChangeListener(this);
 		}
 	}
 
@@ -93,8 +93,8 @@ class ChildElementPart extends SVGEditPart implements PropertyChangeListener { /
     @Override
 	protected IFigure createFigure() {
     	    	
-    	Element svgRoot = childElement.getElement();
- 		Dimension size = childElement.getSize();
+    	Element svgRoot = editableElement.getElement();
+ 		Dimension size = editableElement.getSize();
  		GraphicsNode gvtRoot = ctx.getGraphicsNode( svgRoot );
     	
     	Image image = transcodeImage(gvtRoot);
@@ -122,7 +122,7 @@ class ChildElementPart extends SVGEditPart implements PropertyChangeListener { /
 	}
 
     protected void copyDataToFigure() {
-    	GraphicsNode gNode = ctx.getGraphicsNode(childElement.getElement()); 
+    	GraphicsNode gNode = ctx.getGraphicsNode(editableElement.getElement()); 
 		Image image = transcodeImage(gNode);
 		if(image == null)
 			return;
@@ -170,7 +170,7 @@ class ChildElementPart extends SVGEditPart implements PropertyChangeListener { /
 
 	public void propertyChange(PropertyChangeEvent evt) {
 		String prop = evt.getPropertyName();
-		if ( ChildElement.TRANSFORM.equals(prop) ) {
+		if ( EditableElement.TRANSFORM.equals(prop) ) {
 			refreshVisuals();
 		}
 	}

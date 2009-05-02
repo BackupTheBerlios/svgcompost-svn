@@ -38,7 +38,7 @@ import de.berlios.svgcompost.freetransform.FreeTransformHelper;
  * @author Gerrit Karius
  *
  */
-public class ChildElement {
+public class EditableElement {
 
 	public static final String TRANSFORM = "Element.Transform";
 
@@ -59,23 +59,40 @@ public class ChildElement {
 	
 	private Element element;
 	private BridgeContext ctx;
+	
+	private BackgroundElement parent;
+
+	public BackgroundElement getParent() {
+		return parent;
+	}
+	public void setParent(BackgroundElement parent) {
+		this.parent = parent;
+	}
 
 	public Element getElement() {
 		return element;
 	}
-
 	public void setElement(Element element) {
 		this.element = element;
+	}
+
+	public BridgeContext getBridgeContext() {
+		return ctx;
 	}
 
 	public GraphicsNode getGraphicsNode() {
 		return ctx.getGraphicsNode(element);
 	}
 
-	public ChildElement(Element element, BridgeContext ctx) {
+	public EditableElement(Element element, BridgeContext ctx) {
 		super();
 		this.ctx = ctx;
 		this.element = element;
+	}
+	
+	public EditableElement(Element element, BridgeContext ctx, BackgroundElement parent) {
+		this(element, ctx);
+		setParent(parent);
 	}
 	
 	public void applySvgValues() {

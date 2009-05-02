@@ -32,6 +32,7 @@ import org.eclipse.draw2d.ShortestPathConnectionRouter;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
+import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.LayerConstants;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editpolicies.RootComponentEditPolicy;
@@ -43,8 +44,8 @@ import org.w3c.dom.events.EventListener;
 
 import de.berlios.svgcompost.freetransform.FreeTransformEditPolicy;
 import de.berlios.svgcompost.freetransform.TransformSVGElementCommand;
-import de.berlios.svgcompost.model.ChildElement;
-import de.berlios.svgcompost.model.ParentElement;
+import de.berlios.svgcompost.model.EditableElement;
+import de.berlios.svgcompost.model.BackgroundElement;
 
 
 
@@ -53,13 +54,23 @@ import de.berlios.svgcompost.model.ParentElement;
  * @author Gerrit Karius
  *
  */
-public class ParentElementPart extends SVGEditPart 
+public class BackgroundElementPart extends SVGEditPart 
 implements PropertyChangeListener, EventListener  {
 	
-	private ParentElement parentElement;
+	private BackgroundElement backgroundElement;
 
-	public ParentElementPart(ParentElement parentElement, BridgeContext ctx) {
-		this.parentElement = parentElement;
+	private GraphicalViewer viewer;
+	
+	public void setViewer(GraphicalViewer viewer) {
+		this.viewer = viewer;
+	}
+
+	public GraphicalViewer getViewer() {
+		return viewer;
+	}
+
+	public BackgroundElementPart(BackgroundElement backgroundElement, BridgeContext ctx) {
+		this.backgroundElement = backgroundElement;
 		this.ctx = ctx;
 	}
 
@@ -67,7 +78,7 @@ implements PropertyChangeListener, EventListener  {
 	public void activate() {
 		if (!isActive()) {
 			super.activate();
-			AbstractNode node = null;
+			backgroundElement.addPropertyChangeListener(this);
 		}
 	}
 
@@ -85,9 +96,9 @@ implements PropertyChangeListener, EventListener  {
 			@Override
 			protected Command createChangeConstraintCommand(ChangeBoundsRequest request,
 					EditPart child, Object constraint) {
-				if ((child instanceof ChildElementPart) && constraint instanceof Rectangle) {
+				if ((child instanceof EditableElementPart) && constraint instanceof Rectangle) {
 					return new TransformSVGElementCommand(
-							(ChildElement) child.getModel(), request, (Rectangle) constraint, getBridgeContext());
+							(EditableElement) child.getModel(), request, (Rectangle) constraint, getBridgeContext());
 				}
 				return super.createChangeConstraintCommand(request, child, constraint);
 			}
@@ -133,14 +144,21 @@ implements PropertyChangeListener, EventListener  {
 		}
 	}
 
-	protected List<ChildElement> getModelChildren() {
-		return parentElement.getChildElements();
+	protected List<EditableElement> getModelChildren() {
+		return backgroundElement.getChildElements();
 	}
 	
+	public void propertyChange(PropertyChangeEvent evt) {
+		String prop = evt.getPropertyName();
+		if( BackgroundElement.INSERT.equals(prop) || BackgroundElement.REMOVE.equals(prop) ) {
+			refreshVisuals();
+			refreshChildren();
+		}
+	}
 
-	public void propertyChange(PropertyChangeEvent arg0) {
-		// TODO Auto-generated method stub
-		
+
+	public BridgeContext getCtx() {
+		return ctx;
 	}
 
 }
