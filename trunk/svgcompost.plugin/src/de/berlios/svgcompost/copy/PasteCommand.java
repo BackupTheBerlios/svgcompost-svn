@@ -8,11 +8,18 @@ import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.ui.actions.Clipboard;
 import org.w3c.dom.Element;
 
+import de.berlios.svgcompost.model.BackgroundElement;
 import de.berlios.svgcompost.model.EditableElement;
 
 public class PasteCommand extends Command {
 
 	private HashMap<EditableElement, EditableElement> list = new HashMap<EditableElement, EditableElement>();
+	
+	private BackgroundElement parentElement;
+
+	public void setParentElement(BackgroundElement parentElement) {
+		this.parentElement = parentElement;
+	}
 
 	@Override
 	public boolean canExecute() {
@@ -51,8 +58,8 @@ public class PasteCommand extends Command {
 		Iterator<EditableElement> it = list.values().iterator();
 		while( it.hasNext() ) {
 			EditableElement node = it.next();
-			if( isPastable(node) ) {
-				node.getParent().addChild(node);
+			if( isPastable(node) && canBePastedInto(parentElement) ) {
+				parentElement.addChild(node);
 			}
 		}
 	}
@@ -66,13 +73,17 @@ public class PasteCommand extends Command {
 		Iterator<EditableElement> it = list.values().iterator();
 		while( it.hasNext() ) {
 			EditableElement node = it.next();
-			if( isPastable(node) ) {
+			if( isPastable(node) && canBePastedInto(parentElement) ) {
 				node.getParent().removeChild(node);
 			}
 		}
 	}
 	
-	public boolean isPastable(EditableElement node) {
+	public boolean isPastable(Object node) {
 		return true;
+	}
+
+	public boolean canBePastedInto(Object node) {
+		return (node != null && node instanceof BackgroundElement);
 	}
 }
