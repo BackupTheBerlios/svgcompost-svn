@@ -130,7 +130,7 @@ public class FreeTransformHelper {
 
 	protected static AffineTransform getDragTransform(ChangeBoundsRequest request, Rectangle2D bounds) {
 		Point2D.Double currentCenter = getCenter(getTransformedRectangle( request, bounds ));
-		System.out.println( "currentCenter = "+currentCenter );
+//		System.out.println( "currentCenter = "+currentCenter );
 		return AffineTransform.getTranslateInstance(currentCenter.x, currentCenter.y);
 	}
 
@@ -215,10 +215,23 @@ public class FreeTransformHelper {
 	}
 	
 	public static Rectangle2D getGlobalBounds(GraphicsNode gNode) {
+		Rectangle2D bounds;
 		if( gNode.getParent() != null )
-			return gNode.getTransformedBounds(gNode.getParent().getGlobalTransform());
+			bounds = gNode.getTransformedBounds(gNode.getParent().getGlobalTransform());
 		else
-			return gNode.getBounds();
+			bounds = gNode.getBounds();
+		
+		if(bounds == null) // Happens with empty groups.
+			bounds = new Rectangle2D.Float(0,0,1,1);
+		
+		return bounds;
+	}
+	
+	public static Rectangle2D getBoundsInParent(GraphicsNode gNode) {
+//		if( gNode.getParent() != null )
+			return gNode.getTransformedBounds(gNode.getTransform());
+//		else
+//			return gNode.getBounds();
 	}
 	
 }

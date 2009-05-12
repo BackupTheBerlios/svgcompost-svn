@@ -91,15 +91,22 @@ public class GVTRenderer {
 		// get the 'width' and 'height' attributes of the SVG document
 		float docWidth = (float)ctx.getDocumentSize().getWidth();
 		float docHeight = (float)ctx.getDocumentSize().getHeight();
-		
+
 		Rectangle2D gvtBounds = FreeTransformHelper.getGlobalBounds( gvtRoot );
 		float gvtWidth = (float) gvtBounds.getWidth();
 		float gvtHeight = (float) gvtBounds.getHeight();
-		
+
 		setImageSize(docWidth, docHeight);
+		
 
 		//compute the transformation matrix
 		AffineTransform Px = AffineTransform.getTranslateInstance(-gvtBounds.getX(), -gvtBounds.getY());
+//		AffineTransform Px = AffineTransform.getTranslateInstance(0, 0);
+		
+//		Element el = ctx.getElement(gvtRoot);
+//		String id = el.getAttribute("id");
+//		System.out.println( id+".tx: "+Px.getTranslateX() );
+//		System.out.println( id+".ty: "+Px.getTranslateY() );
 
 		gvtRoot = renderImage( gvtRoot, Px, (int)gvtWidth, (int)gvtHeight);
 

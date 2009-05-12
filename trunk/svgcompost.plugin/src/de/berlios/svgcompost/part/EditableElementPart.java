@@ -47,6 +47,7 @@ import de.berlios.svgcompost.figure.MapModeImageFigure;
 import de.berlios.svgcompost.freetransform.FreeTransformHelper;
 import de.berlios.svgcompost.model.EditableElement;
 import de.berlios.svgcompost.render.GVTRenderer;
+import de.berlios.svgcompost.render.Transcoders;
 
 
 
@@ -58,8 +59,6 @@ import de.berlios.svgcompost.render.GVTRenderer;
 public class EditableElementPart extends SVGEditPart implements PropertyChangeListener { //EventListener {
 	
 	public static final String EVENT_TYPE = "DOMAttrModified";
-
-	protected GVTRenderer renderer = new GVTRenderer();
 
 	private EditableElement editableElement;
 	
@@ -81,6 +80,7 @@ public class EditableElementPart extends SVGEditPart implements PropertyChangeLi
 	protected void refreshVisuals() {
 		
 		copyDataToFigure();
+		getParent().refresh();
 		
 	}
 
@@ -99,16 +99,16 @@ public class EditableElementPart extends SVGEditPart implements PropertyChangeLi
     	
     	Image image = transcodeImage(gvtRoot);
     	IFigure figure;
-		if(image!=null) {
+//		if(image!=null) {
 			figure = new MapModeImageFigure(image);
 			((MapModeImageFigure)figure).setPreferredSize(size.width, size.height);
-			if( ((MapModeImageFigure)figure).getImage() == null ) {
-				figure = new RectangleFigure();
-			}
-		}
-		else {
-			figure = new RectangleFigure();
-		}
+//			if( ((MapModeImageFigure)figure).getImage() == null ) {
+//				figure = new RectangleFigure();
+//			}
+//		}
+//		else {
+//			figure = new RectangleFigure();
+//		}
 		
 
 		figure.setOpaque(false);
@@ -122,7 +122,7 @@ public class EditableElementPart extends SVGEditPart implements PropertyChangeLi
 	}
 
     protected void copyDataToFigure() {
-    	GraphicsNode gNode = ctx.getGraphicsNode(editableElement.getElement()); 
+    	GraphicsNode gNode = ctx.getGraphicsNode(editableElement.getElement());
 		Image image = transcodeImage(gNode);
 		if(image == null)
 			return;
@@ -135,13 +135,16 @@ public class EditableElementPart extends SVGEditPart implements PropertyChangeLi
 
 		if( figure != null && figure.getParent() != null )
 			((GraphicalEditPart) getParent()).setLayoutConstraint(this, getFigure(), draw2dBounds );
+ 		figure.setBounds(new Rectangle((int)awtBounds.getX(),(int)awtBounds.getY(),(int)awtBounds.getWidth(),(int)awtBounds.getHeight()));
     }
     
     protected Image transcodeImage( GraphicsNode gNode ) {
     	Image image = null;
 		try {
-			image = renderer.transcode(ctx, gNode);
+			image = Transcoders.getGVTRenderer().transcode(ctx, gNode);
 		} catch (TranscoderException e) {
+			e.printStackTrace();
+		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
 		}
 		return image;
@@ -157,7 +160,7 @@ public class EditableElementPart extends SVGEditPart implements PropertyChangeLi
     			if (editPart instanceof AbstractGraphicalEditPart) {
 					MapModeImageFigure figure = (MapModeImageFigure) ((AbstractGraphicalEditPart)editPart).getFigure();
 	    			AffineTransform transform = FreeTransformHelper.createFreeTransform( request, figure.getAwtBounds(), false );
-					System.out.println( "requested transform = "+transform );
+//					System.out.println( "requested transform = "+transform );
 					request.getExtendedData().put(FreeTransformHelper.FREE_TRANSFORM, transform);
 				}
     		}

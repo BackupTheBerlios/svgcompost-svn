@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.batik.bridge.BridgeContext;
-import org.eclipse.gef.GraphicalViewer;
+import org.apache.batik.gvt.GraphicsNode;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -68,8 +68,12 @@ public class BackgroundElement {
 		this.element = element;
 		NodeList list = element.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
-			if( list.item(i) instanceof Element && ctx.getGraphicsNode((Element)list.item(i)) != null )
-				editableElements.add( new EditableElement( (Element) list.item(i), ctx, this ) );
+			if( list.item(i) instanceof Element ) {
+				GraphicsNode gNode = ctx.getGraphicsNode((Element)list.item(i));
+				// We don't want to edit empty elements, they cause lots of crashes.
+				if( gNode != null && gNode.getBounds() != null )
+					editableElements.add( new EditableElement( (Element) list.item(i), ctx, this ) );
+			}
 		}
 	}
 	

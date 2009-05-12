@@ -13,5 +13,6 @@ Require-Bundle: org.w3c.dom.svg,
  org.apache.batik.ext.awt,
  org.eclipse.gmf.runtime.diagram.ui.properties,
  org.apache.batik.svggen;bundle-version="1.6.0",
- org.apache.xml.serializer;bundle-version="2.7.1"
+ org.apache.xml.serializer;bundle-version="2.7.1",
+ org.eclipse.gmf.runtime.draw2d.ui.render;bundle-version="1.1.0"
 Bundle-Activator: de.berlios.svgcompost.SVGCompostPlugin

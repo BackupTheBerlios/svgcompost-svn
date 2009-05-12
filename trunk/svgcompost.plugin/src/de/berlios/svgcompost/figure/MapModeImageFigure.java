@@ -19,7 +19,10 @@ package de.berlios.svgcompost.figure;
 import java.awt.geom.Rectangle2D;
 
 import org.eclipse.draw2d.ImageFigure;
+import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.draw2d.geometry.Insets;
 import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.draw2d.geometry.Translatable;
 import org.eclipse.gmf.runtime.draw2d.ui.mapmode.IMapMode;
 import org.eclipse.gmf.runtime.draw2d.ui.mapmode.MapModeTypes;
@@ -45,7 +48,24 @@ public class MapModeImageFigure extends ImageFigure implements IMapMode {
  		setLocation( new Point((int)awtBounds.getX(), (int)awtBounds.getY()) );
 	}
 	
+	public Dimension getPreferredSize(int wHint, int hHint) {
+		if( getImage() != null )
+			return super.getPreferredSize(wHint, hHint);
+
+		if (prefSize != null)
+			return prefSize;
+		if (getLayoutManager() != null) {
+			Dimension d = getLayoutManager().getPreferredSize(this, wHint, hHint);
+			if (d != null)
+				return d;
+		}
+		return getSize();
+	}
+	
 	public Rectangle2D getAwtBounds() {
+		if( awtBounds == null && bounds != null) {
+			return new Rectangle2D.Float( bounds.x, bounds.y, bounds.width, bounds.height );
+		}
 		return awtBounds;
 	}
 	

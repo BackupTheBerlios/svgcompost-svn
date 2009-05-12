@@ -16,15 +16,14 @@
 
 package de.berlios.svgcompost.part;
 
+import java.awt.geom.Dimension2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import org.apache.batik.bridge.BridgeContext;
-import org.apache.batik.dom.AbstractNode;
+import org.apache.batik.gvt.GraphicsNode;
 import org.eclipse.draw2d.ConnectionLayer;
-import org.eclipse.draw2d.Figure;
-import org.eclipse.draw2d.FreeformLayer;
 import org.eclipse.draw2d.FreeformLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.MarginBorder;
@@ -39,18 +38,24 @@ import org.eclipse.gef.editpolicies.RootComponentEditPolicy;
 import org.eclipse.gef.editpolicies.XYLayoutEditPolicy;
 import org.eclipse.gef.requests.ChangeBoundsRequest;
 import org.eclipse.gef.requests.CreateRequest;
+import org.eclipse.gmf.runtime.draw2d.ui.render.RenderInfo;
+import org.eclipse.gmf.runtime.draw2d.ui.render.factory.RenderedImageFactory;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.RGB;
 import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
 
+import de.berlios.svgcompost.figure.BackgroundImageFigure;
 import de.berlios.svgcompost.freetransform.FreeTransformEditPolicy;
 import de.berlios.svgcompost.freetransform.TransformSVGElementCommand;
-import de.berlios.svgcompost.model.EditableElement;
 import de.berlios.svgcompost.model.BackgroundElement;
+import de.berlios.svgcompost.model.EditableElement;
+import de.berlios.svgcompost.render.Transcoders;
 
 
 
 /**
- * EditPart for the SVG parent element whode child elements are edited.
+ * EditPart for the SVG parent element whose child elements are edited.
  * @author Gerrit Karius
  *
  */
@@ -81,6 +86,14 @@ implements PropertyChangeListener, EventListener  {
 			backgroundElement.addPropertyChangeListener(this);
 		}
 	}
+	
+	
+
+//	@Override
+//	protected void addChild(EditPart child, int index) {
+//		if(child != null)
+//			super.addChild(child, index);
+//	}
 
 	public void handleEvent(Event evt) {
 		String prop = evt.getType();
@@ -127,9 +140,10 @@ implements PropertyChangeListener, EventListener  {
 
 	@Override
 	protected IFigure createFigure() {
-		Figure f = new FreeformLayer();
+		BackgroundImageFigure f = new BackgroundImageFigure();
 		f.setBorder(new MarginBorder(3));
 		f.setLayoutManager(new FreeformLayout());
+		f.setImage( transcodeImage() );
 
 		ConnectionLayer connLayer = (ConnectionLayer)getLayer(LayerConstants.CONNECTION_LAYER);
 		connLayer.setConnectionRouter(new ShortestPathConnectionRouter(f));
@@ -155,6 +169,36 @@ implements PropertyChangeListener, EventListener  {
 			refreshChildren();
 		}
 	}
+	
+	
+
+    @Override
+	public void refresh() {
+		// TODO Auto-generated method stub
+    	((BackgroundImageFigure)getFigure()).setImage(transcodeImage());
+		super.refresh();
+	}
+
+//	@Override
+//	protected void registerVisuals() {
+//		// TODO Auto-generated method stub
+//		super.registerVisuals();
+//	}
+
+	protected Image transcodeImage() {
+    	Image image = null;
+		try {
+			Dimension2D dim = ctx.getDocumentSize();
+			RenderInfo info = RenderedImageFactory.createInfo((int)dim.getWidth(), (int)dim.getHeight(), true, true, null, new RGB(0,0,0));
+			image = Transcoders.getSVGImageConverter().renderSVGtoSWTImage(ctx.getDocument(), info);
+//			GraphicsNode gvtRoot = ctx.getGraphicsNode( ctx.getDocument().getDocumentElement() );
+//			image = Transcoders.getGVTRenderer().transcode(ctx, gvtRoot);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return image;
+    }
 
 
 	public BridgeContext getCtx() {
