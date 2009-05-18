@@ -22,7 +22,6 @@ import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import org.apache.batik.bridge.BridgeContext;
-import org.apache.batik.gvt.GraphicsNode;
 import org.eclipse.draw2d.ConnectionLayer;
 import org.eclipse.draw2d.FreeformLayout;
 import org.eclipse.draw2d.IFigure;
@@ -34,6 +33,7 @@ import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.LayerConstants;
 import org.eclipse.gef.commands.Command;
+import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gef.editpolicies.RootComponentEditPolicy;
 import org.eclipse.gef.editpolicies.XYLayoutEditPolicy;
 import org.eclipse.gef.requests.ChangeBoundsRequest;
@@ -48,8 +48,7 @@ import org.w3c.dom.events.EventListener;
 import de.berlios.svgcompost.figure.BackgroundImageFigure;
 import de.berlios.svgcompost.freetransform.FreeTransformEditPolicy;
 import de.berlios.svgcompost.freetransform.TransformSVGElementCommand;
-import de.berlios.svgcompost.model.BackgroundElement;
-import de.berlios.svgcompost.model.EditableElement;
+import de.berlios.svgcompost.model.SVGNode;
 import de.berlios.svgcompost.render.Transcoders;
 
 
@@ -59,12 +58,14 @@ import de.berlios.svgcompost.render.Transcoders;
  * @author Gerrit Karius
  *
  */
-public class BackgroundElementPart extends SVGEditPart 
+public class BackgroundPart extends AbstractGraphicalEditPart 
 implements PropertyChangeListener, EventListener  {
 	
-	private BackgroundElement backgroundElement;
+	private SVGNode editRoot;
 
 	private GraphicalViewer viewer;
+
+	private BridgeContext ctx;
 	
 	public void setViewer(GraphicalViewer viewer) {
 		this.viewer = viewer;
@@ -74,8 +75,8 @@ implements PropertyChangeListener, EventListener  {
 		return viewer;
 	}
 
-	public BackgroundElementPart(BackgroundElement backgroundElement, BridgeContext ctx) {
-		this.backgroundElement = backgroundElement;
+	public BackgroundPart(SVGNode backgroundElement, BridgeContext ctx) {
+		this.editRoot = backgroundElement;
 		this.ctx = ctx;
 	}
 
@@ -83,7 +84,7 @@ implements PropertyChangeListener, EventListener  {
 	public void activate() {
 		if (!isActive()) {
 			super.activate();
-			backgroundElement.addPropertyChangeListener(this);
+			editRoot.addPropertyChangeListener(this);
 		}
 	}
 	
@@ -97,7 +98,6 @@ implements PropertyChangeListener, EventListener  {
 
 	public void handleEvent(Event evt) {
 		String prop = evt.getType();
-		
 		refreshChildren();
 	}
 	
@@ -109,9 +109,9 @@ implements PropertyChangeListener, EventListener  {
 			@Override
 			protected Command createChangeConstraintCommand(ChangeBoundsRequest request,
 					EditPart child, Object constraint) {
-				if ((child instanceof EditableElementPart) && constraint instanceof Rectangle) {
+				if ((child instanceof EditablePart) && constraint instanceof Rectangle) {
 					return new TransformSVGElementCommand(
-							(EditableElement) child.getModel(), request, (Rectangle) constraint, getBridgeContext());
+							(SVGNode) child.getModel(), request, (Rectangle) constraint, getBridgeContext());
 				}
 				return super.createChangeConstraintCommand(request, child, constraint);
 			}
@@ -158,25 +158,29 @@ implements PropertyChangeListener, EventListener  {
 		}
 	}
 
-	protected List<EditableElement> getModelChildren() {
-		return backgroundElement.getChildElements();
+	protected List<SVGNode> getModelChildren() {
+		return editRoot.getChildElements();
 	}
 	
 	public void propertyChange(PropertyChangeEvent evt) {
 		String prop = evt.getPropertyName();
-		if( BackgroundElement.INSERT.equals(prop) || BackgroundElement.REMOVE.equals(prop) ) {
+		if( SVGNode.INSERT.equals(prop) || SVGNode.REMOVE.equals(prop) ) {
 			refreshVisuals();
 			refreshChildren();
+		}
+		else if( SVGNode.TRANSFORM.equals(prop) ) {
+			System.out.println( "transform fired on bg" );
+			refreshVisuals();
 		}
 	}
 	
 	
 
     @Override
-	public void refresh() {
+	public void refreshVisuals() {
 		// TODO Auto-generated method stub
     	((BackgroundImageFigure)getFigure()).setImage(transcodeImage());
-		super.refresh();
+		super.refreshVisuals();
 	}
 
 //	@Override
@@ -189,7 +193,7 @@ implements PropertyChangeListener, EventListener  {
     	Image image = null;
 		try {
 			Dimension2D dim = ctx.getDocumentSize();
-			RenderInfo info = RenderedImageFactory.createInfo((int)dim.getWidth(), (int)dim.getHeight(), true, true, null, new RGB(0,0,0));
+			RenderInfo info = RenderedImageFactory.createInfo((int)dim.getWidth(), (int)dim.getHeight(), true, true, new RGB(255,255,255), new RGB(0,0,0));
 			image = Transcoders.getSVGImageConverter().renderSVGtoSWTImage(ctx.getDocument(), info);
 //			GraphicsNode gvtRoot = ctx.getGraphicsNode( ctx.getDocument().getDocumentElement() );
 //			image = Transcoders.getGVTRenderer().transcode(ctx, gvtRoot);
@@ -201,8 +205,17 @@ implements PropertyChangeListener, EventListener  {
     }
 
 
-	public BridgeContext getCtx() {
+	public BridgeContext getBridgeContext() {
 		return ctx;
 	}
 
+	public SVGNode getEditRoot() {
+		return editRoot;
+	}
+
+	public void setEditRoot(SVGNode root) {
+		editRoot = root;
+		refreshChildren();
+	}
+	
 }

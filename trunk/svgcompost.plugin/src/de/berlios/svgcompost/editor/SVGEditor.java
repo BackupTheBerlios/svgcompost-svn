@@ -67,7 +67,7 @@ import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 
 import de.berlios.svgcompost.copy.CopyAction;
 import de.berlios.svgcompost.copy.PasteAction;
-import de.berlios.svgcompost.model.BackgroundElement;
+import de.berlios.svgcompost.model.SVGNode;
 import de.berlios.svgcompost.part.SingleLevelFactory;
 import de.berlios.svgcompost.provider.SVGEditorContextMenuProvider;
 import de.berlios.svgcompost.provider.SVGEditorPaletteFactory;
@@ -281,7 +281,8 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette {
 
 		Element root = doc.getRootElement();
 		System.out.println( "gNode for root: "+ctx.getGraphicsNode(root) );
-		viewer.setContents( new BackgroundElement( doc.getRootElement(), ctx ) );
+//		viewer.setContents( new BackgroundElement( doc.getRootElement(), ctx ) );
+		viewer.setContents( new SVGNode( doc.getRootElement(), ctx ) );
 		
 	}
 

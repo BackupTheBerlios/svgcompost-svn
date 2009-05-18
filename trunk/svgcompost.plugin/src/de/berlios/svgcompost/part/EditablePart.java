@@ -30,7 +30,6 @@ import org.eclipse.draw2d.Border;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LineBorder;
-import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.DragTracker;
@@ -45,8 +44,7 @@ import org.w3c.dom.Element;
 
 import de.berlios.svgcompost.figure.MapModeImageFigure;
 import de.berlios.svgcompost.freetransform.FreeTransformHelper;
-import de.berlios.svgcompost.model.EditableElement;
-import de.berlios.svgcompost.render.GVTRenderer;
+import de.berlios.svgcompost.model.SVGNode;
 import de.berlios.svgcompost.render.Transcoders;
 
 
@@ -56,13 +54,15 @@ import de.berlios.svgcompost.render.Transcoders;
  * @author Gerrit Karius
  *
  */
-public class EditableElementPart extends SVGEditPart implements PropertyChangeListener { //EventListener {
+public class EditablePart extends AbstractGraphicalEditPart implements PropertyChangeListener { //EventListener {
 	
 	public static final String EVENT_TYPE = "DOMAttrModified";
 
-	private EditableElement editableElement;
+	private SVGNode editableElement;
+
+	private BridgeContext ctx;
 	
-	public EditableElementPart(EditableElement element, BridgeContext ctx) {
+	public EditablePart(SVGNode element, BridgeContext ctx) {
 		super();
 		this.editableElement = element;
 		this.ctx = ctx;
@@ -78,38 +78,31 @@ public class EditableElementPart extends SVGEditPart implements PropertyChangeLi
 
 	@Override
 	protected void refreshVisuals() {
-		
 		copyDataToFigure();
-		getParent().refresh();
-		
 	}
+	
+//	protected BackgroundPart getBackground() {
+//		EditPart root = this;
+//		while( ! (root instanceof BackgroundPart) && root.getParent() != null )
+//			root = root.getParent();
+//		return (BackgroundPart) root;
+//	}
 
-	private static final List<Object> emptyList = new ArrayList<Object>();
-	@Override
-	protected List<Object> getModelChildren() {
-		return emptyList;
-	}
+//	private static final List<Object> emptyList = new ArrayList<Object>();
+//	@Override
+//	protected List<Object> getModelChildren() {
+//		return emptyList;
+//	}
 
     @Override
 	protected IFigure createFigure() {
     	    	
-    	Element svgRoot = editableElement.getElement();
  		Dimension size = editableElement.getSize();
- 		GraphicsNode gvtRoot = ctx.getGraphicsNode( svgRoot );
     	
-    	Image image = transcodeImage(gvtRoot);
+    	Image image = null;//transcodeImage(gvtRoot);
     	IFigure figure;
-//		if(image!=null) {
-			figure = new MapModeImageFigure(image);
-			((MapModeImageFigure)figure).setPreferredSize(size.width, size.height);
-//			if( ((MapModeImageFigure)figure).getImage() == null ) {
-//				figure = new RectangleFigure();
-//			}
-//		}
-//		else {
-//			figure = new RectangleFigure();
-//		}
-		
+		figure = new MapModeImageFigure(image);
+		((MapModeImageFigure)figure).setPreferredSize(size.width, size.height);
 
 		figure.setOpaque(false);
 		figure.setBackgroundColor(ColorConstants.yellow);
@@ -123,9 +116,7 @@ public class EditableElementPart extends SVGEditPart implements PropertyChangeLi
 
     protected void copyDataToFigure() {
     	GraphicsNode gNode = ctx.getGraphicsNode(editableElement.getElement());
-		Image image = transcodeImage(gNode);
-		if(image == null)
-			return;
+		Image image = null;//transcodeImage(gNode);
  		MapModeImageFigure imageFigure = (MapModeImageFigure) getFigure();
  		imageFigure.setImage(image);
  		Rectangle2D awtBounds = FreeTransformHelper.getGlobalBounds( gNode );
@@ -160,7 +151,6 @@ public class EditableElementPart extends SVGEditPart implements PropertyChangeLi
     			if (editPart instanceof AbstractGraphicalEditPart) {
 					MapModeImageFigure figure = (MapModeImageFigure) ((AbstractGraphicalEditPart)editPart).getFigure();
 	    			AffineTransform transform = FreeTransformHelper.createFreeTransform( request, figure.getAwtBounds(), false );
-//					System.out.println( "requested transform = "+transform );
 					request.getExtendedData().put(FreeTransformHelper.FREE_TRANSFORM, transform);
 				}
     		}
@@ -173,7 +163,7 @@ public class EditableElementPart extends SVGEditPart implements PropertyChangeLi
 
 	public void propertyChange(PropertyChangeEvent evt) {
 		String prop = evt.getPropertyName();
-		if ( EditableElement.TRANSFORM.equals(prop) ) {
+		if ( SVGNode.TRANSFORM.equals(prop) ) {
 			refreshVisuals();
 		}
 	}

@@ -22,8 +22,7 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPartFactory;
 import org.eclipse.gef.GraphicalViewer;
 
-import de.berlios.svgcompost.model.EditableElement;
-import de.berlios.svgcompost.model.BackgroundElement;
+import de.berlios.svgcompost.model.SVGNode;
 
 
 
@@ -39,6 +38,8 @@ public class SingleLevelFactory implements EditPartFactory {
 	
 	private GraphicalViewer viewer;
 	
+	private BackgroundPart background;
+	
 	public void setViewer(GraphicalViewer viewer) {
 		this.viewer = viewer;
 	}
@@ -49,14 +50,19 @@ public class SingleLevelFactory implements EditPartFactory {
 	
 	public EditPart createEditPart(EditPart context, Object modelElement) {
 		EditPart part = null;
-		if( modelElement instanceof BackgroundElement ) {
-			part = new BackgroundElementPart((BackgroundElement)modelElement,ctx);
-			((BackgroundElementPart)part).setViewer(viewer);
+		if( ! (modelElement instanceof SVGNode) )
+			return null;
+		SVGNode node = (SVGNode) modelElement;
+		if( context == null ) {
+			background = new BackgroundPart(node,ctx);
+			background.setViewer(viewer);
+			part = background;
 		}
-		else if( modelElement instanceof EditableElement ) {
-			part = new EditableElementPart((EditableElement)modelElement,ctx);
+		else {
+			part = new EditablePart(node,ctx);
+			part.setParent(context);
+			node.addPropertyChangeListener(background);
 		}
-		else return null;
 			
 		part.setModel(modelElement);
 		return part;

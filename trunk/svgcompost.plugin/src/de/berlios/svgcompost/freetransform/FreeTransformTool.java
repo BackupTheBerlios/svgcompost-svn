@@ -26,9 +26,8 @@ import org.eclipse.gef.tools.PanningSelectionTool;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import de.berlios.svgcompost.model.EditableElement;
-import de.berlios.svgcompost.model.BackgroundElement;
-import de.berlios.svgcompost.part.BackgroundElementPart;
+import de.berlios.svgcompost.model.SVGNode;
+import de.berlios.svgcompost.part.BackgroundPart;
 
 
 
@@ -105,24 +104,28 @@ public class FreeTransformTool extends PanningSelectionTool {
 		if(editPart instanceof ScalableFreeformRootEditPart) {
 			// up one level
 			ScalableFreeformRootEditPart root = (ScalableFreeformRootEditPart) editPart;
-			BackgroundElementPart parentPart = (BackgroundElementPart) root.getChildren().get(0);
+			BackgroundPart parentPart = (BackgroundPart) root.getChildren().get(0);
 //			ParentElement parent = (ParentElement) parentPart.getModel();
 			// TODO: change children on model, fire change and have parent call refreshChildren();
-			Element svgElement = ((BackgroundElement)parentPart.getModel()).getElement();
+			Element svgElement = ((SVGNode)parentPart.getModel()).getElement();
 			Node parentElement = svgElement.getParentNode();
-			if( parentElement != null && parentElement instanceof Element ) {
-				System.out.println( "parentElement = "+( (Element) parentElement ).getAttribute("id") );
-				parentPart.getViewer().setContents(new BackgroundElement( (Element) parentElement, parentPart.getCtx() ));
-			}
+			if( parentPart.getEditRoot().getParent() != null )
+				parentPart.setEditRoot( parentPart.getEditRoot().getParent() );
+//			if( parentElement != null && parentElement instanceof Element ) {
+//				System.out.println( "parentElement = "+( (Element) parentElement ).getAttribute("id") );
+//				parentPart.getViewer().setContents(new SVGNode( (Element) parentElement, parentPart.getBridgeContext() ));
+//			}
 
 		}
 		else {
 			// open part for editing of inner components
 			FigureCanvas canvas = (FigureCanvas)getCurrentViewer().getControl();
-			BackgroundElementPart parentPart = (BackgroundElementPart) editPart.getParent();
-			Element svgElement = ((EditableElement)editPart.getModel()).getElement();
+			BackgroundPart parentPart = (BackgroundPart) editPart.getParent();
+			Element svgElement = ((SVGNode)editPart.getModel()).getElement();
 			System.out.println( "svgElement = "+svgElement.getAttribute("id") );
-			parentPart.getViewer().setContents(new BackgroundElement( svgElement, parentPart.getCtx() ));
+			if( editPart.getModel() instanceof SVGNode )
+				parentPart.setEditRoot( (SVGNode) editPart.getModel() );
+//			parentPart.getViewer().setContents(new SVGNode( svgElement, parentPart.getBridgeContext() ));
 
 		}
 		return super.handleDoubleClick(button);

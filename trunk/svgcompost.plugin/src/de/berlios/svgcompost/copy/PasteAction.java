@@ -10,8 +10,8 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 
-import de.berlios.svgcompost.model.BackgroundElement;
-import de.berlios.svgcompost.part.BackgroundElementPart;
+import de.berlios.svgcompost.model.SVGNode;
+import de.berlios.svgcompost.part.BackgroundPart;
 
 public class PasteAction extends SelectionAction {
 
@@ -39,12 +39,12 @@ public class PasteAction extends SelectionAction {
 		Iterator<Object> it = selectedObjects.iterator();
 		while( it.hasNext() ) {
 			Object nextSelected = it.next();
-			if( ! (nextSelected instanceof BackgroundElementPart) )
+			if( ! (nextSelected instanceof BackgroundPart) )
 				continue;
-			BackgroundElementPart be = (BackgroundElementPart) nextSelected;
-			if( !cmd.canBePastedInto(be.getModel()) )
+			BackgroundPart be = (BackgroundPart) nextSelected;
+			if( !cmd.canBePastedInto(be.getEditRoot()) )
 				return null;
-			cmd.setParentElement((BackgroundElement)be.getModel());
+			cmd.setParentElement((SVGNode)be.getEditRoot());
 		}
 
 		return cmd;

@@ -10,8 +10,8 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 
-import de.berlios.svgcompost.model.EditableElement;
-import de.berlios.svgcompost.part.EditableElementPart;
+import de.berlios.svgcompost.model.SVGNode;
+import de.berlios.svgcompost.part.EditablePart;
 
 public class CopyAction extends SelectionAction {
 
@@ -40,12 +40,12 @@ public class CopyAction extends SelectionAction {
 		Iterator<Object> it = selectedObjects.iterator();
 		while( it.hasNext() ) {
 			Object nextSelected = it.next();
-			if( ! (nextSelected instanceof EditableElementPart) )
+			if( ! (nextSelected instanceof EditablePart) )
 				continue;
-			EditableElementPart ep = (EditableElementPart) nextSelected;
+			EditablePart ep = (EditablePart) nextSelected;
 			if( !cmd.isCopyable(ep.getModel()) )
 				return null;
-			cmd.addElement((EditableElement)ep.getModel());
+			cmd.addElement((SVGNode)ep.getModel());
 		}
 		return cmd;
 	}

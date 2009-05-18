@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.ui.actions.Clipboard;
 
-import de.berlios.svgcompost.model.EditableElement;
+import de.berlios.svgcompost.model.SVGNode;
 
 public class CopyCommand extends Command {
 
-	private ArrayList<EditableElement> list = new ArrayList<EditableElement>();
+	private ArrayList<SVGNode> list = new ArrayList<SVGNode>();
 	
-	public boolean addElement(EditableElement node) {
+	public boolean addElement(SVGNode node) {
 		if( !list.contains(node) ) {
 			return list.add(node);
 		}
@@ -37,7 +37,7 @@ public class CopyCommand extends Command {
 	}
 
 	public boolean isCopyable(Object node) {
-		return node != null && node instanceof EditableElement;
+		return node != null && node instanceof SVGNode;
 	}
 
 }

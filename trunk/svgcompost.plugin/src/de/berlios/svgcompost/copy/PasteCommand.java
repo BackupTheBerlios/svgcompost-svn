@@ -8,27 +8,26 @@ import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.ui.actions.Clipboard;
 import org.w3c.dom.Element;
 
-import de.berlios.svgcompost.model.BackgroundElement;
-import de.berlios.svgcompost.model.EditableElement;
+import de.berlios.svgcompost.model.SVGNode;
 
 public class PasteCommand extends Command {
 
-	private HashMap<EditableElement, EditableElement> list = new HashMap<EditableElement, EditableElement>();
+	private HashMap<SVGNode, SVGNode> list = new HashMap<SVGNode, SVGNode>();
 	
-	private BackgroundElement parentElement;
+	private SVGNode parentElement;
 
-	public void setParentElement(BackgroundElement parentElement) {
+	public void setParentElement(SVGNode parentElement) {
 		this.parentElement = parentElement;
 	}
 
 	@Override
 	public boolean canExecute() {
-		ArrayList<EditableElement> bList = (ArrayList<EditableElement>) Clipboard.getDefault().getContents();
+		ArrayList<SVGNode> bList = (ArrayList<SVGNode>) Clipboard.getDefault().getContents();
 		if( bList == null || bList.isEmpty() )
 			return false;
-		Iterator<EditableElement> it = bList.iterator();
+		Iterator<SVGNode> it = bList.iterator();
 		while( it.hasNext() ) {
-			EditableElement node = it.next();
+			SVGNode node = it.next();
 			if( isPastable(node) ) {
 				list.put(node, null);
 			}
@@ -40,13 +39,13 @@ public class PasteCommand extends Command {
 	public void execute() {
 		if( !canExecute() )
 			return;
-		Iterator<EditableElement> it = list.keySet().iterator();
+		Iterator<SVGNode> it = list.keySet().iterator();
 		while( it.hasNext() ) {
-			EditableElement node = it.next();
+			SVGNode node = it.next();
 			Element el = node.getElement();
 			Element clone = (Element) el.cloneNode(true);
 			clone.setAttribute("id", el.getAttribute("id")+"_clone");
-			EditableElement cloneNode = new EditableElement(clone, node.getBridgeContext());
+			SVGNode cloneNode = new SVGNode(clone, node.getBridgeContext());
 			cloneNode.setParent(node.getParent());
 			list.put(node, cloneNode);
 		}
@@ -55,9 +54,9 @@ public class PasteCommand extends Command {
 
 	@Override
 	public void redo() {
-		Iterator<EditableElement> it = list.values().iterator();
+		Iterator<SVGNode> it = list.values().iterator();
 		while( it.hasNext() ) {
-			EditableElement node = it.next();
+			SVGNode node = it.next();
 			if( isPastable(node) && canBePastedInto(parentElement) ) {
 				parentElement.addChild(node);
 			}
@@ -70,9 +69,9 @@ public class PasteCommand extends Command {
 	
 	@Override
 	public void undo() {
-		Iterator<EditableElement> it = list.values().iterator();
+		Iterator<SVGNode> it = list.values().iterator();
 		while( it.hasNext() ) {
-			EditableElement node = it.next();
+			SVGNode node = it.next();
 			if( isPastable(node) && canBePastedInto(parentElement) ) {
 				node.getParent().removeChild(node);
 			}
@@ -84,6 +83,6 @@ public class PasteCommand extends Command {
 	}
 
 	public boolean canBePastedInto(Object node) {
-		return (node != null && node instanceof BackgroundElement);
+		return (node != null && node instanceof SVGNode);
 	}
 }

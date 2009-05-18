@@ -27,7 +27,7 @@ import org.eclipse.gef.RequestConstants;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.requests.ChangeBoundsRequest;
 
-import de.berlios.svgcompost.model.EditableElement;
+import de.berlios.svgcompost.model.SVGNode;
 
 
 
@@ -47,9 +47,9 @@ public class TransformSVGElementCommand extends Command {
 	private final ChangeBoundsRequest request;
 
 	/** SVGElement to manipulate. */
-	private final EditableElement element;
+	private final SVGNode element;
 	
-	public TransformSVGElementCommand(EditableElement element, ChangeBoundsRequest req, 
+	public TransformSVGElementCommand(SVGNode element, ChangeBoundsRequest req, 
 			Rectangle newBounds, BridgeContext ctx) {
 		if (element == null || req == null || newBounds == null) {
 			throw new IllegalArgumentException();
@@ -58,6 +58,15 @@ public class TransformSVGElementCommand extends Command {
 		this.request = req;
 		setLabel("move / resize");
 	}
+
+//	public TransformSVGElementCommand(SVGNode model,
+//			ChangeBoundsRequest request2, Rectangle constraint,
+//			BridgeContext bridgeContext) {
+//		// TODO Auto-generated constructor stub
+//		request = null;
+//		element = null;
+//		throw new RuntimeException("Empty constructor stub");
+//	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.gef.commands.Command#canExecute()
