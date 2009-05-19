@@ -21,6 +21,7 @@ import java.awt.geom.AffineTransform;
 import org.eclipse.draw2d.Cursors;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.PositionConstants;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.DragTracker;
 import org.eclipse.gef.GraphicalEditPart;
@@ -28,6 +29,7 @@ import org.eclipse.gef.SharedCursors;
 import org.eclipse.gef.handles.ResizeHandle;
 import org.eclipse.gef.requests.ChangeBoundsRequest;
 import org.eclipse.gef.tools.ResizeTracker;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 
 import de.berlios.svgcompost.figure.MapModeImageFigure;
@@ -53,6 +55,13 @@ public class FreeTransformHandle extends ResizeHandle {
 
 	public FreeTransformHandle(GraphicalEditPart owner, int direction) {
 		super(owner, direction);
+//		maxSize.expand(2, 2);
+//		prefSize.expand(2, 2);
+		Dimension dim = getPreferredSize();
+		dim.expand(6, 6);
+//		setSize(dim);
+		setPreferredSize(dim);
+//		setMaximumSize(dim);
 		this.direction = direction;
 	}
 	
@@ -107,19 +116,30 @@ public class FreeTransformHandle extends ResizeHandle {
 
 	@Override
 	public void paintFigure(Graphics g) {
-		if( ! rotateSkewMode ) {
-			super.paintFigure(g);
-			return;
-		}
 		Rectangle r = getBounds();
-		r.shrink(1, 1);
-		try {
-			g.setBackgroundColor(getFillColor());
-			g.fillOval(r.x, r.y, r.width, r.height);
-			g.setForegroundColor(getBorderColor()); 
-			g.drawOval(r.x, r.y, r.width, r.height);
-		} finally {
-			r.expand(1, 1);
+		if( ! rotateSkewMode ) {
+			r.shrink(4, 4);
+			try {
+				g.setBackgroundColor(getFillColor());
+				g.fillRectangle(r.x, r.y, r.width, r.height);
+				g.setForegroundColor(getBorderColor()); 
+				g.drawRectangle(r.x, r.y, r.width, r.height);
+			} finally {
+				r.expand(4, 4);
+			}
+		}
+		else {
+			r.shrink(2, 2);
+			try {
+				g.setBackgroundColor(getBorderColor());
+				g.fillOval(r.x, r.y, r.width, r.height);
+				g.setBackgroundColor(getFillColor());
+				r.shrink(1, 1);
+				g.fillOval(r.x, r.y, r.width, r.height);
+				r.expand(1, 1);
+			} finally {
+				r.expand(2, 2);
+			}
 		}
 	}
 	
