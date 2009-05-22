@@ -27,6 +27,9 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef.requests.ChangeBoundsRequest;
 
+import de.berlios.svgcompost.plugin.SVGCompostConstants;
+import de.berlios.svgcompost.plugin.SVGCompostPlugin;
+
 
 /**
  * Helper class which provides static functions to calculate transforms out of the editor's request data.
@@ -37,7 +40,17 @@ public class FreeTransformHelper {
 	
 	public static final String FREE_TRANSFORM = "free transform";
 	public static final String ROTATE_SKEW_MODE = "rotate skew mode";
+	public static final String ORIGIN = "origin";
 
+
+	public static AffineTransform createFreeTransform(ChangeBoundsRequest request, Rectangle2D bounds, boolean rotateSkewMode) {
+		boolean transformCenter = SVGCompostPlugin.getDefault().getPluginPreferences().getBoolean(SVGCompostConstants.FREETRANSFORM_CENTER);
+		if( transformCenter )
+			return createFreeTransform_center(request, bounds, rotateSkewMode);
+		else
+			return createFreeTransform_origin(request, bounds, rotateSkewMode);
+	}
+	
 	/**
 	 * Calculates an AffineTransform which, if applied to the given Figure's
 	 * current bounds rectangle, will map the point specified by the
@@ -49,7 +62,84 @@ public class FreeTransformHelper {
 	 * @param rotateSkewMode
 	 * @return
 	 */
-	public static AffineTransform createFreeTransform(ChangeBoundsRequest request, Rectangle2D bounds, boolean rotateSkewMode) {
+	public static AffineTransform createFreeTransform_origin(ChangeBoundsRequest request, Rectangle2D bounds, boolean rotateSkewMode) {
+		int direction = request.getResizeDirection();
+		
+		//TODO: Doesn't work with skew, only works on one side with scale.
+		
+		AffineTransform transform;
+		
+		// Test for simple drag.
+		if( direction == PositionConstants.NONE ) {
+			transform = getDragTransform(request, bounds);
+			return transform;
+		}
+		
+		// Calc delta from center of figure to current mouse location.
+		Rectangle2D startRectangle = bounds;
+		Point2D.Double center = getCenter(startRectangle);
+		Point2D.Double origin = (Point2D.Double) request.getExtendedData().get(ORIGIN);
+
+		if( ! rotateSkewMode ) {
+			Rectangle2D currentRectangle = getTransformedRectangle(request, bounds);
+			
+			transform = getResizeTransform(direction, startRectangle, currentRectangle);
+		}
+		else {
+			Point2D.Double location = new Point2D.Double( request.getLocation().x, request.getLocation().y );
+			Point2D.Double toCurrent = getDifference(location, origin);
+			switch (direction) {
+			
+			case PositionConstants.NORTH_EAST:
+			case PositionConstants.NORTH_WEST:
+			case PositionConstants.SOUTH_EAST:
+			case PositionConstants.SOUTH_WEST:
+				// Calc delta from center of figure to mouse starting location.
+				Point2D.Double toStart = getDifference( getPosition(startRectangle, direction), origin );
+				// Calc rotation transform.
+				transform = getRotationTransform(direction, toStart, toCurrent);
+				break;
+				
+			case PositionConstants.NORTH:
+			case PositionConstants.EAST:
+			case PositionConstants.SOUTH:
+			case PositionConstants.WEST:
+				// Calc skew transform.
+				transform = getSkewTransform(direction, toCurrent);
+				break;
+	
+			case PositionConstants.NONE:
+			default:
+				transform = new AffineTransform();
+				break;
+			}
+		}
+
+		// Apply translation to transform.
+		// (No need for matrix calculations, since rotate and skew translation is 0.)
+		Point2D.Double offset = new Point2D.Double( center.x-origin.x, center.y-origin.y );
+		
+		transform.concatenate( AffineTransform.getTranslateInstance(offset.x, offset.y) );
+		double[] m = new double[6];
+		transform.getMatrix(m);
+		transform.setTransform(m[0], m[1], m[2], m[3], m[4]+origin.x, m[5]+origin.y);
+		// Apply transform to figure.
+		return transform;
+	}
+
+	
+	/**
+	 * Calculates an AffineTransform which, if applied to the given Figure's
+	 * current bounds rectangle, will map the point specified by the
+	 * resize direction (e.g. NORTH_EAST means the upper right corner)
+	 * to the current mouse position saved in the Request.
+	 * The rotate skew mode specifies which kind of transformation will be created.
+	 * @param request
+	 * @param bounds
+	 * @param rotateSkewMode
+	 * @return
+	 */
+	public static AffineTransform createFreeTransform_center(ChangeBoundsRequest request, Rectangle2D bounds, boolean rotateSkewMode) {
 		int direction = request.getResizeDirection();
 		
 		AffineTransform transform;

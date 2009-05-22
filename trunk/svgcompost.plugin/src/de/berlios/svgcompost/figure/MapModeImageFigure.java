@@ -16,8 +16,10 @@
 
 package de.berlios.svgcompost.figure;
 
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
+import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.ImageFigure;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Insets;
@@ -36,6 +38,7 @@ public class MapModeImageFigure extends ImageFigure implements IMapMode {
 	
 	private IMapMode mm;
 	protected Rectangle2D awtBounds;
+	protected Point2D awtOrigin;
 	
 	public MapModeImageFigure(Image image) {
 		super(image);
@@ -44,8 +47,27 @@ public class MapModeImageFigure extends ImageFigure implements IMapMode {
 	
 	public void setAwtBounds(Rectangle2D awtBounds) {
 		this.awtBounds = awtBounds;
- 		setPreferredSize((int)awtBounds.getWidth(), (int)awtBounds.getHeight());
+ 		setPreferredSize((int)awtBounds.getWidth()+1, (int)awtBounds.getHeight()+1);
  		setLocation( new Point((int)awtBounds.getX(), (int)awtBounds.getY()) );
+	}
+	
+	public void setAwtOrigin(Point2D awtOrigin) {
+		this.awtOrigin = awtOrigin;
+	}
+	
+	public Point2D getAwtOrigin() {
+		if( awtOrigin == null && bounds != null) {
+			Point c = bounds.getCenter();
+			return new Point2D.Float( c.x, c.y );
+		}
+		return awtOrigin;
+	}
+	
+	public Point getDraw2dOrigin() {
+		if( awtOrigin == null && bounds != null) {
+			return bounds.getCenter();
+		}
+		return new Point( awtOrigin.getX(), awtOrigin.getY() );
 	}
 	
 	public Dimension getPreferredSize(int wHint, int hHint) {
@@ -67,6 +89,21 @@ public class MapModeImageFigure extends ImageFigure implements IMapMode {
 			return new Rectangle2D.Float( bounds.x, bounds.y, bounds.width, bounds.height );
 		}
 		return awtBounds;
+	}
+	
+	private static int crosshairRadius = 5;
+	
+	protected void paintFigure(Graphics graphics) {
+		super.paintFigure(graphics);
+		Point o = getDraw2dOrigin();
+		graphics.fillOval(o.x-crosshairRadius, o.y-crosshairRadius, crosshairRadius*2, crosshairRadius*2);
+		graphics.drawOval(o.x-crosshairRadius, o.y-crosshairRadius, crosshairRadius*2, crosshairRadius*2);
+		Point c = bounds.getCenter();
+		
+//		Rectangle tinyBounds = new Rectangle( bounds );
+//		tinyBounds.shrink(100,100);
+		graphics.drawLine(c.x, c.y-crosshairRadius, c.x, c.y+crosshairRadius);
+		graphics.drawLine(c.x-crosshairRadius, c.y, c.x+crosshairRadius, c.y);
 	}
 	
 	public int DPtoLP(int deviceUnit) {

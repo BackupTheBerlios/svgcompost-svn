@@ -169,7 +169,6 @@ implements PropertyChangeListener, EventListener  {
 			refreshChildren();
 		}
 		else if( SVGNode.TRANSFORM.equals(prop) ) {
-			System.out.println( "transform fired on bg" );
 			refreshVisuals();
 		}
 	}

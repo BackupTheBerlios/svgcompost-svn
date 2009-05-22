@@ -78,6 +78,7 @@ public class FreeTransformHandle extends ResizeHandle {
 				super.updateSourceRequest();
 				ChangeBoundsRequest request = (ChangeBoundsRequest) getSourceRequest();
 				MapModeImageFigure figure = (MapModeImageFigure) getOwner().getFigure();
+				request.getExtendedData().put(FreeTransformHelper.ORIGIN, figure.getAwtOrigin());
 				AffineTransform transform = FreeTransformHelper.createFreeTransform( request, figure.getAwtBounds(), rotateSkewMode );
 //				System.out.println( "requested transform = "+transform );
 				request.getExtendedData().put(FreeTransformHelper.FREE_TRANSFORM, transform);

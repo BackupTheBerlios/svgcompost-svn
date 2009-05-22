@@ -17,11 +17,10 @@
 package de.berlios.svgcompost.part;
 
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.gvt.GraphicsNode;
@@ -40,7 +39,6 @@ import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gef.requests.ChangeBoundsRequest;
 import org.eclipse.gef.tools.DragEditPartsTracker;
 import org.eclipse.swt.graphics.Image;
-import org.w3c.dom.Element;
 
 import de.berlios.svgcompost.figure.MapModeImageFigure;
 import de.berlios.svgcompost.freetransform.FreeTransformHelper;
@@ -105,7 +103,7 @@ public class EditablePart extends AbstractGraphicalEditPart implements PropertyC
 		((MapModeImageFigure)figure).setPreferredSize(size.width, size.height);
 
 		figure.setOpaque(false);
-		figure.setBackgroundColor(ColorConstants.yellow);
+		figure.setBackgroundColor(ColorConstants.white);
 		figure.setForegroundColor(ColorConstants.blue);
 		
 		Border border = new LineBorder(3);
@@ -127,6 +125,9 @@ public class EditablePart extends AbstractGraphicalEditPart implements PropertyC
 		if( figure != null && figure.getParent() != null )
 			((GraphicalEditPart) getParent()).setLayoutConstraint(this, getFigure(), draw2dBounds );
  		figure.setBounds(new Rectangle((int)awtBounds.getX(),(int)awtBounds.getY(),(int)awtBounds.getWidth(),(int)awtBounds.getHeight()));
+ 		
+ 		AffineTransform globTrafo = gNode.getGlobalTransform();
+ 		imageFigure.setAwtOrigin( new Point2D.Double( globTrafo.getTranslateX(), globTrafo.getTranslateY() ) );
     }
     
     protected Image transcodeImage( GraphicsNode gNode ) {
@@ -150,6 +151,7 @@ public class EditablePart extends AbstractGraphicalEditPart implements PropertyC
     			EditPart editPart = this.getSourceEditPart();
     			if (editPart instanceof AbstractGraphicalEditPart) {
 					MapModeImageFigure figure = (MapModeImageFigure) ((AbstractGraphicalEditPart)editPart).getFigure();
+					request.getExtendedData().put(FreeTransformHelper.ORIGIN, figure.getAwtOrigin());
 	    			AffineTransform transform = FreeTransformHelper.createFreeTransform( request, figure.getAwtBounds(), false );
 					request.getExtendedData().put(FreeTransformHelper.FREE_TRANSFORM, transform);
 				}

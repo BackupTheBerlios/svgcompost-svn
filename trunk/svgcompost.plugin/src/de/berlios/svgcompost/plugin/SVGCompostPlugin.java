@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.berlios.svgcompost;
+package de.berlios.svgcompost.plugin;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 

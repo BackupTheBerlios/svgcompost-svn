@@ -6,10 +6,17 @@
       <editor
             name="SvgCompost Editor"
             extensions="svg"
-            icon="icons/sample.gif"
             contributorClass="de.berlios.svgcompost.contributor.SVGEditorActionBarContributor"
             class="de.berlios.svgcompost.editor.SVGEditor"
             id="svgcompost.editors.SVGEditor">
       </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="de.berlios.svgcompost.plugin.SVGCompostPreferencePage"
+            id="svgcompost.plugin.preferences"
+            name="SVG Compost">
+      </page>
    </extension>
 </plugin>
