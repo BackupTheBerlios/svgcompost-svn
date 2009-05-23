@@ -80,22 +80,21 @@ public class FreeTransformHelper {
 		Point2D.Double center = getCenter(startRectangle);
 		Point2D.Double origin = (Point2D.Double) request.getExtendedData().get(ORIGIN);
 
+		Point2D.Double location = new Point2D.Double( request.getLocation().x, request.getLocation().y );
+		// Calc delta from origin to current mouse location.
+		Point2D.Double toCurrent = getDifference(location, origin);
+		// Calc delta from origin to mouse starting location.
+		Point2D.Double toStart = getDifference( getPosition(startRectangle, direction), origin );
 		if( ! rotateSkewMode ) {
-			Rectangle2D currentRectangle = getTransformedRectangle(request, bounds);
-			
-			transform = getResizeTransform(direction, startRectangle, currentRectangle);
+			transform = getResizeTransform(direction, toStart, toCurrent);
 		}
 		else {
-			Point2D.Double location = new Point2D.Double( request.getLocation().x, request.getLocation().y );
-			Point2D.Double toCurrent = getDifference(location, origin);
 			switch (direction) {
 			
 			case PositionConstants.NORTH_EAST:
 			case PositionConstants.NORTH_WEST:
 			case PositionConstants.SOUTH_EAST:
 			case PositionConstants.SOUTH_WEST:
-				// Calc delta from center of figure to mouse starting location.
-				Point2D.Double toStart = getDifference( getPosition(startRectangle, direction), origin );
 				// Calc rotation transform.
 				transform = getRotationTransform(direction, toStart, toCurrent);
 				break;
@@ -228,6 +227,17 @@ public class FreeTransformHelper {
 		AffineTransform transform = AffineTransform.getScaleInstance(
 				(double)currentRectangle.getWidth()/(double)startRectangle.getWidth(),
 				(double)currentRectangle.getHeight()/(double)startRectangle.getHeight() );
+		return transform;
+	}
+	
+	protected static AffineTransform getResizeTransform(int direction, Point2D toStart, Point2D toCurrent) {
+		double scaleX = 1;
+		double scaleY = 1;
+		if( direction != PositionConstants.NORTH && direction != PositionConstants.SOUTH )
+			scaleX = toCurrent.getX() / toStart.getX();
+		if( direction != PositionConstants.EAST && direction != PositionConstants.WEST )
+			scaleY = toCurrent.getY() / toStart.getY();
+		AffineTransform transform = AffineTransform.getScaleInstance( scaleX, scaleY );
 		return transform;
 	}
 	
