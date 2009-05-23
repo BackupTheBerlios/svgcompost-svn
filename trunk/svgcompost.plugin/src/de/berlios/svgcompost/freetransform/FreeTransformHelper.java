@@ -65,8 +65,6 @@ public class FreeTransformHelper {
 	public static AffineTransform createFreeTransform_origin(ChangeBoundsRequest request, Rectangle2D bounds, boolean rotateSkewMode) {
 		int direction = request.getResizeDirection();
 		
-		//TODO: Doesn't work with skew, only works on one side with scale.
-		
 		AffineTransform transform;
 		
 		// Test for simple drag.
@@ -104,7 +102,7 @@ public class FreeTransformHelper {
 			case PositionConstants.SOUTH:
 			case PositionConstants.WEST:
 				// Calc skew transform.
-				transform = getSkewTransform(direction, toCurrent);
+				transform = getSkewTransform(direction, toStart, toCurrent );
 				break;
 	
 			case PositionConstants.NONE:
@@ -115,7 +113,6 @@ public class FreeTransformHelper {
 		}
 
 		// Apply translation to transform.
-		// (No need for matrix calculations, since rotate and skew translation is 0.)
 		Point2D.Double offset = new Point2D.Double( center.x-origin.x, center.y-origin.y );
 		
 		transform.concatenate( AffineTransform.getTranslateInstance(offset.x, offset.y) );
@@ -276,6 +273,39 @@ public class FreeTransformHelper {
 		case PositionConstants.WEST:
 			if( dx != 0 )
 				skewY = dy / dx;
+			break;
+
+		default:
+			break;
+		}
+		
+		return AffineTransform.getShearInstance(skewX, skewY);
+	}
+	
+	protected static AffineTransform getSkewTransform(int direction, Point2D.Double toStart, Point2D.Double toCurrent) {
+		double dx = toCurrent.x - toStart.x;
+		double dy = toCurrent.y - toStart.y;
+		
+		double skewX = 0;
+		double skewY = 0;
+		
+		switch (direction) {
+					
+		case PositionConstants.NORTH:
+			if( toStart.y != 0 )
+				skewX = (toCurrent.x - toStart.x) / toStart.y;
+			break;
+		case PositionConstants.SOUTH:
+			if( toStart.y != 0 )
+				skewX = (toCurrent.x - toStart.x) / toStart.y;
+			break;
+		case PositionConstants.EAST:
+			if( toStart.x != 0 )
+				skewY = (toCurrent.y - toStart.y) / toStart.x;
+			break;
+		case PositionConstants.WEST:
+			if( toStart.x != 0 )
+				skewY = (toCurrent.y - toStart.y) / toStart.x;
 			break;
 
 		default:
