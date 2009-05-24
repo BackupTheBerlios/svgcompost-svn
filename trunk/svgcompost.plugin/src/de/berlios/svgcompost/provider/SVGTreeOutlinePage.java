@@ -17,15 +17,23 @@
 package de.berlios.svgcompost.provider;
 
 import org.eclipse.gef.ui.actions.ActionRegistry;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import de.berlios.svgcompost.editor.SVGEditor;
+import de.berlios.svgcompost.model.SVGNode;
+import de.berlios.svgcompost.part.BackgroundPart;
+import de.berlios.svgcompost.part.EditablePart;
 
 
 /**
@@ -33,7 +41,7 @@ import de.berlios.svgcompost.editor.SVGEditor;
  * @author Gerrit Karius
  *
  */
-public class SVGTreeOutlinePage extends ContentOutlinePage {
+public class SVGTreeOutlinePage extends ContentOutlinePage implements ISelectionListener {
 
 	private Element root;
 	
@@ -42,6 +50,7 @@ public class SVGTreeOutlinePage extends ContentOutlinePage {
 	public SVGTreeOutlinePage(SVGEditor editor) {
 		super();
 		this.editor = editor;
+		editor.getSite().getPage().addPostSelectionListener(this);
 	}
 	
 	public void setInput(Document doc) {
@@ -56,6 +65,9 @@ public class SVGTreeOutlinePage extends ContentOutlinePage {
 		
 		if( treeViewer == null )
 			return;
+		
+		treeViewer.addPostSelectionChangedListener(editor);
+
 		if( treeViewer.getContentProvider() == null ) {
 			treeViewer.setContentProvider(new SVGTreeContentProvider());
 			treeViewer.setLabelProvider(new SVGLabelProvider());
@@ -74,6 +86,25 @@ public class SVGTreeOutlinePage extends ContentOutlinePage {
 		bars.setGlobalActionHandler(ActionFactory.PASTE.getId(), ar.getAction(ActionFactory.PASTE.getId()));
 		initTreeViewer();
 	}
+
+	@Override
+	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+		if( selection instanceof StructuredSelection ) {
+			StructuredSelection structured = (StructuredSelection) selection;
+			Object selected = structured.getFirstElement();
+			Element element = null;
+			if( selected instanceof EditablePart )
+				element = ((SVGNode)((EditablePart)selected).getModel()).getElement();
+			else if( selected instanceof BackgroundPart )
+				element = ((SVGNode)((BackgroundPart)selected).getEditRoot()).getElement();
+			if( element != null )
+				setSelection( new StructuredSelection(element) );
+			else
+				setSelection( new StructuredSelection() );
+		}
+	}
+	
+	
 	
 
 }

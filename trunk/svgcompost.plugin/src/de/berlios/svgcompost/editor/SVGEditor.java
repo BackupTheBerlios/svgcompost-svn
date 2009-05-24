@@ -24,6 +24,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.util.EventObject;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.batik.bridge.BridgeContext;
@@ -41,6 +42,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.gef.ContextMenuProvider;
 import org.eclipse.gef.DefaultEditDomain;
+import org.eclipse.gef.EditPart;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.dnd.TemplateTransferDragSourceListener;
 import org.eclipse.gef.dnd.TemplateTransferDropTargetListener;
@@ -55,6 +57,10 @@ import org.eclipse.gef.ui.parts.GraphicalEditorWithFlyoutPalette;
 import org.eclipse.gef.ui.parts.GraphicalViewerKeyHandler;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.TransferDropTargetListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -68,6 +74,7 @@ import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import de.berlios.svgcompost.copy.CopyAction;
 import de.berlios.svgcompost.copy.PasteAction;
 import de.berlios.svgcompost.model.SVGNode;
+import de.berlios.svgcompost.part.BackgroundPart;
 import de.berlios.svgcompost.part.SingleLevelFactory;
 import de.berlios.svgcompost.provider.SVGEditorContextMenuProvider;
 import de.berlios.svgcompost.provider.SVGEditorPaletteFactory;
@@ -79,7 +86,7 @@ import de.berlios.svgcompost.provider.SVGTreeOutlinePage;
  * @author Gerrit Karius
  *
  */
-public class SVGEditor extends GraphicalEditorWithFlyoutPalette {
+public class SVGEditor extends GraphicalEditorWithFlyoutPalette implements ISelectionChangedListener {
 
 	private static PaletteRoot PALETTE_MODEL;
 	
@@ -224,7 +231,6 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette {
 	public Object getAdapter(Class type) {
 		if (type == IContentOutlinePage.class) {
 			outline = new SVGTreeOutlinePage(this);
-			System.out.println( "outline: "+outline );
 			outline.setInput(doc);
 			return outline;
 		}
@@ -290,6 +296,29 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette {
 
 	public boolean isSaveAsAllowed() {
 		return true;
+	}
+
+	@Override
+	public void selectionChanged(SelectionChangedEvent event) {
+		System.out.println("SVGEditor.selectionChanged("+event+")");
+		ISelection selection = event.getSelection();
+		if( selection instanceof StructuredSelection ) {
+			StructuredSelection structured = (StructuredSelection) selection;
+			Object selected = structured.getFirstElement();
+			Element element = null;
+			if( selected instanceof Element )
+				element = (Element) selected;
+			GraphicalViewer viewer = getGraphicalViewer();
+			EditPart part = (EditPart) viewer.getEditPartRegistry().get(element);
+//			if( part != null ) {
+//				List<EditPart> children = viewer.getRootEditPart().getChildren();
+//				if( children.size() > 0 && children.get(0) instanceof BackgroundPart )
+//					((BackgroundPart)children.get(0)).setEditRoot( (EditPart) viewer.getEditPartRegistry().get(element) );
+//				viewer.setSelection( new StructuredSelection(part) );
+//			}
+//			else
+//				viewer.setSelection( new StructuredSelection() );
+		}
 	}
 
 

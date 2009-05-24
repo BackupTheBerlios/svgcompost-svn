@@ -74,6 +74,18 @@ public class EditablePart extends AbstractGraphicalEditPart implements PropertyC
 		}
 	}
 
+//	@Override
+//	protected void register() {
+//		// TODO Auto-generated method stub
+//		super.register();
+//	}
+
+	@Override
+	protected void registerModel() {
+		super.registerModel();
+		getViewer().getEditPartRegistry().put(editableElement.getElement(), this);	
+	}
+
 	@Override
 	protected void refreshVisuals() {
 		copyDataToFigure();
