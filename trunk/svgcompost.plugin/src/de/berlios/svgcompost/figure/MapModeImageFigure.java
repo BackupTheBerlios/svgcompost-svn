@@ -22,13 +22,15 @@ import java.awt.geom.Rectangle2D;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.ImageFigure;
 import org.eclipse.draw2d.geometry.Dimension;
-import org.eclipse.draw2d.geometry.Insets;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.draw2d.geometry.Translatable;
 import org.eclipse.gmf.runtime.draw2d.ui.mapmode.IMapMode;
 import org.eclipse.gmf.runtime.draw2d.ui.mapmode.MapModeTypes;
 import org.eclipse.swt.graphics.Image;
+
+import de.berlios.svgcompost.plugin.SVGCompostConstants;
+import de.berlios.svgcompost.plugin.SVGCompostPlugin;
 
 /**
  * An ImageFIgure that implements IMapMode with straight identity mapping.
@@ -95,15 +97,24 @@ public class MapModeImageFigure extends ImageFigure implements IMapMode {
 	
 	protected void paintFigure(Graphics graphics) {
 		super.paintFigure(graphics);
-		Point o = getDraw2dOrigin();
-		graphics.fillOval(o.x-crosshairRadius, o.y-crosshairRadius, crosshairRadius*2, crosshairRadius*2);
-		graphics.drawOval(o.x-crosshairRadius, o.y-crosshairRadius, crosshairRadius*2, crosshairRadius*2);
-		Point c = bounds.getCenter();
 		
-//		Rectangle tinyBounds = new Rectangle( bounds );
-//		tinyBounds.shrink(100,100);
-		graphics.drawLine(c.x, c.y-crosshairRadius, c.x, c.y+crosshairRadius);
-		graphics.drawLine(c.x-crosshairRadius, c.y, c.x+crosshairRadius, c.y);
+//		Rectangle originalBounds = getBounds();
+//		Rectangle drawingBounds = new Rectangle( originalBounds );
+		
+		boolean transformCenter = SVGCompostPlugin.getDefault().getPluginPreferences().getBoolean(SVGCompostConstants.FREETRANSFORM_CENTER);
+		Point o = getDraw2dOrigin();
+		Point c = transformCenter ? bounds.getCenter() : o;
+		
+//		drawingBounds.union( new Rectangle(o.x-crosshairRadius,o.y-crosshairRadius,crosshairRadius,crosshairRadius) );
+//		setBounds( drawingBounds );
+		
+		graphics.fillOval(c.x-crosshairRadius, c.y-crosshairRadius, crosshairRadius*2, crosshairRadius*2);
+		graphics.drawOval(c.x-crosshairRadius, c.y-crosshairRadius, crosshairRadius*2, crosshairRadius*2);
+		
+		graphics.drawLine(o.x, o.y-crosshairRadius, o.x, o.y+crosshairRadius);
+		graphics.drawLine(o.x-crosshairRadius, o.y, o.x+crosshairRadius, o.y);
+		
+//		setBounds(originalBounds);
 	}
 	
 	public int DPtoLP(int deviceUnit) {
