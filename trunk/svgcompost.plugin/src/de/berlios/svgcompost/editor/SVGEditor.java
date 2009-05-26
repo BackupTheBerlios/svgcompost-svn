@@ -57,9 +57,9 @@ import org.eclipse.gef.ui.parts.GraphicalEditorWithFlyoutPalette;
 import org.eclipse.gef.ui.parts.GraphicalViewerKeyHandler;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.TransferDropTargetListener;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
@@ -75,6 +75,7 @@ import de.berlios.svgcompost.copy.CopyAction;
 import de.berlios.svgcompost.copy.PasteAction;
 import de.berlios.svgcompost.model.SVGNode;
 import de.berlios.svgcompost.part.BackgroundPart;
+import de.berlios.svgcompost.part.EditablePart;
 import de.berlios.svgcompost.part.SingleLevelFactory;
 import de.berlios.svgcompost.provider.SVGEditorContextMenuProvider;
 import de.berlios.svgcompost.provider.SVGEditorPaletteFactory;
@@ -86,7 +87,7 @@ import de.berlios.svgcompost.provider.SVGTreeOutlinePage;
  * @author Gerrit Karius
  *
  */
-public class SVGEditor extends GraphicalEditorWithFlyoutPalette implements ISelectionChangedListener {
+public class SVGEditor extends GraphicalEditorWithFlyoutPalette implements IDoubleClickListener {
 
 	private static PaletteRoot PALETTE_MODEL;
 	
@@ -299,8 +300,7 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette implements ISele
 	}
 
 	@Override
-	public void selectionChanged(SelectionChangedEvent event) {
-		System.out.println("SVGEditor.selectionChanged("+event+")");
+	public void doubleClick(DoubleClickEvent event) {
 		ISelection selection = event.getSelection();
 		if( selection instanceof StructuredSelection ) {
 			StructuredSelection structured = (StructuredSelection) selection;
@@ -310,14 +310,14 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette implements ISele
 				element = (Element) selected;
 			GraphicalViewer viewer = getGraphicalViewer();
 			EditPart part = (EditPart) viewer.getEditPartRegistry().get(element);
-//			if( part != null ) {
-//				List<EditPart> children = viewer.getRootEditPart().getChildren();
-//				if( children.size() > 0 && children.get(0) instanceof BackgroundPart )
-//					((BackgroundPart)children.get(0)).setEditRoot( (EditPart) viewer.getEditPartRegistry().get(element) );
-//				viewer.setSelection( new StructuredSelection(part) );
-//			}
-//			else
-//				viewer.setSelection( new StructuredSelection() );
+			if( part != null ) {
+				List<EditPart> children = viewer.getRootEditPart().getChildren();
+				if( children.size() > 0 && children.get(0) instanceof BackgroundPart )
+					((BackgroundPart)children.get(0)).setEditRoot( (SVGNode) ((EditablePart)viewer.getEditPartRegistry().get(element)).getModel() );
+				viewer.setSelection( new StructuredSelection(part) );
+			}
+			else
+				viewer.setSelection( new StructuredSelection() );
 		}
 	}
 

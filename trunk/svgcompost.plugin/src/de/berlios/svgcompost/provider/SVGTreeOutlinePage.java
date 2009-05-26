@@ -19,7 +19,6 @@ package de.berlios.svgcompost.provider;
 import org.eclipse.gef.ui.actions.ActionRegistry;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
@@ -66,7 +65,8 @@ public class SVGTreeOutlinePage extends ContentOutlinePage implements ISelection
 		if( treeViewer == null )
 			return;
 		
-		treeViewer.addPostSelectionChangedListener(editor);
+//		treeViewer.addPostSelectionChangedListener(editor);
+		treeViewer.addDoubleClickListener(editor);
 
 		if( treeViewer.getContentProvider() == null ) {
 			treeViewer.setContentProvider(new SVGTreeContentProvider());
