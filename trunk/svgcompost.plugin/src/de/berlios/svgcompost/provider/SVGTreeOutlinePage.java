@@ -28,6 +28,9 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.events.Event;
+import org.w3c.dom.events.EventListener;
+import org.w3c.dom.events.EventTarget;
 
 import de.berlios.svgcompost.editor.SVGEditor;
 import de.berlios.svgcompost.model.SVGNode;
@@ -40,7 +43,7 @@ import de.berlios.svgcompost.part.EditablePart;
  * @author Gerrit Karius
  *
  */
-public class SVGTreeOutlinePage extends ContentOutlinePage implements ISelectionListener {
+public class SVGTreeOutlinePage extends ContentOutlinePage implements ISelectionListener, EventListener {
 
 	private Element root;
 	
@@ -56,6 +59,13 @@ public class SVGTreeOutlinePage extends ContentOutlinePage implements ISelection
 		if( doc == null )
 			return;
 		root = doc.getDocumentElement();
+		if( root instanceof EventTarget ) {
+			EventTarget target = (EventTarget) root;
+			target.addEventListener("DOMAttrModified", this, false);
+			target.addEventListener("DOMNodeInserted", this, false);
+			target.addEventListener("DOMNodeRemoved", this, false);
+			target.addEventListener("DOMCharacterDataModified", this, false);
+		}
 		initTreeViewer();
 	}
 	
@@ -102,6 +112,12 @@ public class SVGTreeOutlinePage extends ContentOutlinePage implements ISelection
 			else
 				setSelection( new StructuredSelection() );
 		}
+	}
+
+	@Override
+	public void handleEvent(Event evt) {
+		if( evt.getType().equals( "DOMNodeInserted" ) || evt.getType().equals( "DOMNodeRemoved" ) )
+		getTreeViewer().refresh();
 	}
 	
 	
