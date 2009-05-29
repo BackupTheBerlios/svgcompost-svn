@@ -23,6 +23,7 @@ public class SVGNode {
 	public static final String TRANSFORM = "Element.Transform";
 	public static final String INSERT = "Element.Insert";
 	public static final String REMOVE = "Element.Remove";
+	public static final String CHANGE_ORDER = "Element.Move";
 
 	private transient PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
@@ -111,13 +112,8 @@ public class SVGNode {
 		SVGGeneratorContext genCtx = SVGGeneratorContext.createDefault(ctx.getDocument());
 		SVGTransform converter = new SVGTransform(genCtx);
 		String transformAttributeValue = converter.toSVGTransform(new TransformStackElement[]{TransformStackElement.createGeneralTransformElement(transform)});
-		System.out.println( "transformAttributeValue = "+transformAttributeValue );
-		
-		System.out.println( element.getAttribute("id")+".transform = "+element.getAttribute("transform") );
 
 		element.setAttribute("transform", transformAttributeValue);
-		
-		System.out.println( element.getAttribute("id")+".transform = "+element.getAttribute("transform") );
 		
 		// FIXME: bounds don't change.
 		// Solution: only the global bounds change.
@@ -160,5 +156,18 @@ public class SVGNode {
 
 	public List<SVGNode> getChildElements() {
 		return editableElements;
+	}
+
+	public void moveChild(SVGNode child, int oldIndex, int newIndex) {
+		// Careful: there might be more (non-visible) XML elements than model nodes.
+		editableElements.remove(oldIndex);
+		editableElements.add(newIndex, child);
+		Element movedElement = child.getElement();
+		element.removeChild(movedElement);
+		if( newIndex == editableElements.size() -1 )
+			element.appendChild(movedElement);
+		else
+			element.insertBefore(movedElement, editableElements.get(newIndex+1).getElement());
+		firePropertyChange(CHANGE_ORDER, oldIndex, newIndex);
 	}
 }

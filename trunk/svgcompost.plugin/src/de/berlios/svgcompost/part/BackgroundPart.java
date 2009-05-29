@@ -164,7 +164,7 @@ implements PropertyChangeListener, EventListener  {
 	
 	public void propertyChange(PropertyChangeEvent evt) {
 		String prop = evt.getPropertyName();
-		if( SVGNode.INSERT.equals(prop) || SVGNode.REMOVE.equals(prop) ) {
+		if( SVGNode.INSERT.equals(prop) || SVGNode.REMOVE.equals(prop) || SVGNode.CHANGE_ORDER.equals(prop) ) {
 			refreshVisuals();
 			refreshChildren();
 		}

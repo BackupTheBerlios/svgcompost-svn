@@ -44,6 +44,8 @@ import org.eclipse.gef.ContextMenuProvider;
 import org.eclipse.gef.DefaultEditDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.GraphicalViewer;
+import org.eclipse.gef.KeyHandler;
+import org.eclipse.gef.KeyStroke;
 import org.eclipse.gef.dnd.TemplateTransferDragSourceListener;
 import org.eclipse.gef.dnd.TemplateTransferDropTargetListener;
 import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
@@ -61,6 +63,7 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -73,6 +76,8 @@ import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 
 import de.berlios.svgcompost.copy.CopyAction;
 import de.berlios.svgcompost.copy.PasteAction;
+import de.berlios.svgcompost.layers.LowerNodeAction;
+import de.berlios.svgcompost.layers.RaiseNodeAction;
 import de.berlios.svgcompost.model.SVGNode;
 import de.berlios.svgcompost.part.BackgroundPart;
 import de.berlios.svgcompost.part.EditablePart;
@@ -115,13 +120,20 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette implements IDoub
 		viewer.setEditPartFactory(factory);
 		factory.setViewer(viewer);
 		
-		viewer.setKeyHandler(new GraphicalViewerKeyHandler(viewer));
+		ActionRegistry registry = getActionRegistry();
+		KeyHandler keyHandler = new GraphicalViewerKeyHandler(viewer);
+		
+		keyHandler.put( KeyStroke.getPressed( SWT.PAGE_DOWN, 0), registry.getAction(LowerNodeAction.LOWER_NODE));
+		keyHandler.put( KeyStroke.getPressed( SWT.PAGE_UP, 0), registry.getAction(RaiseNodeAction.RAISE_NODE));
+
+		viewer.setKeyHandler(keyHandler);
 
 		// configure the context menu provider
 		ContextMenuProvider cmProvider =
-			new SVGEditorContextMenuProvider(viewer, getActionRegistry());
+			new SVGEditorContextMenuProvider(viewer, registry);
 		viewer.setContextMenu(cmProvider);
 		getSite().registerContextMenu(cmProvider, viewer);
+
 	}
 
 
@@ -134,12 +146,23 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette implements IDoub
 	@Override
 	public void createActions() {
 		super.createActions();
+
 		ActionRegistry registry = getActionRegistry();
 		IAction action;
+		
 		action = new CopyAction(this);
 		registry.registerAction(action);
 		getSelectionActions().add(action.getId());
+		
 		action = new PasteAction(this);
+		registry.registerAction(action);
+		getSelectionActions().add(action.getId());
+
+		action = new RaiseNodeAction(this);
+		registry.registerAction(action);
+		getSelectionActions().add(action.getId());
+		
+		action = new LowerNodeAction(this);
 		registry.registerAction(action);
 		getSelectionActions().add(action.getId());
 	}
