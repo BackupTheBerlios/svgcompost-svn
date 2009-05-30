@@ -19,9 +19,7 @@ package de.berlios.svgcompost.editor;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
@@ -72,6 +70,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.part.FileEditorInput;
@@ -82,6 +81,7 @@ import org.w3c.dom.svg.SVGDocument;
 import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 
 import de.berlios.svgcompost.copy.CopyAction;
+import de.berlios.svgcompost.copy.DeleteAction;
 import de.berlios.svgcompost.copy.PasteAction;
 import de.berlios.svgcompost.layers.LowerNodeAction;
 import de.berlios.svgcompost.layers.RaiseNodeAction;
@@ -132,6 +132,7 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette implements IDoub
 		
 		keyHandler.put( KeyStroke.getPressed( SWT.PAGE_DOWN, 0), registry.getAction(LowerNodeAction.LOWER_NODE));
 		keyHandler.put( KeyStroke.getPressed( SWT.PAGE_UP, 0), registry.getAction(RaiseNodeAction.RAISE_NODE));
+		keyHandler.put( KeyStroke.getPressed( SWT.DEL, 0), registry.getAction(ActionFactory.DELETE.getId()));
 
 		viewer.setKeyHandler(keyHandler);
 
@@ -168,8 +169,11 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette implements IDoub
 		action = new RaiseNodeAction(this);
 		registry.registerAction(action);
 		getSelectionActions().add(action.getId());
-		
 		action = new LowerNodeAction(this);
+		registry.registerAction(action);
+		getSelectionActions().add(action.getId());
+		
+		action = new DeleteAction(this);
 		registry.registerAction(action);
 		getSelectionActions().add(action.getId());
 	}
