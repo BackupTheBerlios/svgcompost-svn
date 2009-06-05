@@ -8,5 +8,6 @@ package de.berlios.svgcompost.plugin;
 public interface SVGCompostConstants {
 	
 	public static final String FREETRANSFORM_CENTER = "svgcompost.freetransform.center";
+	public static final String FLIP_LAYERS = "svgcompost.layers.flip";
 
 }

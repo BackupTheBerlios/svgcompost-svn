@@ -83,6 +83,7 @@ import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import de.berlios.svgcompost.copy.CopyAction;
 import de.berlios.svgcompost.copy.DeleteAction;
 import de.berlios.svgcompost.copy.PasteAction;
+import de.berlios.svgcompost.layers.HideShowLayersAction;
 import de.berlios.svgcompost.layers.LowerNodeAction;
 import de.berlios.svgcompost.layers.RaiseNodeAction;
 import de.berlios.svgcompost.model.SVGNode;
@@ -133,6 +134,7 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette implements IDoub
 		keyHandler.put( KeyStroke.getPressed( SWT.PAGE_DOWN, 0), registry.getAction(LowerNodeAction.LOWER_NODE));
 		keyHandler.put( KeyStroke.getPressed( SWT.PAGE_UP, 0), registry.getAction(RaiseNodeAction.RAISE_NODE));
 		keyHandler.put( KeyStroke.getPressed( SWT.DEL, 0), registry.getAction(ActionFactory.DELETE.getId()));
+		keyHandler.put( KeyStroke.getPressed( 'h', 0x68, 0), registry.getAction(HideShowLayersAction.HIDE_SHOW_LAYERS));
 
 		viewer.setKeyHandler(keyHandler);
 
@@ -155,26 +157,16 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette implements IDoub
 	public void createActions() {
 		super.createActions();
 
-		ActionRegistry registry = getActionRegistry();
-		IAction action;
-		
-		action = new CopyAction(this);
-		registry.registerAction(action);
-		getSelectionActions().add(action.getId());
-		
-		action = new PasteAction(this);
-		registry.registerAction(action);
-		getSelectionActions().add(action.getId());
-
-		action = new RaiseNodeAction(this);
-		registry.registerAction(action);
-		getSelectionActions().add(action.getId());
-		action = new LowerNodeAction(this);
-		registry.registerAction(action);
-		getSelectionActions().add(action.getId());
-		
-		action = new DeleteAction(this);
-		registry.registerAction(action);
+		registerAction( new CopyAction(this) );
+		registerAction( new PasteAction(this) );
+		registerAction( new DeleteAction(this) );
+		registerAction( new RaiseNodeAction(this) );
+		registerAction( new LowerNodeAction(this) );
+		registerAction( new HideShowLayersAction(this) );
+	}
+	
+	protected void registerAction( IAction action ) {
+		getActionRegistry().registerAction(action);
 		getSelectionActions().add(action.getId());
 	}
 
