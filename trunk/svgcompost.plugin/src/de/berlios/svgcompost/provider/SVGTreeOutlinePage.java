@@ -97,7 +97,7 @@ public class SVGTreeOutlinePage extends ContentOutlinePage implements ISelection
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		IActionBars bars = getSite().getActionBars();
-		ActionRegistry ar = editor.getRegistry();
+		ActionRegistry ar = (ActionRegistry) editor.getAdapter(ActionRegistry.class);
 		bars.setGlobalActionHandler(ActionFactory.COPY.getId(), ar.getAction(ActionFactory.COPY.getId()));
 		bars.setGlobalActionHandler(ActionFactory.PASTE.getId(), ar.getAction(ActionFactory.PASTE.getId()));
 		initTreeViewer();

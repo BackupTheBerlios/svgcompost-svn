@@ -83,6 +83,8 @@ import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import de.berlios.svgcompost.copy.CopyAction;
 import de.berlios.svgcompost.copy.DeleteAction;
 import de.berlios.svgcompost.copy.PasteAction;
+import de.berlios.svgcompost.layers.FlipBackwardAction;
+import de.berlios.svgcompost.layers.FlipForwardAction;
 import de.berlios.svgcompost.layers.HideShowLayersAction;
 import de.berlios.svgcompost.layers.LowerNodeAction;
 import de.berlios.svgcompost.layers.RaiseNodeAction;
@@ -135,6 +137,8 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette implements IDoub
 		keyHandler.put( KeyStroke.getPressed( SWT.PAGE_UP, 0), registry.getAction(RaiseNodeAction.RAISE_NODE));
 		keyHandler.put( KeyStroke.getPressed( SWT.DEL, 0), registry.getAction(ActionFactory.DELETE.getId()));
 		keyHandler.put( KeyStroke.getPressed( 'h', 0x68, 0), registry.getAction(HideShowLayersAction.HIDE_SHOW_LAYERS));
+		keyHandler.put( KeyStroke.getPressed( 'l', 0x6c, 0), registry.getAction(FlipForwardAction.FLIP_FORWARD));
+		keyHandler.put( KeyStroke.getPressed( 'k', 0x6b, 0), registry.getAction(FlipBackwardAction.FLIP_BACKWARD));
 
 		viewer.setKeyHandler(keyHandler);
 
@@ -163,6 +167,8 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette implements IDoub
 		registerAction( new RaiseNodeAction(this) );
 		registerAction( new LowerNodeAction(this) );
 		registerAction( new HideShowLayersAction(this) );
+		registerAction( new FlipForwardAction(this) );
+		registerAction( new FlipBackwardAction(this) );
 	}
 	
 	protected void registerAction( IAction action ) {
@@ -236,10 +242,6 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette implements IDoub
 		firePropertyChange(PROP_DIRTY);
 	}
 
-	public ActionRegistry getRegistry() {
-		return getActionRegistry();
-	}
-
 	public void doSaveAs() {
 		Shell shell = getSite().getWorkbenchWindow().getShell();
 		SaveAsDialog dialog = new SaveAsDialog(shell);
@@ -304,7 +306,6 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette implements IDoub
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-		System.out.println( "fileUri: "+fileUri );
 
         String xmlReaderClassName = XMLResourceDescriptor.getXMLParserClassName();
 		SAXSVGDocumentFactory docFactory = new SAXSVGDocumentFactory(xmlReaderClassName);
@@ -324,19 +325,16 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette implements IDoub
 		
 		this.factory.setBridgeContext(ctx);
 
-		System.out.println("set contents for outline: "+outline);
 		if( outline != null )
 			outline.setInput(doc);
 
 		Element root = doc.getRootElement();
-		System.out.println( "gNode for root: "+ctx.getGraphicsNode(root) );
-//		viewer.setContents( new BackgroundElement( doc.getRootElement(), ctx ) );
 		viewer.setContents( new SVGNode( doc.getRootElement(), ctx ) );
 		
 	}
 
 
-
+	@Override
 	public boolean isSaveAsAllowed() {
 		return true;
 	}
