@@ -26,7 +26,7 @@ public class HideShowLayersAction extends SelectionAction {
 		super.init();
 		setText("Hide/Show other Layers");
 		setId(HIDE_SHOW_LAYERS);
-		setEnabled(false);
+		setEnabled(calculateEnabled());
 	}
 	
 	@Override
