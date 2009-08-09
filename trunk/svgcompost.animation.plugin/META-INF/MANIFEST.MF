@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: AnimPlugin
 Bundle-SymbolicName: svgcompost.animation.plugin
 Bundle-Version: 1.0.0
-Bundle-Activator: svgcompost.animation.plugin.AnimPlugin
+Bundle-Activator: de.berlios.svgcompost.animation.plugin.AnimPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.apache.batik.bridge;bundle-version="1.6.0",
