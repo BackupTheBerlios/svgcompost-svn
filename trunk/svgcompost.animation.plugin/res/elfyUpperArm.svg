@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.45.1"
+   sodipodi:docbase="D:\workspace\cutout\res"
+   sodipodi:docname="elfy-wo-trafo.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.35"
+     inkscape:cx="-162.96524"
+     inkscape:cy="1519.0101"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     inkscape:window-width="1024"
+     inkscape:window-height="719"
+     inkscape:window-x="-4"
+     inkscape:window-y="-4" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       style="fill:#ffd300;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 28.756443,-23.352105 C 26.038063,-12.478565 6.7728533,-27.776575 -4.1006967,-30.494965 C -7.7757267,-31.413715 -8.2868467,-29.657735 -11.243557,-29.066385 C -12.078217,-29.275055 -18.844247,5.6221155 -19.814977,9.5050355 C -21.770917,17.328765 -19.814977,28.493405 -19.814977,36.647895 C -19.814977,48.097245 -18.218887,57.317995 -15.529267,68.076465 C -13.904827,74.574225 -10.187697,80.871315 -8.3864067,88.076465 C -8.1281567,89.109465 -7.4340267,89.981225 -6.9578367,90.933615 C -6.1943767,93.987465 15.491133,88.535655 17.327873,88.076465 C 19.409953,96.404795 15.899303,70.946825 15.899303,62.362185 C 15.899303,56.933545 12.761573,46.954115 11.613593,42.362185 C 9.6071033,34.336215 12.905803,24.336195 14.470733,18.076465 C 16.335223,10.618505 18.197873,2.0507555 21.613593,-4.7806745 C 24.345533,-10.244565 27.165163,-16.986945 28.756443,-23.352105 z "
+       id="elfyUpperArm"
+       inkscape:label="elfyUpperArm" />
+  </g>
+</svg>

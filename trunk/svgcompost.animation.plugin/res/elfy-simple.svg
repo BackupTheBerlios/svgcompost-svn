@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.45.1"
+   sodipodi:docbase="D:\workspace\cutout_generator\res"
+   sodipodi:docname="elfy.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.35"
+     inkscape:cx="-162.96524"
+     inkscape:cy="925.77749"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     inkscape:window-width="1024"
+     inkscape:window-height="719"
+     inkscape:window-x="-4"
+     inkscape:window-y="-4" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       style="fill:#ffd300;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M -52.515625,60.679288 C -27.975581,34.018454 8.565771,-20.337465 -45.456771,-37.684171 C -85.009,-45.411431 -83.31143,6.23103 -72.492613,26.383411 C -78.974474,42.320701 -69.712511,58.381554 -52.515625,60.679288 z "
+       id="elfyFoot" />
+    <path
+       style="fill:#ffd300;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M -48.386402,115.21932 C -73.451908,155.48281 -66.878038,206.91723 -59.877781,250.87879 C -89.694219,284.42771 -97.144885,221.26886 -105.09262,201.08608 C -110.60967,165.8326 -111.0715,104.85207 -72.02987,91.590491 C -59.097816,90.968299 -47.77036,102.24585 -48.386402,115.21932 z "
+       id="elfyLowerLeg" />
+    <path
+       style="fill:#ffd300;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 120.481,97.177058 C 108.93626,79.589814 89.63262,17.137845 74.56403,66.530821 C 58.26933,84.923644 84.71151,86.404126 77.53553,103.09796 C 97.87291,103.44611 99.73499,98.148776 94.1721,121.5149 C 100.3817,173.58403 114.32406,108.70035 120.481,97.177058 z "
+       id="elfyToes" />
+    <path
+       style="fill:#ffd300;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M -121.24355,58.076471 C -181.80882,22.861661 -253.06158,17.574366 -320.44197,4.6368554 C -288.8112,28.432498 -244.30182,27.351714 -214.06134,54.407824 C -181.81507,87.552674 -153.50351,93.140462 -121.24355,58.076471 z "
+       id="elfyEar" />
+    <path
+       style="fill:#ffd300;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 11.686892,-203.42927 C -5.2266714,-208.16746 -54.123231,-212.08559 -50.802511,-203.43807 C -9.1124314,-171.94711 -32.861061,-120.04183 -50.027131,-86.822691 C -19.528591,-43.186821 41.358789,-77.419151 26.881353,-127.00473 C 27.196044,-153.42269 11.658458,-177.65265 11.686892,-203.42927 z "
+       id="elfyBody" />
+    <path
+       style="fill:#ffd300;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 55.899306,-19.066384 C 73.769296,-33.979124 52.23877,-105.99299 84.036876,-74.756354 C 82.074136,-50.295434 109.91303,3.2281257 61.926554,-7.7136043 C 56.87323,-8.3915343 51.625574,-14.409244 55.899306,-19.066384 z "
+       id="path3161" />
+    <path
+       style="fill:#ffd300;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 51.613587,193.79074 C 33.135078,197.28416 -0.073314714,175.20118 6.2890713,211.84599 C -1.2986707,239.42839 -4.2729167,321.1213 39.361124,300.81444 C 37.887471,261.8086 27.177433,230.01422 51.613587,193.79074 z "
+       id="elfyUpperArm" />
+    <path
+       style="fill:#ffd300;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 206.52254,196.32269 C 198.95304,160.53997 209.87495,124.75171 214.23868,91.121219 C 188.13234,39.096228 162.05066,117.34521 176.04411,143.15499 C 186.30273,154.85819 185.62421,208.38179 206.52254,196.32269 z "
+       id="elfyLowerArm" />
+    <path
+       style="fill:#ffd300;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 260.18502,162.36218 C 255.71476,146.23273 261.27335,88.22289 274.86736,131.83348 C 283.37109,150.007 346.05144,120.40325 307.01695,147.0019 C 308.35009,163.77525 370.22344,167.05928 325.47562,173.85995 C 295.1743,172.00229 312.09001,184.38117 325.29607,193.77665 C 303.8983,194.08289 267.19456,184.68433 260.18502,162.36218 z "
+       id="elfyHand" />
+    <path
+       style="fill:#ffd300;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 105.88134,269.03506 C 113.9347,242.03444 138.08149,192.21512 164.59286,198.68962 C 186.60785,249.98956 177.05929,307.12893 172.83789,360.798 C 165.11539,406.87346 119.16114,376.24511 130.85035,341.32601 C 135.75119,312.09605 113.37892,294.35428 105.88134,269.03506 z "
+       id="elfyUpperLeg" />
+    <path
+       style="fill:#ffd300;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 155.8993,-36.209249 C 187.27554,-43.633719 239.93875,-54.117829 260.36029,-32.688759 C 269.51714,6.1864914 232.58738,42.552129 197.85069,12.526261 C 177.02906,4.7058754 152.37062,-10.223226 155.8993,-36.209249 z "
+       id="elfyHead" />
+    <g
+       id="g3387"
+       transform="translate(229.30463,241.42646)" />
+  </g>
+</svg>

@@ -1,0 +1,621 @@
+<?xml version="1.0"?>
+<swf version="7" compressed="1">
+  <Header framerate="12" frames="1">
+    <size>
+      <Rectangle left="0" right="11000" top="0" bottom="8000"/>
+    </size>
+    <tags>
+      <SetBackgroundColor>
+        <color>
+          <Color red="255" green="255" blue="255"/>
+        </color>
+      </SetBackgroundColor>
+      <DefineShape3 objectID="3">
+        <bounds>
+          <Rectangle left="-467" right="251" top="-373" bottom="85"/>
+        </bounds>
+        <styles>
+          <StyleList>
+            <fillStyles>
+              <Solid>
+                <color>
+                  <Color red="0" green="0" blue="0" alpha="0"/>
+                </color>
+              </Solid>
+            </fillStyles>
+            <lineStyles>
+              <LineStyle width="0">
+                <color>
+                  <Color red="0" green="0" blue="0" alpha="0"/>
+                </color>
+              </LineStyle>
+            </lineStyles>
+          </StyleList>
+        </styles>
+        <shapes>
+          <Shape>
+            <edges>
+              <ShapeSetup x="-5" y="-154" fillStyle0="1" lineStyle="1"/>
+              <CurveTo x1="120" y1="38" x2="240" y2="99"/>
+              <CurveTo x1="126" y1="64" x2="256" y2="112"/>
+              <LineTo x="47" y="24"/>
+              <CurveTo x1="70" y1="46" x2="106" y2="121"/>
+              <CurveTo x1="21" y1="44" x2="54" y2="81"/>
+              <CurveTo x1="48" y1="55" x2="78" y2="123"/>
+              <LineTo x="22" y="37"/>
+              <CurveTo x1="33" y1="43" x2="29" y2="104"/>
+              <LineTo x="1" y="99"/>
+              <LineTo x="16" y="239"/>
+              <CurveTo x1="5" y1="55" x2="-29" y2="54"/>
+              <CurveTo x1="-240" y1="-7" x2="-462" y2="39"/>
+              <LineTo x="-76" y="16"/>
+              <CurveTo x1="-32" y1="-8" x2="-42" y2="-28"/>
+              <CurveTo x1="-48" y1="-98" x2="-58" y2="-219"/>
+              <CurveTo x1="-2" y1="-31" x2="-18" y2="-63"/>
+              <CurveTo x1="-52" y1="-103" x2="-71" y2="-217"/>
+              <CurveTo x1="-3" y1="-21" x2="-17" y2="-38"/>
+              <CurveTo x1="-43" y1="-51" x2="-65" y2="-141"/>
+              <CurveTo x1="-12" y1="-48" x2="-65" y2="-90"/>
+              <LineTo x="-31" y="-27"/>
+              <LineTo x="-29" y="-30"/>
+              <CurveTo x1="-40" y1="-45" x2="-83" y2="-62"/>
+              <CurveTo x1="-56" y1="-24" x2="-83" y2="-73"/>
+              <LineTo x="22" y="-14"/>
+              <LineTo x="36" y="-12"/>
+              <CurveTo x1="12" y1="-4" x2="222" y2="-134"/>
+              <LineTo x="93" y="95"/>
+              <LineTo x="93" y="95"/>
+              <ShapeSetup/>
+            </edges>
+          </Shape>
+        </shapes>
+      </DefineShape3>
+      <DefineSprite objectID="2" frames="1">
+        <tags>
+          <PlaceObject2 replace="0" depth="1" objectID="3">
+            <transform>
+              <Transform transX="0" transY="0"/>
+            </transform>
+          </PlaceObject2>
+          <ShowFrame/>
+          <End/>
+        </tags>
+      </DefineSprite>
+      <Export>
+        <symbols>
+          <Symbol objectID="2" name="object1"/>
+        </symbols>
+      </Export>
+      <DefineSprite objectID="4" frames="1">
+        <tags>
+          <PlaceObject2 replace="0" depth="2" objectID="2" name="use1">
+            <transform>
+              <Transform transX="0" transY="0"/>
+            </transform>
+          </PlaceObject2>
+          <ShowFrame/>
+          <End/>
+        </tags>
+      </DefineSprite>
+      <Export>
+        <symbols>
+          <Symbol objectID="4" name="object2"/>
+        </symbols>
+      </Export>
+      <DefineShape3 objectID="7">
+        <bounds>
+          <Rectangle left="-56" right="1045" top="-1436" bottom="-776"/>
+        </bounds>
+        <styles>
+          <StyleList>
+            <fillStyles>
+              <Solid>
+                <color>
+                  <Color red="0" green="0" blue="0" alpha="0"/>
+                </color>
+              </Solid>
+            </fillStyles>
+            <lineStyles>
+              <LineStyle width="0">
+                <color>
+                  <Color red="0" green="0" blue="0" alpha="0"/>
+                </color>
+              </LineStyle>
+            </lineStyles>
+          </StyleList>
+        </styles>
+        <shapes>
+          <Shape>
+            <edges>
+              <ShapeSetup x="307" y="-1096" fillStyle0="1" lineStyle="1"/>
+              <CurveTo x1="0" y1="100" x2="9" y2="199"/>
+              <CurveTo x1="2" y1="11" x2="12" y2="20"/>
+              <CurveTo x1="29" y1="23" x2="36" y2="57"/>
+              <CurveTo x1="3" y1="15" x2="22" y2="25"/>
+              <CurveTo x1="34" y1="20" x2="35" y2="79"/>
+              <CurveTo x1="6" y1="160" x2="-3" y2="320"/>
+              <CurveTo x1="-1" y1="20" x2="-12" y2="39"/>
+              <CurveTo x1="-19" y1="33" x2="29" y2="164"/>
+              <CurveTo x1="44" y1="123" x2="70" y2="146"/>
+              <CurveTo x1="117" y1="102" x2="-96" y2="124"/>
+              <CurveTo x1="-214" y1="21" x2="-363" y2="88"/>
+              <CurveTo x1="-152" y1="66" x2="-308" y2="23"/>
+              <CurveTo x1="-159" y1="-44" x2="-244" y2="-138"/>
+              <CurveTo x1="-87" y1="-96" x2="-107" y2="-96"/>
+              <CurveTo x1="-19" y1="-79" x2="38" y2="-87"/>
+              <CurveTo x1="20" y1="-3" x2="44" y2="-20"/>
+              <CurveTo x1="125" y1="-97" x2="234" y2="-207"/>
+              <CurveTo x1="40" y1="-42" x2="73" y2="-90"/>
+              <LineTo x="26" y="-31"/>
+              <CurveTo x1="15" y1="-15" x2="9" y2="-50"/>
+              <CurveTo x1="-6" y1="-37" x2="25" y2="-89"/>
+              <CurveTo x1="31" y1="-52" x2="36" y2="-94"/>
+              <CurveTo x1="5" y1="-43" x2="-8" y2="-60"/>
+              <CurveTo x1="-21" y1="-28" x2="-21" y2="-82"/>
+              <CurveTo x1="0" y1="-24" x2="-26" y2="-50"/>
+              <CurveTo x1="-10" y1="-10" x2="-13" y2="-30"/>
+              <LineTo x="-14" y="-100"/>
+              <CurveTo x1="-3" y1="-21" x2="-283" y2="-340"/>
+              <CurveTo x1="702" y1="-352" x2="738" y2="-215"/>
+              <CurveTo x1="36" y1="138" x2="328" y2="268"/>
+              <CurveTo x1="293" y1="131" x2="13" y2="169"/>
+              <CurveTo x1="-279" y1="38" x2="-279" y2="58"/>
+              <LineTo x="-532" y="-58"/>
+              <LineTo x="-532" y="-58"/>
+              <ShapeSetup/>
+            </edges>
+          </Shape>
+        </shapes>
+      </DefineShape3>
+      <DefineSprite objectID="6" frames="1">
+        <tags>
+          <PlaceObject2 replace="0" depth="3" objectID="7">
+            <transform>
+              <Transform transX="0" transY="0"/>
+            </transform>
+          </PlaceObject2>
+          <ShowFrame/>
+          <End/>
+        </tags>
+      </DefineSprite>
+      <Export>
+        <symbols>
+          <Symbol objectID="6" name="object3"/>
+        </symbols>
+      </Export>
+      <DefineSprite objectID="8" frames="1">
+        <tags>
+          <PlaceObject2 replace="0" depth="4" objectID="6" name="use2">
+            <transform>
+              <Transform transX="0" transY="0"/>
+            </transform>
+          </PlaceObject2>
+          <ShowFrame/>
+          <End/>
+        </tags>
+      </DefineSprite>
+      <Export>
+        <symbols>
+          <Symbol objectID="8" name="object4"/>
+        </symbols>
+      </Export>
+      <DefineShape3 objectID="11">
+        <bounds>
+          <Rectangle left="-96" right="370" top="-358" bottom="123"/>
+        </bounds>
+        <styles>
+          <StyleList>
+            <fillStyles>
+              <Solid>
+                <color>
+                  <Color red="0" green="0" blue="0" alpha="0"/>
+                </color>
+              </Solid>
+            </fillStyles>
+            <lineStyles>
+              <LineStyle width="0">
+                <color>
+                  <Color red="0" green="0" blue="0" alpha="0"/>
+                </color>
+              </LineStyle>
+            </lineStyles>
+          </StyleList>
+        </styles>
+        <shapes>
+          <Shape>
+            <edges>
+              <ShapeSetup x="125" y="-144" fillStyle0="1" lineStyle="1"/>
+              <LineTo x="112" y="-4"/>
+              <LineTo x="2" y="62"/>
+              <LineTo x="2" y="53"/>
+              <CurveTo x1="9" y1="135" x2="36" y2="267"/>
+              <LineTo x="9" y="41"/>
+              <LineTo x="16" y="97"/>
+              <LineTo x="12" y="100"/>
+              <CurveTo x1="19" y1="145" x2="-37" y2="265"/>
+              <LineTo x="-33" y="59"/>
+              <CurveTo x1="-70" y1="105" x2="-126" y2="217"/>
+              <CurveTo x1="-28" y1="56" x2="-54" y2="85"/>
+              <CurveTo x1="-17" y1="21" x2="-53" y2="45"/>
+              <CurveTo x1="-14" y1="9" x2="-28" y2="0"/>
+              <LineTo x="-32" y="-23"/>
+              <CurveTo x1="-41" y1="-31" x2="-93" y2="-51"/>
+              <CurveTo x1="-68" y1="-25" x2="-141" y2="-27"/>
+              <LineTo x="-221" y="-22"/>
+              <CurveTo x1="-66" y1="-12" x2="-124" y2="-37"/>
+              <CurveTo x1="-25" y1="-11" x2="-55" y2="-10"/>
+              <CurveTo x1="-73" y1="2" x2="-76" y2="-61"/>
+              <CurveTo x1="-4" y1="-82" x2="55" y2="-141"/>
+              <LineTo x="21" y="-16"/>
+              <CurveTo x1="25" y1="-16" x2="57" y2="-21"/>
+              <CurveTo x1="13" y1="-2" x2="29" y2="-14"/>
+              <CurveTo x1="24" y1="-18" x2="52" y2="-32"/>
+              <CurveTo x1="152" y1="-74" x2="245" y2="-214"/>
+              <LineTo x="46" y="-87"/>
+              <CurveTo x1="11" y1="-25" x2="16" y2="-54"/>
+              <CurveTo x1="10" y1="-71" x2="-17" y2="-125"/>
+              <LineTo x="-14" y="-34"/>
+              <LineTo x="-6" y="-24"/>
+              <LineTo x="-14" y="-77"/>
+              <CurveTo x1="-6" y1="-43" x2="18" y2="-56"/>
+              <CurveTo x1="8" y1="-5" x2="13" y2="-24"/>
+              <CurveTo x1="13" y1="-51" x2="42" y2="-72"/>
+              <CurveTo x1="13" y1="-9" x2="32" y2="-14"/>
+              <CurveTo x1="21" y1="-5" x2="41" y2="-16"/>
+              <CurveTo x1="41" y1="-22" x2="205" y2="-32"/>
+              <LineTo x="63" y="-3"/>
+              <LineTo x="53" y="29"/>
+              <LineTo x="53" y="29"/>
+              <ShapeSetup/>
+            </edges>
+          </Shape>
+        </shapes>
+      </DefineShape3>
+      <DefineSprite objectID="10" frames="1">
+        <tags>
+          <PlaceObject2 replace="0" depth="5" objectID="11">
+            <transform>
+              <Transform transX="0" transY="0"/>
+            </transform>
+          </PlaceObject2>
+          <ShowFrame/>
+          <End/>
+        </tags>
+      </DefineSprite>
+      <Export>
+        <symbols>
+          <Symbol objectID="10" name="object5"/>
+        </symbols>
+      </Export>
+      <DefineSprite objectID="12" frames="1">
+        <tags>
+          <PlaceObject2 replace="0" depth="6" objectID="10" name="use3">
+            <transform>
+              <Transform transX="0" transY="0"/>
+            </transform>
+          </PlaceObject2>
+          <ShowFrame/>
+          <End/>
+        </tags>
+      </DefineSprite>
+      <Export>
+        <symbols>
+          <Symbol objectID="12" name="object6"/>
+        </symbols>
+      </Export>
+      <DefineSprite objectID="14" frames="1">
+        <tags>
+          <PlaceObject2 replace="0" depth="7" objectID="4" name="mymodel_rearleg">
+            <transform>
+              <Transform transX="177" transY="-6"/>
+            </transform>
+          </PlaceObject2>
+          <PlaceObject2 replace="0" depth="8" objectID="8" name="mymodel_body">
+            <transform>
+              <Transform transX="-44" transY="95"/>
+            </transform>
+          </PlaceObject2>
+          <PlaceObject2 replace="0" depth="9" objectID="12" name="mymodel_frontleg">
+            <transform>
+              <Transform transX="-262" transY="41"/>
+            </transform>
+          </PlaceObject2>
+          <ShowFrame/>
+          <End/>
+        </tags>
+      </DefineSprite>
+      <Export>
+        <symbols>
+          <Symbol objectID="14" name="object7"/>
+        </symbols>
+      </Export>
+      <DefineSprite objectID="18" frames="1">
+        <tags>
+          <PlaceObject2 replace="0" depth="10" objectID="14" name="mymodel_body">
+            <transform>
+              <Transform transX="10" transY="-648"/>
+            </transform>
+          </PlaceObject2>
+          <ShowFrame/>
+          <End/>
+        </tags>
+      </DefineSprite>
+      <Export>
+        <symbols>
+          <Symbol objectID="18" name="mymodel"/>
+        </symbols>
+      </Export>
+      <DefineSprite objectID="20" frames="1">
+        <tags>
+          <PlaceObject2 replace="0" depth="11" objectID="4" name="mymodel_rearleg">
+            <transform>
+              <Transform transX="2293" transY="4020"/>
+            </transform>
+          </PlaceObject2>
+          <PlaceObject2 replace="0" depth="12" objectID="8" name="mymodel_body">
+            <transform>
+              <Transform transX="1953" transY="4235"/>
+            </transform>
+          </PlaceObject2>
+          <PlaceObject2 replace="0" depth="13" objectID="12" name="mymodel_frontleg">
+            <transform>
+              <Transform transX="1603" transY="4148"/>
+            </transform>
+          </PlaceObject2>
+          <ShowFrame/>
+          <End/>
+        </tags>
+      </DefineSprite>
+      <Export>
+        <symbols>
+          <Symbol objectID="20" name="frame1"/>
+        </symbols>
+      </Export>
+      <DefineSprite objectID="24" frames="1">
+        <tags>
+          <PlaceObject2 replace="0" depth="14" objectID="4" name="mymodel_rearleg">
+            <transform>
+              <Transform scaleX="0.9659118652343750" scaleY="0.8194580078125000" skewX="-0.2588195800781250" skewY="0.8053588867187500" transX="3253" transY="3420"/>
+            </transform>
+          </PlaceObject2>
+          <PlaceObject2 replace="0" depth="15" objectID="8" name="mymodel_body">
+            <transform>
+              <Transform scaleX="0.9239349365234375" scaleY="1.162719726562500" skewX="-0.3794860839843750" skewY="-0.2018585205078125" transX="2752" transY="3616"/>
+            </transform>
+          </PlaceObject2>
+          <PlaceObject2 replace="0" depth="16" objectID="12" name="mymodel_frontleg">
+            <transform>
+              <Transform scaleX="1.061965942382812" scaleY="1.314483642578125" skewX="-0.06295776367187500" skewY="-0.4956359863281250" transX="2402" transY="3908"/>
+            </transform>
+          </PlaceObject2>
+          <ShowFrame/>
+          <End/>
+        </tags>
+      </DefineSprite>
+      <Export>
+        <symbols>
+          <Symbol objectID="24" name="frame2"/>
+        </symbols>
+      </Export>
+      <DefineSprite objectID="28" frames="1">
+        <tags>
+          <PlaceObject2 replace="0" depth="17" objectID="4" name="mymodel_rearleg">
+            <transform>
+              <Transform scaleX="0.8585357666015625" scaleY="1.308700561523438" skewX="0.1968078613281250" skewY="0.6277770996093750" transX="3565" transY="3770"/>
+            </transform>
+          </PlaceObject2>
+          <PlaceObject2 replace="0" depth="18" objectID="8" name="mymodel_body">
+            <transform>
+              <Transform scaleX="0.8324279785156250" scaleY="1.184585571289062" skewX="0.04238891601562500" skewY="-0.2736816406250000" transX="3114" transY="3737"/>
+            </transform>
+          </PlaceObject2>
+          <PlaceObject2 replace="0" depth="19" objectID="12" name="mymodel_frontleg">
+            <transform>
+              <Transform scaleX="1.046630859375000" scaleY="1.173171997070312" skewX="-0.1536407470703125" skewY="-0.2930755615234375" transX="2784" transY="3885"/>
+            </transform>
+          </PlaceObject2>
+          <ShowFrame/>
+          <End/>
+        </tags>
+      </DefineSprite>
+      <Export>
+        <symbols>
+          <Symbol objectID="28" name="frame3"/>
+        </symbols>
+      </Export>
+      <DefineSprite objectID="32" frames="1">
+        <tags>
+          <PlaceObject2 replace="0" depth="20" objectID="8" name="mymodel_body">
+            <transform>
+              <Transform scaleX="1.164245605468750" scaleY="0.9128112792968750" skewX="0.05081176757812500" skewY="-0.08737182617187500" transX="5655" transY="6288"/>
+            </transform>
+          </PlaceObject2>
+          <PlaceObject2 replace="0" depth="21" objectID="12" name="mymodel_frontleg">
+            <transform>
+              <Transform scaleX="1.045043945312500" scaleY="0.6597290039062500" skewX="0.1437225341796875" skewY="-0.8193969726562500" transX="5136" transY="6095"/>
+            </transform>
+          </PlaceObject2>
+          <PlaceObject2 replace="0" depth="22" objectID="4" name="mymodel_rearleg">
+            <transform>
+              <Transform scaleX="0.8584747314453125" scaleY="0.9981689453125000" skewX="-0.05842590332031250" skewY="0.0002441406250000000" transX="6010" transY="6212"/>
+            </transform>
+          </PlaceObject2>
+          <ShowFrame/>
+          <End/>
+        </tags>
+      </DefineSprite>
+      <Export>
+        <symbols>
+          <Symbol objectID="32" name="frame4"/>
+        </symbols>
+      </Export>
+      <DefineSprite objectID="36" frames="1">
+        <tags>
+          <PlaceObject2 replace="0" depth="23" objectID="12" name="mymodel_frontleg">
+            <transform>
+              <Transform scaleX="1.045043945312500" scaleY="0.6597290039062500" skewX="0.1437225341796875" skewY="-0.8193969726562500" transX="7396" transY="4640"/>
+            </transform>
+          </PlaceObject2>
+          <PlaceObject2 replace="0" depth="24" objectID="8" name="mymodel_body">
+            <transform>
+              <Transform scaleX="0.8241882324218750" scaleY="0.8911590576171875" skewX="-0.8238677978515625" skewY="0.8029632568359375" transX="7760" transY="4460"/>
+            </transform>
+          </PlaceObject2>
+          <ShowFrame/>
+          <End/>
+        </tags>
+      </DefineSprite>
+      <Export>
+        <symbols>
+          <Symbol objectID="36" name="frame5"/>
+        </symbols>
+      </Export>
+      <DefineSprite objectID="39" frames="1">
+        <tags>
+          <PlaceObject2 replace="0" depth="25" objectID="8" name="mymodel_body">
+            <transform>
+              <Transform scaleX="1.164245605468750" scaleY="1.194107055664062" skewX="0.05081176757812500" skewY="-0.1143035888671875" transX="8682" transY="2396"/>
+            </transform>
+          </PlaceObject2>
+          <PlaceObject2 replace="0" depth="26" objectID="4" name="mymodel_rearleg">
+            <transform>
+              <Transform scaleX="0.8584747314453125" scaleY="0.9981689453125000" skewX="-0.05842590332031250" skewY="0.0002441406250000000" transX="8978" transY="2320"/>
+            </transform>
+          </PlaceObject2>
+          <PlaceObject2 replace="0" depth="27" objectID="12" name="mymodel_frontleg">
+            <transform>
+              <Transform scaleX="1.045043945312500" scaleY="0.6597290039062500" skewX="0.1437225341796875" skewY="-0.8193969726562500" transX="8260" transY="2401"/>
+            </transform>
+          </PlaceObject2>
+          <ShowFrame/>
+          <End/>
+        </tags>
+      </DefineSprite>
+      <Export>
+        <symbols>
+          <Symbol objectID="39" name="frame6"/>
+        </symbols>
+      </Export>
+      <DefineSprite objectID="43" frames="1">
+        <tags>
+          <PlaceObject2 replace="0" depth="28" objectID="4" name="mymodel_rearleg">
+            <transform>
+              <Transform scaleX="0.8584747314453125" scaleY="0.9981689453125000" skewX="-0.05842590332031250" skewY="0.0002441406250000000" transX="10378" transY="3328"/>
+            </transform>
+          </PlaceObject2>
+          <PlaceObject2 replace="0" depth="29" objectID="8" name="mymodel_body">
+            <transform>
+              <Transform scaleX="0.8130035400390625" scaleY="0.7912445068359375" skewX="0.8348846435546875" skewY="-0.9015960693359375" transX="10240" transY="3429"/>
+            </transform>
+          </PlaceObject2>
+          <PlaceObject2 replace="0" depth="30" objectID="12" name="mymodel_frontleg">
+            <transform>
+              <Transform scaleX="1.045043945312500" scaleY="0.6597290039062500" skewX="0.1437225341796875" skewY="-0.8193969726562500" transX="10168" transY="3422"/>
+            </transform>
+          </PlaceObject2>
+          <ShowFrame/>
+          <End/>
+        </tags>
+      </DefineSprite>
+      <Export>
+        <symbols>
+          <Symbol objectID="43" name="frame7"/>
+        </symbols>
+      </Export>
+      <DefineSprite objectID="1" frames="1">
+        <tags>
+          <PlaceObject2 replace="0" depth="31" objectID="2" name="object1">
+            <transform>
+              <Transform transX="0" transY="0"/>
+            </transform>
+          </PlaceObject2>
+          <PlaceObject2 replace="0" depth="32" objectID="4" name="object2">
+            <transform>
+              <Transform transX="0" transY="0"/>
+            </transform>
+          </PlaceObject2>
+          <PlaceObject2 replace="0" depth="33" objectID="6" name="object3">
+            <transform>
+              <Transform transX="0" transY="0"/>
+            </transform>
+          </PlaceObject2>
+          <PlaceObject2 replace="0" depth="34" objectID="8" name="object4">
+            <transform>
+              <Transform transX="0" transY="0"/>
+            </transform>
+          </PlaceObject2>
+          <PlaceObject2 replace="0" depth="35" objectID="10" name="object5">
+            <transform>
+              <Transform transX="0" transY="0"/>
+            </transform>
+          </PlaceObject2>
+          <PlaceObject2 replace="0" depth="36" objectID="12" name="object6">
+            <transform>
+              <Transform transX="0" transY="0"/>
+            </transform>
+          </PlaceObject2>
+          <PlaceObject2 replace="0" depth="37" objectID="14" name="object7">
+            <transform>
+              <Transform transX="0" transY="0"/>
+            </transform>
+          </PlaceObject2>
+          <PlaceObject2 replace="0" depth="38" objectID="18" name="mymodel">
+            <transform>
+              <Transform transX="0" transY="0"/>
+            </transform>
+          </PlaceObject2>
+          <PlaceObject2 replace="0" depth="39" objectID="20" name="frame1">
+            <transform>
+              <Transform transX="0" transY="0"/>
+            </transform>
+          </PlaceObject2>
+          <PlaceObject2 replace="0" depth="40" objectID="24" name="frame2">
+            <transform>
+              <Transform transX="0" transY="0"/>
+            </transform>
+          </PlaceObject2>
+          <PlaceObject2 replace="0" depth="41" objectID="28" name="frame3">
+            <transform>
+              <Transform transX="0" transY="0"/>
+            </transform>
+          </PlaceObject2>
+          <PlaceObject2 replace="0" depth="42" objectID="32" name="frame4">
+            <transform>
+              <Transform transX="0" transY="0"/>
+            </transform>
+          </PlaceObject2>
+          <PlaceObject2 replace="0" depth="43" objectID="36" name="frame5">
+            <transform>
+              <Transform transX="0" transY="0"/>
+            </transform>
+          </PlaceObject2>
+          <PlaceObject2 replace="0" depth="44" objectID="39" name="frame6">
+            <transform>
+              <Transform transX="0" transY="0"/>
+            </transform>
+          </PlaceObject2>
+          <PlaceObject2 replace="0" depth="45" objectID="43" name="frame7">
+            <transform>
+              <Transform transX="0" transY="0"/>
+            </transform>
+          </PlaceObject2>
+          <ShowFrame/>
+          <End/>
+        </tags>
+      </DefineSprite>
+      <Export>
+        <symbols>
+          <Symbol objectID="1" name="svg1"/>
+        </symbols>
+      </Export>
+      <ShowFrame/>
+      <PlaceObject2 replace="0" depth="1" objectID="1" morph="0" name="myFoobar">
+        <transform>
+          <Transform scaleX="1.000000000000000" scaleY="1.000000000000000" skewX="20.00000000000000" skewY="0.000000000000000" transX="2000" transY="2000"/>
+        </transform>
+      </PlaceObject2>
+      <ShowFrame/>
+      <End/>
+    </tags>
+  </Header>
+</swf>

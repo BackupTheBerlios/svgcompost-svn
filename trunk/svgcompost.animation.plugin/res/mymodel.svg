@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="550px"
+   height="400px"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.45.1"
+   sodipodi:docname="mymodel.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   sodipodi:docbase="/home/gerrit/workspace/cutout_generator/res">
+  <metadata
+     id="metadata61">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     inkscape:window-height="621"
+     inkscape:window-width="872"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     guidetolerance="10.0"
+     gridtolerance="10.0"
+     objecttolerance="10.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base"
+     inkscape:zoom="1.0175"
+     inkscape:cx="275"
+     inkscape:cy="200"
+     inkscape:window-x="38"
+     inkscape:window-y="112"
+     inkscape:current-layer="frame5" />
+  <defs
+     id="defs">
+    <path
+       id="object1"
+       fill="#3366cc"
+       stroke-width="1px"
+       stroke="#000066"
+       d="M -0.25,-7.7 q 6,1.9 12,4.95 q 6.3,3.2 12.8,5.6 l 2.35,1.2 q 3.5,2.3 5.3,6.05 q 1.05,2.2 2.7,4.05 q 2.4,2.75 3.9,6.15 l 1.1,1.85 q 1.65,2.15 1.45,5.2 l 0.05,4.95 l 0.8,11.95 q 0.25,2.75 -1.45,2.7 q -12,-0.35 -23.1,1.95 l -3.8,0.8 q -1.6,-0.4 -2.1,-1.4 q -2.4,-4.9 -2.9,-10.95 q -0.1,-1.55 -0.9,-3.15 q -2.6,-5.15 -3.55,-10.85 q -0.15,-1.05 -0.85,-1.9 q -2.15,-2.55 -3.25,-7.05 q -0.6,-2.4 -3.25,-4.5 l -1.55,-1.35 l -1.45,-1.5 q -2,-2.25 -4.15,-3.1 q -2.8,-1.2 -4.15,-3.65 l 1.1,-0.7 l 1.8,-0.6 q 0.6,-0.2 11.1,-6.7 z" />
+    <g
+       id="object2">
+      <use
+         transform="translate(0,0)"
+         id="use1"
+         xlink:href="#object1" />
+    </g>
+    <path
+       id="object3"
+       fill="#66cc00"
+       stroke-width="1px"
+       stroke="#000066"
+       d="M 15.35,-54.8 q 0,5 0.45,9.95 q 0.1,0.55 0.6,1 q 1.45,1.15 1.8,2.85 q 0.15,0.75 1.1,1.25 q 1.7,1 1.75,3.95 q 0.3,8 -0.15,16 q -0.05,1 -0.6,1.95 q -0.95,1.65 1.45,8.2 q 2.2,6.15 3.5,7.3 q 5.85,5.1 -4.8,6.2 q -10.7,1.05 -18.15,4.4 q -7.6,3.3 -15.4,1.15 q -7.95,-2.2 -12.2,-6.9 q -4.35,-4.8 -5.35,-4.8 q -0.95,-3.95 1.9,-4.35 q 1,-0.15 2.2,-1 q 6.25,-4.85 11.7,-10.35 q 2,-2.1 3.65,-4.5 l 1.3,-1.55 q 0.75,-0.75 0.45,-2.5 q -0.3,-1.85 1.25,-4.45 q 1.55,-2.6 1.8,-4.7 q 0.25,-2.15 -0.4,-3 q -1.05,-1.4 -1.05,-4.1 q 0,-1.2 -1.3,-2.5 q -0.5,-0.5 -0.65,-1.5 l -0.7,-5 q -0.15,-1.05 -14.15,-17 q 35.1,-17.6 36.9,-10.75 q 1.8,6.9 16.4,13.4 q 14.65,6.55 0.65,8.45 q -13.95,1.9 -13.95,2.9 z" />
+    <g
+       id="object4">
+      <use
+         transform="translate(0,0)"
+         id="use2"
+         xlink:href="#object3" />
+    </g>
+    <path
+       id="object5"
+       fill="#ff0000"
+       stroke-width="1px"
+       stroke="#000066"
+       d="M 6.25,-7.2 l 5.6,-0.2 l 0.1,3.1 l 0.1,2.65 q 0.45,6.75 1.8,13.35 l 0.45,2.05 l 0.8,4.85 l 0.6,5 q 0.95,7.25 -1.85,13.25 l -1.65,2.95 q -3.5,5.25 -6.3,10.85 q -1.4,2.8 -2.7,4.25 q -0.85,1.05 -2.65,2.25 q -0.7,0.45 -1.4,0 l -1.6,-1.15 q -2.05,-1.55 -4.65,-2.55 q -3.4,-1.25 -7.05,-1.35 l -11.05,-1.1 q -3.3,-0.6 -6.2,-1.85 q -1.25,-0.55 -2.75,-0.5 q -3.65,0.1 -3.8,-3.05 q -0.2,-4.1 2.75,-7.05 l 1.05,-0.8 q 1.25,-0.8 2.85,-1.05 q 0.65,-0.1 1.45,-0.7 q 1.2,-0.9 2.6,-1.6 q 7.6,-3.7 12.25,-10.7 l 2.3,-4.35 q 0.55,-1.25 0.8,-2.7 q 0.5,-3.55 -0.85,-6.25 l -0.7,-1.7 l -0.3,-1.2 l -0.7,-3.85 q -0.3,-2.15 0.9,-2.8 q 0.4,-0.25 0.65,-1.2 q 0.65,-2.55 2.1,-3.6 q 0.65,-0.45 1.6,-0.7 q 1.05,-0.25 2.05,-0.8 q 2.05,-1.1 10.25,-1.6 l 3.15,-0.15 z" />
+    <g
+       id="object6">
+      <use
+         transform="translate(0,0)"
+         id="use3"
+         xlink:href="#object5" />
+    </g>
+    <g
+       id="object7">
+      <use
+         transform="translate(8.85,-0.3)"
+         id="use4"
+         xlink:href="#object2"
+         inkscape:label="mymodel_rearleg" />
+      <use
+         transform="translate(-2.2,4.75)"
+         id="use5"
+         xlink:href="#object4"
+         inkscape:label="mymodel_body" />
+      <use
+         transform="translate(-13.1,2.05)"
+         id="use6"
+         xlink:href="#object6"
+         inkscape:label="mymodel_frontleg" />
+    </g>
+    <g
+       id="mymodel">
+      <use
+         transform="translate(0.5,-32.4)"
+         id="use7"
+         xlink:href="#object7"
+         inkscape:label="mymodel_body" />
+    </g>
+  </defs>
+  <g
+     inkscape:groupmode="layer"
+     id="frame1"
+     inkscape:label="frame1"
+     model="mymodel"
+     easing="quadratic"
+     alignment="inout"
+     duration="2.500000000000000">
+    <use
+       transform="translate(114.65,201)"
+       id="use8"
+       xlink:href="#object2"
+       inkscape:label="mymodel_rearleg" />
+    <use
+       transform="translate(97.65,211.75)"
+       id="use9"
+       xlink:href="#object4"
+       inkscape:label="mymodel_body" />
+    <use
+       transform="translate(80.15,207.4)"
+       id="use10"
+       xlink:href="#object6"
+       inkscape:label="mymodel_frontleg" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="frame2"
+     inkscape:label="frame2"
+     easing="quadratic"
+     alignment="out"
+     duration="1.500000000000000">
+    <use
+       transform="matrix(0.9659271240234375,-0.2588195800781250,0.8053741455078125,0.8194732666015625,162.65,171)"
+       id="use25"
+       xlink:href="#object2"
+       inkscape:label="mymodel_rearleg" />
+    <use
+       transform="matrix(0.9239349365234375,-0.3795013427734375,-0.2018585205078125,1.162719726562500,137.6,180.8)"
+       id="use27"
+       xlink:href="#object4"
+       inkscape:label="mymodel_body" />
+    <use
+       transform="matrix(1.061981201171875,-0.06295776367187500,-0.4956512451171875,1.314483642578125,120.1,195.4)"
+       id="use29"
+       xlink:href="#object6"
+       inkscape:label="mymodel_frontleg" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="frame3"
+     inkscape:label="frame3">
+    <use
+       transform="matrix(0.8585357666015625,0.1968078613281250,0.6277923583984375,1.308700561523438,178.25,188.5)"
+       id="use32"
+       xlink:href="#object2"
+       inkscape:label="mymodel_rearleg" />
+    <use
+       transform="matrix(0.8324279785156250,0.04238891601562500,-0.2736816406250000,1.184585571289062,155.7,186.85)"
+       id="use34"
+       xlink:href="#object4"
+       inkscape:label="mymodel_body" />
+    <use
+       transform="matrix(1.046646118164062,-0.1536407470703125,-0.2930755615234375,1.173187255859375,139.2,194.25)"
+       id="use36"
+       xlink:href="#object6"
+       inkscape:label="mymodel_frontleg" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="frame4"
+     inkscape:label="frame4">
+    <use
+       transform="matrix(1.1642456,5.0811768e-2,-8.7371826e-2,0.9128265,282.76929,314.40528)"
+       id="use41"
+       xlink:href="#object4"
+       inkscape:label="mymodel_body"
+       x="0"
+       y="0"
+       width="550"
+       height="400" />
+    <use
+       transform="matrix(1.0450592,0.1437225,-0.8194122,0.659729,256.82407,304.77408)"
+       id="use43"
+       xlink:href="#object6"
+       inkscape:label="mymodel_frontleg"
+       x="0"
+       y="0"
+       width="550"
+       height="400" />
+    <use
+       transform="matrix(0.8584747,-5.8425903e-2,2.5939941e-4,0.9981689,300.51391,310.63968)"
+       id="use46"
+       xlink:href="#object2"
+       inkscape:label="mymodel_rearleg"
+       x="0"
+       y="0"
+       width="550"
+       height="400" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="frame5"
+     inkscape:label="frame5">
+    <use
+       transform="matrix(1.0450592,0.1437225,-0.8194122,0.659729,369.84619,232.0468)"
+       id="use50"
+       xlink:href="#object6"
+       inkscape:label="mymodel_frontleg"
+       x="0"
+       y="0"
+       width="550"
+       height="400" />
+    <use
+       transform="matrix(0.8241889,-0.8238703,0.802978,0.8911697,388.01064,223.04963)"
+       id="use48"
+       xlink:href="#object4"
+       inkscape:label="mymodel_body"
+       x="0"
+       y="0"
+       width="550"
+       height="400" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="frame6"
+     inkscape:label="frame6">
+    <use
+       transform="matrix(1.1642456,5.0811768e-2,-0.1143036,1.1941071,434.12063,119.81069)"
+       id="use53"
+       xlink:href="#object4"
+       inkscape:label="mymodel_body"
+       x="0"
+       y="0"
+       width="550"
+       height="400" />
+    <use
+       transform="matrix(0.8584747,-5.8425903e-2,2.5939941e-4,0.9981689,448.91686,116.04508)"
+       id="use2197"
+       xlink:href="#object2"
+       inkscape:label="mymodel_rearleg"
+       x="0"
+       y="0"
+       width="550"
+       height="400" />
+    <use
+       transform="matrix(1.0450592,0.1437225,-0.8194122,0.659729,413.04612,120.06978)"
+       id="use2199"
+       xlink:href="#object6"
+       inkscape:label="mymodel_frontleg"
+       x="0"
+       y="0"
+       width="550"
+       height="400" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="frame7"
+     inkscape:label="frame7">
+    <use
+       transform="matrix(0.8584747,-5.8425903e-2,2.5939941e-4,0.9981689,518.9199,166.40074)"
+       id="use21"
+       xlink:href="#object2"
+       inkscape:label="mymodel_rearleg"
+       x="0"
+       y="0"
+       width="550"
+       height="400" />
+    <use
+       transform="matrix(0.8130167,0.8348973,-0.9015991,0.7912498,512.0042,171.45779)"
+       id="use57"
+       xlink:href="#object4"
+       inkscape:label="mymodel_body"
+       x="0"
+       y="0"
+       width="550"
+       height="400" />
+    <use
+       transform="matrix(1.0450592,0.1437225,-0.8194122,0.659729,508.42113,171.11314)"
+       id="use22"
+       xlink:href="#object6"
+       inkscape:label="mymodel_frontleg"
+       x="0"
+       y="0"
+       width="550"
+       height="400" />
+  </g>
+</svg>

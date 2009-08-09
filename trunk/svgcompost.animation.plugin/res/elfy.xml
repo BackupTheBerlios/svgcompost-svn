@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<movie version="7" width="550" height="400" framerate="12">
+  <background color="#FFFFFF" />
+  <frame>
+    <library>
+      <clip id="svg1" import="elfy-walk-connect-layers.svg"/>
+    </library>
+  </frame>
+</movie>
