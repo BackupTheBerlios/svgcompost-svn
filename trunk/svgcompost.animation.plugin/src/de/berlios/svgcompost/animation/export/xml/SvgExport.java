@@ -1,4 +1,4 @@
-package de.berlios.svgcompost.animation.export;
+package de.berlios.svgcompost.animation.export.xml;
 
 import java.awt.Shape;
 import java.io.File;

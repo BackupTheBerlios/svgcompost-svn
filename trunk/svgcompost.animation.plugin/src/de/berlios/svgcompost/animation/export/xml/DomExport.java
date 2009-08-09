@@ -1,4 +1,4 @@
-package de.berlios.svgcompost.animation.export;
+package de.berlios.svgcompost.animation.export.xml;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -23,6 +23,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import de.berlios.svgcompost.animation.canvas.Canvas;
+import de.berlios.svgcompost.animation.export.Export;
 
 public abstract class DomExport implements Export {
 
