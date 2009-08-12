@@ -6,12 +6,9 @@ import java.io.IOException;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.UserAgentAdapter;
-import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
-import org.apache.batik.dom.util.SAXDocumentFactory;
 import org.apache.batik.util.XMLResourceDescriptor;
 import org.apache.log4j.Logger;
-import org.w3c.dom.Document;
 import org.w3c.dom.svg.SVGDocument;
 
 public class GraphicsBuilder {
