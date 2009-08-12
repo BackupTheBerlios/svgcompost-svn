@@ -22,6 +22,13 @@ import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGRect;
 
 
+/**
+ * The Canvas is a screen to draw the animations on. It aggregates a tree of CanvasNode objects,
+ * together with the source SVGDocument and its BridgeContext to retrieve definitions.
+ * It provides some utility functions to insert new nodes into the tree. 
+ * @author Gerrit Karius
+ *
+ */
 public class Canvas {
 	
 	private static Logger log = Logger.getLogger(Canvas.class);
@@ -43,9 +50,6 @@ public class Canvas {
 	private BridgeContext sourceCtx;
 	private GVTBuilder sourceBld;
 
-//	private SVGDocument canvasDoc;
-//	private BridgeContext canvasCtx;
-
 	RootGraphicsNode rootNode;
 	CanvasGraphicsNode canvasNode;
 	
@@ -53,8 +57,6 @@ public class Canvas {
 	String inkspaceLabel;
 	
 	protected Library library;
-	
-	// TODO: GVTBuilder, BridgeContext, Bridge, getBridgeContext
 	
 	public Canvas( BridgeContext sourceCtx ) {
 		this.sourceCtx = sourceCtx;
@@ -99,17 +101,13 @@ public class Canvas {
 	
 	public Library getLibrary() {
 		if( library == null )
-			log.error( "Library is requested, but none was attached with addLibrary(BridgeContext)." );
+			log.error( "Library is requested, but none was attached with setLibrary(BridgeContext)." );
 		return library;
 	}
 
-	public void addLibrary( BridgeContext sourceCtx ) {
+	public void setLibrary( BridgeContext sourceCtx ) {
 		library = new Library( new Canvas( sourceCtx ) );
 	}
-	
-//	public CanvasGraphicsNode getCanvas() {
-//		return canvasNode;
-//	}
 	
 	public static Iterator getChildIterator( GraphicsNode parent ) {
 		if( parent == null || ! (parent instanceof CompositeGraphicsNode) )
@@ -151,7 +149,7 @@ public class Canvas {
 		group.remove( gNode );
 	}
 	
-	public static CanvasNode groupNode( CanvasNode cNode, String name ) {
+	public static CanvasNode insertGroupNode( CanvasNode cNode, String name ) {
 		GraphicsNode parent = cNode.getGraphicsNode();
 		if( parent == null ) {
 			return null;
@@ -166,7 +164,7 @@ public class Canvas {
 		return null;
 	}
 	
-	public CanvasNode symbolNode( CanvasNode cNode, String symbolId, String name ) {
+	public CanvasNode insertSymbolNode( CanvasNode cNode, String symbolId, String name ) {
 		GraphicsNode parent = cNode.getGraphicsNode();
 		if( parent == null ) {
 			return null;
@@ -185,7 +183,7 @@ public class Canvas {
 			GraphicsNode gNode = sourceBld.build( sourceCtx, element );
 			if( gNode == null ) {
 				log.warn( "Null node built for symbol: "+symbolId+". (Empty or invisible element?) Using empty group node instead." );
-				return groupNode(cNode, name);
+				return insertGroupNode(cNode, name);
 			}
 			group.add( gNode );
 			gNode.setRenderingHint( KEY_SYMBOL_ID, symbolId );
@@ -262,8 +260,6 @@ public class Canvas {
 		if( node.getTransform() == null ) {
 			return new AffineTransform();
 		}
-//		else if( ! node.getTransform().isIdentity() )
-//			System.out.println( "has transform: "+getName( node ) );
 		return (AffineTransform) node.getTransform().clone();
 	}
 	

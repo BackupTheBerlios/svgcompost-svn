@@ -28,7 +28,7 @@ public class Main {
 	
 	public static String outfile = "res/binary.swf"; //"res/swfml.xml"; //"res/out"; //
 	
-	public static CanvasNode circle;
+//	public static CanvasNode circle;
 	
 	/**
 	 * @param args
@@ -39,7 +39,7 @@ public class Main {
 		BridgeContext ctx = GraphicsBuilder.readLibrary(infile);
 
 		Canvas canvas = new Canvas( ctx );
-		canvas.addLibrary( ctx );
+		canvas.setLibrary( ctx );
 		Export capture = new FlagstoneExport( canvas );
 //		SwfmlBasicExport capture = new SwfmlBasicExport( canvas );
 //		SwfmlShapeImport shapeImport = new SwfmlShapeImport(importFile);

@@ -111,11 +111,11 @@ public class CanvasNode {
 	}
 	
 	public CanvasNode addSymbolInstance( String symbolId, String name ) {
-		return canvas.symbolNode(this, symbolId, name);
+		return canvas.insertSymbolNode(this, symbolId, name);
 	}
 	
 	public CanvasNode addEmptyChild( String name ) {
-		return Canvas.groupNode(this, name);
+		return Canvas.insertGroupNode(this, name);
 	}
 	
 	public void removeNode() {
