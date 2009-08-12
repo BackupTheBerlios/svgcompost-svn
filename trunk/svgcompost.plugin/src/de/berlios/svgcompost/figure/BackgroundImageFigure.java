@@ -2,7 +2,6 @@ package de.berlios.svgcompost.figure;
 
 import org.eclipse.draw2d.FreeformLayer;
 import org.eclipse.draw2d.Graphics;
-import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.graphics.Image;
