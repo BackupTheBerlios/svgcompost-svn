@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
 import de.berlios.svgcompost.animation.anim.chara.JointedConnection;
 import de.berlios.svgcompost.animation.canvas.CanvasNode;
 import de.berlios.svgcompost.animation.canvas.SkeletonLink;
@@ -20,8 +18,6 @@ import de.berlios.svgcompost.animation.canvas.SkeletonLink;
  */
 public class Skeleton extends Bone {
 
-	private static Logger log = Logger.getLogger(Skeleton.class);
-
 //	public int activeKey;
 //	public int currentTweening;
 //	public double currentPercentage;
@@ -31,7 +27,7 @@ public class Skeleton extends Bone {
 	
 	public Skeleton( String name ) {
 		super( name );
-		root = this;
+		skeleton = this;
 //		rootMc = new ArrayList<CanvasNode>();
 	}
 	
@@ -69,25 +65,6 @@ public class Skeleton extends Bone {
 		bones.put( forName, bone );
 	}
 
-	/**
-	 * Constructs a ClusterStructure tree with a ClusterRoot as root node from the model mc.
-	 * The new tree reflects the parent-child structures of the mc's descendants. 
-	 * @param mc
-	 * @return The newly created model root.
-	 */
-	public static Skeleton createModelRoot( CanvasNode mc ) {
-		if( mc == null ) {
-			log.error( "Root for new skeleton is null." );
-			return null;
-		}
-		Skeleton root = new Skeleton( mc.getName() );
-		root.registerBone(mc.getName(), root);
-
-		Bone.createBone( mc, root );
-		
-		return root;
-	}
-	
 	public void calcLimbMatrices( SkeletonLink keyframeLink ) {
 		for(JointedConnection limb : connectors)
 			limb.calcKeyMatrices(keyframeLink);

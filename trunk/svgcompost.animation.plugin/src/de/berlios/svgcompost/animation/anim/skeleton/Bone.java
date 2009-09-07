@@ -5,8 +5,6 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
 import de.berlios.svgcompost.animation.canvas.BoneLink;
 import de.berlios.svgcompost.animation.canvas.CanvasNode;
 import de.berlios.svgcompost.animation.canvas.SkeletonLink;
@@ -24,12 +22,10 @@ import de.berlios.svgcompost.animation.canvas.SkeletonLink;
  */
 public class Bone {
 	
-	private static Logger log = Logger.getLogger(Bone.class);
-	
 	protected String name;
 	protected Bone parent;
 	protected List<Bone> children;
-	protected Skeleton root;
+	protected Skeleton skeleton;
 	protected int level;
 	
 	/*
@@ -68,9 +64,9 @@ public class Bone {
 			children = new ArrayList<Bone>();
 		children.add(child);
 		child.parent = this;
-		child.root = root;
+		child.skeleton = skeleton;
 		child.level = level + 1;
-		root.registerBone( child.name, child );
+		skeleton.registerBone( child.name, child );
 	}
 	
 	public Bone get(int index) {
@@ -89,25 +85,6 @@ public class Bone {
 		return name;
 	}
 	
-	protected static void createBone( CanvasNode mc, Bone parent ) {
-		String mcName = mc.getName();
-		if( log.isTraceEnabled() ) {
-			log.trace( "create bone with name: "+mcName );
-			log.trace( "# of children: "+mc.getSize() );
-		}
-		for (int i = 0; i < mc.getSize(); i++) {
-			CanvasNode mcChild = mc.get( i );
-			String childName = mcChild.getName();
-			if( log.isTraceEnabled() )
-				log.trace( "create child bone with name: "+mcName );
-			if( childName != null && ! childName.equals( "" ) && ! childName.equals( mcName ) ) {
-				Bone child = new Bone( childName );
-				parent.add( child );
-				createBone( mcChild, child );
-			}
-		}
-	}
-	
 	public void calcKeyMatrices( SkeletonLink keyframeLink ) {
 		
 		CanvasNode keyNode = keyframeLink.getNodeForBone(this);
@@ -119,7 +96,7 @@ public class Bone {
 		else if( parentKeyNode != null )
 			subtractFromMatrix( parentKeyNode.getGlobalTransform(), keyMatrix );
 		else
-			subtractFromMatrix( keyframeLink.getNodeForBone(root).getGlobalTransform(), keyMatrix );
+			subtractFromMatrix( keyframeLink.getNodeForBone(skeleton).getGlobalTransform(), keyMatrix );
 		keyNode.getBoneLink().setKeyMatrix(keyMatrix);
 		
 		for (int i = 0; i < size(); i++)
@@ -157,7 +134,7 @@ public class Bone {
 			if( parentKeyNode != null )
 				tween.preConcatenate( parentKeyNode.getGlobalTransform() );
 			else
-				tween.preConcatenate( activeKeyLink.getNodeForBone(root).getGlobalTransform() );
+				tween.preConcatenate( activeKeyLink.getNodeForBone(skeleton).getGlobalTransform() );
 			// Subtract the Bone's CanvasNode's parent's matrix, to get a local transform.
 			subtractFromMatrix( keyNode.getParent().getGlobalTransform(), tween );
 		}

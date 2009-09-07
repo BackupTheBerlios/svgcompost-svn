@@ -23,6 +23,7 @@ import de.berlios.svgcompost.animation.anim.easing.Quadratic;
 import de.berlios.svgcompost.animation.anim.skeleton.Bone;
 import de.berlios.svgcompost.animation.anim.skeleton.KeyframeAnim;
 import de.berlios.svgcompost.animation.anim.skeleton.Skeleton;
+import de.berlios.svgcompost.animation.anim.skeleton.SkeletonFactory;
 
 public class Library {
 	
@@ -278,10 +279,12 @@ public class Library {
 			return model;
 		log.debug("Model '"+modelName+"' referenced for the first time.");
 		CanvasNode modelNode = libraryCanvas.getRoot().addSymbolInstance( modelName, modelName );
-		model = Skeleton.createModelRoot( modelNode );
+		model = SkeletonFactory.createSkeleton( modelNode );
 		
-		model.addConnector( "elfyLeftUpperLeg", "elfyLeftLowerLeg", "elfyLeftFoot" );
-		model.addConnector( "elfyRightUpperLeg", "elfyRightLowerLeg", "elfyRightFoot" );
+		// TODO: This is a hack for the sample anim. Read from markup instead,
+		// in Skeleton.createModelRoot
+//		model.addConnector( "elfyLeftUpperLeg", "elfyLeftLowerLeg", "elfyLeftFoot" );
+//		model.addConnector( "elfyRightUpperLeg", "elfyRightLowerLeg", "elfyRightFoot" );
 		
 		modelNode.removeNode();
 		models.put(modelName, model);
