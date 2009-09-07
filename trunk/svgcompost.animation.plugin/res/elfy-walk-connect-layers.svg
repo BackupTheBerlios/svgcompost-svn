@@ -251,29 +251,16 @@
                inkscape:label="elfyLeftHand" />
           </g>
         </g>
-        <g
-           id="g3299"
-           inkscape:label="elfyLeftUpperLeg">
-          <use
-             inkscape:label="elfyLeftUpperLeg"
-             height="1052.3622"
-             width="744.09448"
-             id="use3211"
-             xlink:href="#elfyUpperLeg"
-             y="0"
-             x="0" />
-          <g
-             inkscape:label="elfyLeftLowerLeg"
-             id="g3293">
-            <use
-               x="0"
-               y="0"
-               xlink:href="#elfyLowerLeg"
-               id="use3215"
-               width="744.09448"
-               height="1052.3622"
-               inkscape:label="elfyLeftLowerLeg" />
-          </g>
+        <g id="g3299" inkscape:label="elfyLeftUpperLeg"
+        	connectWith="elfyLeftLowerLeg" connectTo="elfyLeftFoot">
+        	<use inkscape:label="elfyLeftUpperLeg" height="1052.3622"
+        		width="744.09448" id="use3211" xlink:href="#elfyUpperLeg"
+        		y="0" x="0" />
+        	<g inkscape:label="elfyLeftLowerLeg" id="g3293">
+        		<use x="0" y="0" xlink:href="#elfyLowerLeg" id="use3215"
+        			width="744.09448" height="1052.3622"
+        			inkscape:label="elfyLeftLowerLeg" />
+        	</g>
         </g>
         <g
            id="g3252"
@@ -325,7 +312,7 @@
            inkscape:label="elfyBody" />
         <g
            id="g3281"
-           inkscape:label="elfyRightUpperLeg">
+           inkscape:label="elfyRightUpperLeg" connectWith="elfyRightLowerLeg" connectTo="elfyRightFoot">
           <use
              inkscape:label="elfyRightUpperLeg"
              height="1052.3622"
@@ -379,8 +366,7 @@
                x="0" />
           </g>
         </g>
-      </g>
-    </g>
+      </g></g>
     <g
        id="elfyWalkPoses"
        transform="translate(-63.83849,265.2611)"
