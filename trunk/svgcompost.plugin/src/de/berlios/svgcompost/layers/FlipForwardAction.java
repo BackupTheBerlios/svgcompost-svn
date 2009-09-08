@@ -55,6 +55,7 @@ public class FlipForwardAction extends SelectionAction {
 			boolean visible = flipLayer.getGraphicsNode() == null ? false : flipLayer.getGraphicsNode().isVisible();
 			if( ! visible ) {
 				// TODO: only flip selection, have visibility managed by the BackgroundElement.
+				// problem with display:none is that no GVT nodes are generated if saved and reloaded.
 				layer.getElement().setAttribute("display", "none");
 				flipLayer.getElement().setAttribute("display", "inline");
 				SVGEditor editor = (SVGEditor) getWorkbenchPart();

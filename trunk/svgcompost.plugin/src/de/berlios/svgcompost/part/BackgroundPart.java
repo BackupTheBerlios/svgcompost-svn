@@ -60,6 +60,7 @@ import de.berlios.svgcompost.render.Transcoders;
  */
 public class BackgroundPart extends AbstractGraphicalEditPart 
 implements PropertyChangeListener, EventListener  {
+	// TODO: make this class extend RootEditPart
 	
 	private SVGNode editRoot;
 
