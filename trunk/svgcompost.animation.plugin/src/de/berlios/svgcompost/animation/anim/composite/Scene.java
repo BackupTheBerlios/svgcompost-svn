@@ -19,6 +19,7 @@ public class Scene extends Sequence {
 	
 	public Scene(Canvas canvas) {
 		this.canvas = canvas;
+		inferDuration = false;
 	}
 
 //	public void addModel( Skeleton model ) {

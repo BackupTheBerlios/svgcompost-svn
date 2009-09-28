@@ -373,7 +373,7 @@ public class Library {
 			tweenAnim.setDurationInSeconds( Double.parseDouble( duration ) );
 		String easing = frameElement.getAttribute( "easing" );
 		if( easing == null || easing.equals( "" ) )
-			tweenAnim.setEasing( Easing.getStandard() );
+			tweenAnim.setEasing( Quadratic._inOut );
 		else
 			tweenAnim.setEasing( Quadratic._inOut );
 //		String align = frameElement.getAttribute( "align" );

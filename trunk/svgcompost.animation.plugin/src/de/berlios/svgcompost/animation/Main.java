@@ -67,16 +67,18 @@ public class Main {
 		
 //		ArrayList<String> keyframeIds = canvas.getLibrary().getFrameIds( "elfyWalkPoses" );
 		
-		Point2D.Float start = new Point2D.Float(-50,-400);
-		Point2D.Float end = new Point2D.Float(150,-270);
+		Point2D.Float start = new Point2D.Float(-50,-200);
+		Point2D.Float end = new Point2D.Float(50,-200);
 		Parallel par = canvas.getLibrary().createWalkAnim(canvas.getRoot(), "elfyWalkPoses", "elfy", start, end);
 		scene.addAnim(par);
+		scene.setDurationInSeconds(10);
 		
 //		Walk.placeSteps(canvas, "steps", start, end);
 //		scene.addAnim( new Wait(10) );
 		
 
 		AnimControl ctrl = new AnimControl( scene );
+		log.debug("scene.getDurationinSeconds() = "+scene.getDurationInSeconds());
 		ctrl.setCapture( capture );
 
 		

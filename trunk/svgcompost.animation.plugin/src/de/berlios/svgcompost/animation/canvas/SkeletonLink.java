@@ -10,7 +10,7 @@ import de.berlios.svgcompost.animation.anim.skeleton.Bone;
 import de.berlios.svgcompost.animation.anim.skeleton.Skeleton;
 
 /**
- * Links a frame CanvasNode to several Skeletons.
+ * Provides links to skeletons' bones in a given key frame.
  * @author gerrit
  *
  */
@@ -38,6 +38,11 @@ public class SkeletonLink {
 		return nodesForBones.get(bone);
 	}
 	
+	/**
+	 * Finds an instance of the given bone in the key frame that this SkeletonLink belongs to.
+	 * @param bone A link to the given bone  in this object's key frame.
+	 * @return
+	 */
 	public BoneLink getLinkForBone( Bone bone ) {
 		CanvasNode node = getNodeForBone( bone );
 		if( node == null )
@@ -51,7 +56,7 @@ public class SkeletonLink {
 		if( skeleton.containsBone( nodeName ) ) {
 			Bone bone = skeleton.getBone( nodeName );
 			node.getBoneLink().setBone( bone );
-			node.getBoneLink().setFrame( frameNode );
+//			node.getBoneLink().setFrame( frameNode );
 			nodesForBones.put(bone, node);
 		}
 		else

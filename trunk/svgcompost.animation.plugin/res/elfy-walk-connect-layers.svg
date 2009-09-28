@@ -2,7 +2,7 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
@@ -13,12 +13,20 @@
    height="400px"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.45.1"
+   inkscape:version="0.46"
    sodipodi:docbase="/home/gerrit/workspace/cutout_generator/res"
    sodipodi:docname="elfy-walk-connect-layers.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
-     id="defs4" />
+     id="defs4">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 200 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="500 : 200 : 1"
+       inkscape:persp3d-origin="250 : 133.33333 : 1"
+       id="perspective127" />
+  </defs>
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -28,13 +36,14 @@
      inkscape:pageshadow="2"
      inkscape:zoom="3.867874"
      inkscape:cx="135.86721"
-     inkscape:cy="231.2219"
+     inkscape:cy="152.435"
      inkscape:document-units="px"
-     inkscape:current-layer="g2261"
-     inkscape:window-width="951"
-     inkscape:window-height="741"
-     inkscape:window-x="38"
-     inkscape:window-y="0" />
+     inkscape:current-layer="layer3"
+     inkscape:window-width="1440"
+     inkscape:window-height="842"
+     inkscape:window-x="-4"
+     inkscape:window-y="-4"
+     showgrid="false" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -251,16 +260,31 @@
                inkscape:label="elfyLeftHand" />
           </g>
         </g>
-        <g id="g3299" inkscape:label="elfyLeftUpperLeg"
-        	connectWith="elfyLeftLowerLeg" connectTo="elfyLeftFoot">
-        	<use inkscape:label="elfyLeftUpperLeg" height="1052.3622"
-        		width="744.09448" id="use3211" xlink:href="#elfyUpperLeg"
-        		y="0" x="0" />
-        	<g inkscape:label="elfyLeftLowerLeg" id="g3293">
-        		<use x="0" y="0" xlink:href="#elfyLowerLeg" id="use3215"
-        			width="744.09448" height="1052.3622"
-        			inkscape:label="elfyLeftLowerLeg" />
-        	</g>
+        <g
+           id="g3299"
+           inkscape:label="elfyLeftUpperLeg"
+           connectWith="elfyLeftLowerLeg"
+           connectTo="elfyLeftFoot">
+          <use
+             inkscape:label="elfyLeftUpperLeg"
+             height="1052.3622"
+             width="744.09448"
+             id="use3211"
+             xlink:href="#elfyUpperLeg"
+             y="0"
+             x="0" />
+          <g
+             inkscape:label="elfyLeftLowerLeg"
+             id="g3293">
+            <use
+               x="0"
+               y="0"
+               xlink:href="#elfyLowerLeg"
+               id="use3215"
+               width="744.09448"
+               height="1052.3622"
+               inkscape:label="elfyLeftLowerLeg" />
+          </g>
         </g>
         <g
            id="g3252"
@@ -312,7 +336,9 @@
            inkscape:label="elfyBody" />
         <g
            id="g3281"
-           inkscape:label="elfyRightUpperLeg" connectWith="elfyRightLowerLeg" connectTo="elfyRightFoot">
+           inkscape:label="elfyRightUpperLeg"
+           connectWith="elfyRightLowerLeg"
+           connectTo="elfyRightFoot">
           <use
              inkscape:label="elfyRightUpperLeg"
              height="1052.3622"
@@ -366,7 +392,8 @@
                x="0" />
           </g>
         </g>
-      </g></g>
+      </g>
+    </g>
     <g
        id="elfyWalkPoses"
        transform="translate(-63.83849,265.2611)"
@@ -567,7 +594,8 @@
       <g
          inkscape:groupmode="layer"
          id="layer2"
-         inkscape:label="frame2">
+         inkscape:label="frame2"
+         style="display:inline">
         <g
            transform="translate(-9.395513,-31.669625)"
            inkscape:label="elfy"
@@ -650,7 +678,7 @@
              y="0"
              xlink:href="#elfyFoot"
              id="use2279"
-             transform="matrix(0.2462047,-0.2587003,0.2587003,0.2462047,218.22867,10.42446)"
+             transform="matrix(0.2462047,-0.2587003,0.2587003,0.2462047,215.64327,15.336719)"
              width="744.09448"
              height="1052.3622" />
           <use
@@ -658,7 +686,7 @@
              y="0"
              xlink:href="#elfyToes"
              id="use2281"
-             transform="matrix(0.3333095,-0.128246,0.128246,0.3333095,227.01935,35.80541)"
+             transform="matrix(0.3333095,-0.128246,0.128246,0.3333095,224.43395,40.717669)"
              width="744.09448"
              height="1052.3622"
              inkscape:label="elfyLeftToes" />

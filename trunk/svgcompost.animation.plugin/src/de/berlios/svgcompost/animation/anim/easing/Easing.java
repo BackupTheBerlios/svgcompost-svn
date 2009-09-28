@@ -25,7 +25,7 @@ public abstract class Easing {
 	
 	public static Easing getStandard() {
 		if( standard == null )
-			standard = new Quadratic( Easing.EASE_IN );
+			standard = new Linear( Easing.EASE_IN );
 		return standard;
 	}
 
