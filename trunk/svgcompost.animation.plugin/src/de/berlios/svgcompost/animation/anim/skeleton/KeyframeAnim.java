@@ -8,7 +8,7 @@ import de.berlios.svgcompost.animation.anim.Anim;
 import de.berlios.svgcompost.animation.anim.easing.Easing;
 import de.berlios.svgcompost.animation.anim.skeleton.Skeleton;
 import de.berlios.svgcompost.animation.canvas.CanvasNode;
-import de.berlios.svgcompost.animation.canvas.SkeletonLink;
+import de.berlios.svgcompost.animation.canvas.SkeletonKey;
 
 /**
  * The KeyframeAnim class is responsible for switching keyframes at the right time.
@@ -63,7 +63,7 @@ public class KeyframeAnim extends Anim {
 			setActiveFrame( percentage < 0.5 );
 		}
 		
-		SkeletonLink.tween(frames.get(tweeningPairIndex), frames.get(activeKey), percentage);
+		SkeletonKey.tween(frames.get(tweeningPairIndex), frames.get(activeKey), percentage);
 	}
 	
 	protected void setActiveFrame( boolean firstFrameActive ) {

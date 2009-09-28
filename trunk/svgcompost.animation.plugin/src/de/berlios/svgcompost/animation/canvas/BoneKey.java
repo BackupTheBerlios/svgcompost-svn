@@ -15,9 +15,9 @@ import de.berlios.svgcompost.animation.anim.skeleton.RotationMatrixTweener;
  * @author gerrit
  *
  */
-public class BoneLink {
+public class BoneKey {
 
-	private static Logger log = Logger.getLogger(BoneLink.class);
+	private static Logger log = Logger.getLogger(BoneKey.class);
 
 	protected Bone bone;
 	private CanvasNode canvasNode;
@@ -33,7 +33,7 @@ public class BoneLink {
 	protected CatmullRomTweener limbTweener;
 	protected Point2D.Float[] limbPoint;
 	
-	public BoneLink( CanvasNode canvasNode ) {
+	public BoneKey( CanvasNode canvasNode ) {
 		this.canvasNode = canvasNode;
 	}
 	
@@ -53,14 +53,14 @@ public class BoneLink {
 	 * Returns a link to the same bone in a keyframe
 	 * relative to this bone's keyframe.
 	 */
-	public BoneLink getRelativeKey( int d ) {
+	public BoneKey getRelativeKey( int d ) {
 		if(frames == null)
 			return null;
 		int i= d + key;
 		if( i<0 || i>=frames.size())
 			return null;
 		else
-			return frames.get(i).getSkeletonLink().getLinkForBone(bone);
+			return frames.get(i).getSkeletonKey(bone.getSkeleton()).getLinkForBone(bone);
 	}
 
 	public AffineTransform getKeyMatrix() {

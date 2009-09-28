@@ -5,9 +5,9 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.berlios.svgcompost.animation.canvas.BoneLink;
+import de.berlios.svgcompost.animation.canvas.BoneKey;
 import de.berlios.svgcompost.animation.canvas.CanvasNode;
-import de.berlios.svgcompost.animation.canvas.SkeletonLink;
+import de.berlios.svgcompost.animation.canvas.SkeletonKey;
 
 /**
  * A bone is a part of an animated skeleton.
@@ -85,7 +85,11 @@ public class Bone {
 		return name;
 	}
 	
-	public void calcKeyMatrices( SkeletonLink keyframeLink ) {
+	public Skeleton getSkeleton() {
+		return skeleton;
+	}
+	
+	public void calcKeyMatrices( SkeletonKey keyframeLink ) {
 		
 		CanvasNode keyNode = keyframeLink.getNodeForBone(this);
 		CanvasNode parentKeyNode = parent == null ? null : keyframeLink.getNodeForBone(parent);
@@ -97,7 +101,7 @@ public class Bone {
 			subtractFromMatrix( parentKeyNode.getGlobalTransform(), keyMatrix );
 		else
 			subtractFromMatrix( keyframeLink.getNodeForBone(skeleton).getGlobalTransform(), keyMatrix );
-		keyNode.getBoneLink().setKeyMatrix(keyMatrix);
+		keyNode.getBoneKey().setKeyMatrix(keyMatrix);
 		
 		for (int i = 0; i < size(); i++)
 			get(i).calcKeyMatrices( keyframeLink );
@@ -107,12 +111,12 @@ public class Bone {
 		if( key < 0 || key >= frames.size()-1 )
 			return;
 		
-		SkeletonLink keyframeLink = frames.get(key).getSkeletonLink();
-		BoneLink keyNodeLink = keyframeLink.getNodeForBone(this).getBoneLink();
+		SkeletonKey keyframeLink = frames.get(key).getSkeletonKey(skeleton);
+		BoneKey keyNodeLink = keyframeLink.getNodeForBone(this).getBoneKey();
 		keyNodeLink.setFrames( frames, key );
 		
-		SkeletonLink nextKeyframeLink = frames.get(key+1).getSkeletonLink();
-		BoneLink nextKeyNodeLink = nextKeyframeLink.getNodeForBone(this).getBoneLink();
+		SkeletonKey nextKeyframeLink = frames.get(key+1).getSkeletonKey(skeleton);
+		BoneKey nextKeyNodeLink = nextKeyframeLink.getNodeForBone(this).getBoneKey();
 		
 		keyNodeLink.getTweener().load( keyNodeLink.getKeyMatrix(), nextKeyNodeLink.getKeyMatrix() );
 		
@@ -120,7 +124,7 @@ public class Bone {
 			get(i).setupTweening( frames, key );
 	}
 	
-	public void tween( SkeletonLink tweeningKeyLink, SkeletonLink activeKeyLink, double percentage ) {
+	public void tween( SkeletonKey tweeningKeyLink, SkeletonKey activeKeyLink, double percentage ) {
 
 		CanvasNode keyNode = activeKeyLink.getNodeForBone(this);
 		if( keyNode == null )
@@ -317,7 +321,7 @@ public class Bone {
 //			children.get(j).recallPosition( i );
 //	}
 	
-	public void setRecursiveLocalXY( Point2D.Float newPosition, SkeletonLink frameLink, CanvasNode local ) {
+	public void setRecursiveLocalXY( Point2D.Float newPosition, SkeletonKey frameLink, CanvasNode local ) {
 		CanvasNode node = frameLink.getNodeForBone(this); 
 		for (Bone child : children)
 			child.savePosition( frameLink );
@@ -329,7 +333,7 @@ public class Bone {
 	// TODO: make this a temporary method scope variable.
 	private Point2D.Float position;
 	
-	public void savePosition( SkeletonLink frameLink ) {
+	public void savePosition( SkeletonKey frameLink ) {
 		CanvasNode node = frameLink.getNodeForBone(this); 
 		position = node.getLocalXY( parent != null ? frameLink.getNodeForBone(parent) : node.getParent() );
 		if( children == null )
@@ -338,7 +342,7 @@ public class Bone {
 			child.savePosition( frameLink );
 	}
 	
-	public void recallPosition( SkeletonLink frameLink ) {
+	public void recallPosition( SkeletonKey frameLink ) {
 		CanvasNode node = frameLink.getNodeForBone(this); 
 		node.setLocalXY( position, parent != null ? frameLink.getNodeForBone(parent) : node.getParent() );
 		if( children == null )

@@ -18,7 +18,6 @@ import org.w3c.dom.svg.SVGStylable;
 
 import de.berlios.svgcompost.animation.anim.composite.Parallel;
 import de.berlios.svgcompost.animation.anim.composite.Sequence;
-import de.berlios.svgcompost.animation.anim.easing.Easing;
 import de.berlios.svgcompost.animation.anim.easing.Quadratic;
 import de.berlios.svgcompost.animation.anim.skeleton.Bone;
 import de.berlios.svgcompost.animation.anim.skeleton.KeyframeAnim;
@@ -63,7 +62,7 @@ public class Library {
 		List<CanvasNode> poses = posesNode.getChildListCopy();
 
 		for(CanvasNode keyframe : poses)
-			keyframe.getSkeletonLink().applySkeleton(model);
+			keyframe./*getSkeletonKeys().*/applySkeleton(model);
 
 		ArrayList<Bone> feet = new ArrayList<Bone>();
 		for( int i=0; i<model.connectorSize(); i++ ) {
@@ -74,10 +73,10 @@ public class Library {
 		int lastPose = noOfPoses-1;
 		
 		for(CanvasNode frame : poses)
-			for( Skeleton skeleton : frame.getSkeletonLink().skeletons )
-				skeleton.calcLimbMatrices(frame.getSkeletonLink());			
+			for( Skeleton skeleton : frame.getSkeletonKeys().keySet() )
+				skeleton.calcLimbMatrices(frame.getSkeletonKey(skeleton));			
 		for(int i=0; i<poses.size(); i++)
-			for( Skeleton skeleton : poses.get(i).getSkeletonLink().skeletons )
+			for( Skeleton skeleton : poses.get(i).getSkeletonKeys().keySet() )
 				skeleton.setupLimbTweening(poses, i);
 
 		Point2D.Float originalStart = calcCenterPoint( feet, poses.get(0), posesNode );
@@ -89,7 +88,7 @@ public class Library {
 			Bone topLevelBone = model.get(i);
 			log.debug("topLevelBone: "+topLevelBone.getName());
 			for( int j=0; j<noOfPoses; j++ ) {
-				SkeletonLink frameLink = poses.get(j).getSkeletonLink(); 
+				SkeletonKey frameLink = poses.get(j).getSkeletonKey(model); 
 				CanvasNode node = frameLink.getNodeForBone(topLevelBone);
 				Point2D.Float xy = node.getLocalXY( posesNode );
 				trafo.transform(xy, xy_new);
@@ -112,10 +111,10 @@ public class Library {
 		
 			
 		for(CanvasNode frame : poses)
-			for( Skeleton skeleton : frame.getSkeletonLink().skeletons )
-				skeleton.calcKeyMatrices(frame.getSkeletonLink());			
+			for( Skeleton skeleton : frame.getSkeletonKeys().keySet() )
+				skeleton.calcKeyMatrices(frame.getSkeletonKey(skeleton));			
 		for(int i=0; i<poses.size(); i++)
-			for( Skeleton skeleton : poses.get(i).getSkeletonLink().skeletons )
+			for( Skeleton skeleton : poses.get(i).getSkeletonKeys().keySet() )
 				skeleton.setupTweening(poses, i);
 
 		for(int i=0; i<poses.size()-1; i++)
@@ -188,7 +187,7 @@ public class Library {
 		float x = 0;
 		float y = 0;
 		for (Bone bone : bones) {
-			Point2D.Float xy = frame.getSkeletonLink().getNodeForBone(bone).getLocalXY( system );
+			Point2D.Float xy = frame.getSkeletonKey(bone.getSkeleton()).getNodeForBone(bone).getLocalXY( system );
 			x += xy.x;
 			y += xy.y;
 		}
@@ -340,9 +339,9 @@ public class Library {
 		
 		for(CanvasNode keyframe : keyframes)
 			for(Skeleton skeleton : modelsByName.values())
-				keyframe.getSkeletonLink().applySkeleton(skeleton);
+				keyframe./*getSkeletonKeys().*/applySkeleton(skeleton);
 			
-		SkeletonLink.setupTweening(keyframes);
+		SkeletonKey.setupTweening(keyframes);
 
 		for(int i=0; i<keyframes.size()-1; i++)
 			for(Skeleton skeleton : modelsByName.values())

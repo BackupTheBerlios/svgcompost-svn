@@ -5,11 +5,16 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.batik.gvt.CompositeGraphicsNode;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.log4j.Logger;
+
+import de.berlios.svgcompost.animation.anim.skeleton.Bone;
+import de.berlios.svgcompost.animation.anim.skeleton.Skeleton;
 
 
 public class CanvasNode {
@@ -27,8 +32,7 @@ public class CanvasNode {
 	public static final String inkscapePrefix = "inkscape";
 	
 	private GraphicsNode gNode;
-	private BoneLink boneLink = new BoneLink( this );
-	private SkeletonLink skeletonLink;
+	private BoneKey boneKey = new BoneKey( this );
 	
 	private Canvas canvas;
 	
@@ -307,14 +311,50 @@ public class CanvasNode {
 		return gNode;
 	}
 	
-	public BoneLink getBoneLink() {
-		return boneLink;
+	public BoneKey getBoneKey() {
+		return boneKey;
+	}
+
+//	protected HashMap<Bone,CanvasNode> nodesForBones = new HashMap<Bone,CanvasNode>();
+//	protected List<SkeletonKey> skeletonKeys = new ArrayList<SkeletonKey>();
+	protected Map<Skeleton,SkeletonKey> skeletonKeys = new HashMap<Skeleton,SkeletonKey>();
+	
+	public void applySkeleton( Skeleton skeleton ) {
+		SkeletonKey skeletonKey = new SkeletonKey( skeleton, this );
+//		skeletonKey.searchForBones( this, nodesForBones );
+//		log.debug( "Found "+nodesForBones.size()+" bones of skeleton "+skeleton.getName()+" in keyframe "+frameNode.getName()+"." );
+		skeletonKeys.put( skeleton, skeletonKey );
 	}
 	
-	public SkeletonLink getSkeletonLink() {
-		if( skeletonLink == null )
-			skeletonLink = new SkeletonLink( this );
-		return skeletonLink;
+	protected void searchForBones( Skeleton skeleton, CanvasNode node, HashMap<Bone,CanvasNode> nodesForBones ) {
+		String nodeName = node.getName();
+
+		if( skeleton.containsBone( nodeName ) ) {
+			Bone bone = skeleton.getBone( nodeName );
+			node.getBoneKey().setBone( bone );
+//			node.getBoneLink().setFrame( frameNode );
+			nodesForBones.put(bone, node);
+		}
+		else
+			log.debug( "couldn't find a bone named "+node.getName() );
+		for( int i = 0; i < node.getSize(); i++ )
+			searchForBones( skeleton, node.get(i), nodesForBones );
+	}
+
+	public SkeletonKey getSkeletonKey( Skeleton forSkeleton ) {
+//		if( skeletonLink == null )
+//			skeletonLink = new SkeletonKey( this );
+		if(forSkeleton==null)
+			log.error("Null skeleton passed to get key.");
+		if( ! skeletonKeys.containsKey(forSkeleton) )
+			applySkeleton(forSkeleton);
+		return skeletonKeys.get(forSkeleton);
+	}
+	
+	public Map<Skeleton,SkeletonKey> getSkeletonKeys() {
+//		if( skeletonLink == null )
+//			skeletonLink = new SkeletonKey( this );
+		return skeletonKeys;
 	}
 	
 	public Canvas getCanvas() {

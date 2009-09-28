@@ -4,14 +4,13 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.List;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import de.berlios.svgcompost.animation.anim.skeleton.Bone;
 import de.berlios.svgcompost.animation.anim.skeleton.Skeleton;
-import de.berlios.svgcompost.animation.canvas.BoneLink;
+import de.berlios.svgcompost.animation.canvas.BoneKey;
 import de.berlios.svgcompost.animation.canvas.CanvasNode;
-import de.berlios.svgcompost.animation.canvas.SkeletonLink;
+import de.berlios.svgcompost.animation.canvas.SkeletonKey;
 import de.berlios.svgcompost.animation.util.CatmullRomSpline;
 import de.berlios.svgcompost.animation.util.Polar;
 
@@ -50,14 +49,14 @@ public class JointedConnection {
 	int numberOfTweenings;
 	*/
 
-	public void calcKeyMatrices( SkeletonLink keyframeLink ) {
+	public void calcKeyMatrices( SkeletonKey keyframeLink ) {
 		CanvasNode parent = keyframeLink.getNodeForBone( mParent );
 		CanvasNode child = keyframeLink.getNodeForBone( mChild );
 		CanvasNode target = keyframeLink.getNodeForBone( mTarget );
 			
 		AffineTransform targetToChild = target.getLocalToLocal( child );
 		
-		child.getBoneLink().setLimbKeyMatrix(targetToChild);
+		child.getBoneKey().setLimbKeyMatrix(targetToChild);
 	}
 			
 	public void setupTweening( List<CanvasNode> frames, int key ) {
@@ -67,16 +66,16 @@ public class JointedConnection {
 		// for all others, use a 50% linear tween between rotPointOnXXX-1 and rotPointOnXXX+1.
 		if( key < 0 || key >= frames.size() || frames.size() == 1 )
 			return;
-		SkeletonLink keyframeLink = frames.get(key).getSkeletonLink();
+		SkeletonKey keyframeLink = frames.get(key).getSkeletonKey(skeleton);
 		
 		CanvasNode child = keyframeLink.getNodeForBone(mChild);
 		CanvasNode parent = keyframeLink.getNodeForBone(mParent);
 		
-		AffineTransform targetToChild = child.getBoneLink().getLimbKeyMatrix();
+		AffineTransform targetToChild = child.getBoneKey().getLimbKeyMatrix();
 		
 		Point2D.Float rotPointOnParent = child.projectCenterToLocal( parent );
 		
-		SkeletonLink nextKeyframeLink = frames.get(key==frames.size()-1?key-1:key+1).getSkeletonLink();
+		SkeletonKey nextKeyframeLink = frames.get(key==frames.size()-1?key-1:key+1).getSkeletonKey(skeleton);
 		AffineTransform nextTargetToChild = nextKeyframeLink.getLinkForBone(mChild).getLimbKeyMatrix();
 
 		Point2D.Float rotPointOnTarget = findRotationPoint( targetToChild, nextTargetToChild );
@@ -98,7 +97,7 @@ public class JointedConnection {
 	 * @param activeKeyLink The key (first or second) that is changed to create the tweens.
 	 * @param percentage The percentage of tweening.
 	 */
-	public void tween( SkeletonLink tweeningKeyLink, SkeletonLink activeKeyLink, double percentage ) {
+	public void tween( SkeletonKey tweeningKeyLink, SkeletonKey activeKeyLink, double percentage ) {
 		log.debug("tween: "+percentage);
 //		if(0==0)
 //			return;
@@ -116,7 +115,7 @@ public class JointedConnection {
 		Point2D.Float elbowPoint = child.projectCenterToLocal( system );
 		
 		// should be tweeningKey?
-		BoneLink tweeningChild = tweeningKeyLink.getLinkForBone(mChild);
+		BoneKey tweeningChild = tweeningKeyLink.getLinkForBone(mChild);
 //		Point2D.Float rotPointOnTarget = tweeningChild.getLimbPoint()[0];
 //		Point2D.Float rotPointOnChild = tweeningChild.getLimbPoint()[1];
 //		Point2D.Float rotPointOnParent = tweeningChild.getLimbPoint()[2];
@@ -191,7 +190,7 @@ public class JointedConnection {
 				
 	}
 
-	protected Point2D.Float linearTweenTargetPoint( BoneLink currentKey, int targetIndex, double percentage ) {
+	protected Point2D.Float linearTweenTargetPoint( BoneKey currentKey, int targetIndex, double percentage ) {
 		return null;
 	}
 	
@@ -202,10 +201,10 @@ public class JointedConnection {
 	 * @param percentage
 	 * @return
 	 */
-	protected Point2D.Float cmrTweenTargetPoint( BoneLink currentKey, int targetIndex, double percentage ) {
-		BoneLink prevKey = currentKey.getRelativeKey(-1);
-		BoneLink nextKey = currentKey.getRelativeKey(+1);
-		BoneLink afterKey = currentKey.getRelativeKey(+2);
+	protected Point2D.Float cmrTweenTargetPoint( BoneKey currentKey, int targetIndex, double percentage ) {
+		BoneKey prevKey = currentKey.getRelativeKey(-1);
+		BoneKey nextKey = currentKey.getRelativeKey(+1);
+		BoneKey afterKey = currentKey.getRelativeKey(+2);
 //		log.debug("afterKey = "+afterKey);
 //		log.debug("afterKey.getLimbPoint() = "+afterKey==null?null:afterKey.getLimbPoint());
 		Point2D.Float rotPointTween = CatmullRomSpline.tween( percentage,
@@ -293,6 +292,10 @@ public class JointedConnection {
 
 	public Bone getTarget() {
 		return mTarget;
+	}
+
+	public void setSkeleton(Skeleton skeleton) {
+		this.skeleton = skeleton;
 	}
 	
 	/**

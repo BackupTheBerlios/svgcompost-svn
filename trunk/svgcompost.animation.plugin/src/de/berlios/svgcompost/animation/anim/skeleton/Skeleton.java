@@ -6,7 +6,7 @@ import java.util.List;
 
 import de.berlios.svgcompost.animation.anim.chara.JointedConnection;
 import de.berlios.svgcompost.animation.canvas.CanvasNode;
-import de.berlios.svgcompost.animation.canvas.SkeletonLink;
+import de.berlios.svgcompost.animation.canvas.SkeletonKey;
 
 /**
  * A Skeleton is the root node for a composite Bone tree.
@@ -38,6 +38,7 @@ public class Skeleton extends Bone {
 	public void addConnector( JointedConnection connector ) {
 		if( connectors == null )
 			connectors = new ArrayList<JointedConnection>();
+		connector.setSkeleton(this);
 		connectors.add( connector );
 	}
 	
@@ -65,7 +66,7 @@ public class Skeleton extends Bone {
 		bones.put( forName, bone );
 	}
 
-	public void calcLimbMatrices( SkeletonLink keyframeLink ) {
+	public void calcLimbMatrices( SkeletonKey keyframeLink ) {
 		for(JointedConnection limb : connectors)
 			limb.calcKeyMatrices(keyframeLink);
 	}
@@ -75,7 +76,7 @@ public class Skeleton extends Bone {
 			limb.setupTweening(frames, key);
 	}
 	
-	public void tweenLimbs( SkeletonLink tweeningKeyLink, SkeletonLink activeKeyLink, double percentage ) {
+	public void tweenLimbs( SkeletonKey tweeningKeyLink, SkeletonKey activeKeyLink, double percentage ) {
 		for(JointedConnection limb : connectors)
 			limb.tween(tweeningKeyLink, activeKeyLink, percentage);
 	}
