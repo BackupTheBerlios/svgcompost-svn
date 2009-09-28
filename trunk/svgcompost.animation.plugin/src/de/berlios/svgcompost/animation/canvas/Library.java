@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
@@ -61,8 +62,11 @@ public class Library {
 		CanvasNode posesNode = stage.addSymbolInstance(posesId, posesId);
 		List<CanvasNode> poses = posesNode.getChildListCopy();
 
-		for(CanvasNode keyframe : poses)
-			keyframe./*getSkeletonKeys().*/applySkeleton(model);
+		Map<Skeleton,SkeletonKey> skeletonKeys = null;
+		for(CanvasNode keyframe : poses) {
+			keyframe./*getSkeletonKeys().*/applySkeleton(model,skeletonKeys);
+			skeletonKeys = keyframe.getSkeletonKeys();
+		}
 
 		ArrayList<Bone> feet = new ArrayList<Bone>();
 		for( int i=0; i<model.connectorSize(); i++ ) {
@@ -337,9 +341,12 @@ public class Library {
 		HashMap<String,Skeleton> modelsByName = extractModelsFromDeclaration( keyframes.get( 0 ) );
 		HashMap<Skeleton,Sequence> seqsByModel = addSequencesForModels( par, modelsByName.values() );
 		
-		for(CanvasNode keyframe : keyframes)
+		Map<Skeleton,SkeletonKey> skeletonKeys = null;
+		for(CanvasNode keyframe : keyframes) {
 			for(Skeleton skeleton : modelsByName.values())
-				keyframe./*getSkeletonKeys().*/applySkeleton(skeleton);
+				keyframe./*getSkeletonKeys().*/applySkeleton(skeleton, skeletonKeys);
+			skeletonKeys = keyframe.getSkeletonKeys();
+		}
 			
 		SkeletonKey.setupTweening(keyframes);
 

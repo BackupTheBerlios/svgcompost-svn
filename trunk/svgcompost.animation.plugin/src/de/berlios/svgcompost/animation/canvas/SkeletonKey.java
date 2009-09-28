@@ -20,6 +20,9 @@ public class SkeletonKey {
 
 	private CanvasNode keyFrame;
 	
+	protected SkeletonKey previousKey;
+	protected SkeletonKey nextKey;
+	
 	protected HashMap<Bone,CanvasNode> nodesForBones = new HashMap<Bone,CanvasNode>();
 	protected Skeleton skeleton;
 	
@@ -78,6 +81,13 @@ public class SkeletonKey {
 		for( Skeleton skeleton : tweeningKey.getSkeletonKeys().keySet() ) {
 			skeleton.tween(tweeningKey.getSkeletonKey(skeleton), activeKey.getSkeletonKey(skeleton), percentage);
 			skeleton.tweenLimbs(tweeningKey.getSkeletonKey(skeleton), activeKey.getSkeletonKey(skeleton), percentage);
+		}
+	}
+
+	public void setPreviousKey(SkeletonKey previousKey) {
+		this.previousKey = previousKey;
+		if( previousKey != null ) {
+			previousKey.nextKey = this;
 		}
 	}
 
