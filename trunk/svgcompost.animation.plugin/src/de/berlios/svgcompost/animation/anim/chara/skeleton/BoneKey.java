@@ -19,6 +19,7 @@ public class BoneKey {
 
 	protected Bone bone;
 	private CanvasNode canvasNode;
+	protected SkeletonKey skeletonKey;
 	
 //	protected CanvasNode frame;
 	protected List<CanvasNode> frames;
@@ -31,8 +32,9 @@ public class BoneKey {
 	protected CatmullRomTweener limbTweener;
 	protected Point2D.Float[] limbPoint;
 	
-	public BoneKey( CanvasNode canvasNode ) {
+	public BoneKey( CanvasNode canvasNode, SkeletonKey skeletonKey ) {
 		this.canvasNode = canvasNode;
+		this.skeletonKey = skeletonKey;
 	}
 	
 //	public void setFrame(CanvasNode frame) {
@@ -58,8 +60,15 @@ public class BoneKey {
 		if( i<0 || i>=frames.size())
 			return null;
 		else
-			return frames.get(i).getSkeletonKey(bone.getSkeleton()).getLinkForBone(bone);
+			return frames.get(i).getSkeletonKey(bone.getSkeleton()).getBoneKey(bone);
 	}
+	public BoneKey nextKey() {
+		return skeletonKey.nextKey().getBoneKey(bone);
+	}
+	public BoneKey previousKey() {
+		return skeletonKey.previousKey().getBoneKey(bone);
+	}
+
 
 	public AffineTransform getKeyMatrix() {
 		return keyMatrix;
@@ -98,6 +107,10 @@ public class BoneKey {
 	public void setFrames(List<CanvasNode> frames, int key) {
 		this.frames = frames;
 		this.key = key;
+	}
+
+	public void setSkeletonKey(SkeletonKey skeletonKey) {
+		this.skeletonKey = skeletonKey;
 	}
 
 

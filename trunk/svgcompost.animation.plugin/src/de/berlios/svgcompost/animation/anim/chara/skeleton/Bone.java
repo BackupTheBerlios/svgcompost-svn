@@ -128,7 +128,7 @@ public class Bone {
 		if( keyNode == null )
 			return;
 
-		AffineTransform tween = tweeningKeyLink.getLinkForBone(this).getTweener().tween( percentage );
+		AffineTransform tween = tweeningKeyLink.getBoneKey(this).getTweener().tween( percentage );
 		
 		if( parent != null ) {
 			// Add the parent Bone's current CanvasNode matrix, to get a global transform.

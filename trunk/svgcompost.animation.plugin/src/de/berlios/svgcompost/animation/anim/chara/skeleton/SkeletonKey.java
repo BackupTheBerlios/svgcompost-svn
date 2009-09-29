@@ -40,7 +40,7 @@ public class SkeletonKey {
 	 * @param bone A link to the given bone  in this object's key frame.
 	 * @return
 	 */
-	public BoneKey getLinkForBone( Bone bone ) {
+	public BoneKey getBoneKey( Bone bone ) {
 		CanvasNode node = getNodeForBone( bone );
 		if( node == null )
 			return null;
@@ -53,6 +53,7 @@ public class SkeletonKey {
 		if( skeleton.containsBone( nodeName ) ) {
 			Bone bone = skeleton.getBone( nodeName );
 			node.getBoneKey().setBone( bone );
+			node.getBoneKey().setSkeletonKey( this );
 			nodesForBones.put(bone, node);
 		}
 		else
@@ -90,4 +91,10 @@ public class SkeletonKey {
 		}
 	}
 
+	public SkeletonKey nextKey() {
+		return nextKey;
+	}
+	public SkeletonKey previousKey() {
+		return previousKey;
+	}
 }

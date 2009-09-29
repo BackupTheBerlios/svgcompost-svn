@@ -72,7 +72,7 @@ public class JointedConnection {
 		Point2D.Float rotPointOnParent = child.projectCenterToLocal( parent );
 		
 		SkeletonKey nextKeyframeLink = frames.get(key==frames.size()-1?key-1:key+1).getSkeletonKey(skeleton);
-		AffineTransform nextTargetToChild = nextKeyframeLink.getLinkForBone(mChild).getLimbKeyMatrix();
+		AffineTransform nextTargetToChild = nextKeyframeLink.getBoneKey(mChild).getLimbKeyMatrix();
 
 		Point2D.Float rotPointOnTarget = findRotationPoint( targetToChild, nextTargetToChild );
 		Point2D.Float rotPointOnChild = new Point2D.Float();
@@ -84,7 +84,7 @@ public class JointedConnection {
 			log.warn( "rotPointOnChild is null: "+key );
 		}
 		
-		keyframeLink.getLinkForBone(mChild).setLimbPoint(new Point2D.Float[]{rotPointOnTarget, rotPointOnChild, rotPointOnParent});
+		keyframeLink.getBoneKey(mChild).setLimbPoint(new Point2D.Float[]{rotPointOnTarget, rotPointOnChild, rotPointOnParent});
 	}
 	
 	/**
@@ -111,7 +111,7 @@ public class JointedConnection {
 		Point2D.Float elbowPoint = child.projectCenterToLocal( system );
 		
 		// should be tweeningKey?
-		BoneKey tweeningChild = tweeningKeyLink.getLinkForBone(mChild);
+		BoneKey tweeningChild = tweeningKeyLink.getBoneKey(mChild);
 //		Point2D.Float rotPointOnTarget = tweeningChild.getLimbPoint()[0];
 //		Point2D.Float rotPointOnChild = tweeningChild.getLimbPoint()[1];
 //		Point2D.Float rotPointOnParent = tweeningChild.getLimbPoint()[2];

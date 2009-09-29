@@ -34,7 +34,7 @@ public class CanvasNode {
 	public static final String inkscapePrefix = "inkscape";
 	
 	private GraphicsNode gNode;
-	private BoneKey boneKey = new BoneKey( this );
+	private BoneKey boneKey = new BoneKey( this, null );
 	
 	private Canvas canvas;
 	
