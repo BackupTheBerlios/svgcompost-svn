@@ -1,12 +1,11 @@
-package de.berlios.svgcompost.animation.canvas;
+package de.berlios.svgcompost.animation.anim.chara.skeleton;
 
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import de.berlios.svgcompost.animation.anim.skeleton.Bone;
-import de.berlios.svgcompost.animation.anim.skeleton.Skeleton;
+import de.berlios.svgcompost.animation.canvas.CanvasNode;
 
 /**
  * Provides links to skeletons' bones in a given key frame.

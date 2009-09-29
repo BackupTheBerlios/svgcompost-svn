@@ -1,4 +1,4 @@
-package de.berlios.svgcompost.animation.anim.skeleton;
+package de.berlios.svgcompost.animation.anim.chara.skeleton;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Float;

@@ -17,13 +17,14 @@ import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.svg.SVGElement;
 import org.w3c.dom.svg.SVGStylable;
 
+import de.berlios.svgcompost.animation.anim.chara.skeleton.Bone;
+import de.berlios.svgcompost.animation.anim.chara.skeleton.KeyframeAnim;
+import de.berlios.svgcompost.animation.anim.chara.skeleton.Skeleton;
+import de.berlios.svgcompost.animation.anim.chara.skeleton.SkeletonFactory;
+import de.berlios.svgcompost.animation.anim.chara.skeleton.SkeletonKey;
 import de.berlios.svgcompost.animation.anim.composite.Parallel;
 import de.berlios.svgcompost.animation.anim.composite.Sequence;
 import de.berlios.svgcompost.animation.anim.easing.Quadratic;
-import de.berlios.svgcompost.animation.anim.skeleton.Bone;
-import de.berlios.svgcompost.animation.anim.skeleton.KeyframeAnim;
-import de.berlios.svgcompost.animation.anim.skeleton.Skeleton;
-import de.berlios.svgcompost.animation.anim.skeleton.SkeletonFactory;
 
 public class Library {
 	

@@ -1,13 +1,11 @@
-package de.berlios.svgcompost.animation.anim.skeleton;
+package de.berlios.svgcompost.animation.anim.chara.skeleton;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.berlios.svgcompost.animation.canvas.BoneKey;
 import de.berlios.svgcompost.animation.canvas.CanvasNode;
-import de.berlios.svgcompost.animation.canvas.SkeletonKey;
 
 /**
  * A bone is a part of an animated skeleton.

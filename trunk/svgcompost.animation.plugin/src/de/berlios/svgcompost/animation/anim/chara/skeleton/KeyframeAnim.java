@@ -1,14 +1,13 @@
-package de.berlios.svgcompost.animation.anim.skeleton;
+package de.berlios.svgcompost.animation.anim.chara.skeleton;
 
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import de.berlios.svgcompost.animation.anim.Anim;
+import de.berlios.svgcompost.animation.anim.chara.skeleton.Skeleton;
 import de.berlios.svgcompost.animation.anim.easing.Easing;
-import de.berlios.svgcompost.animation.anim.skeleton.Skeleton;
 import de.berlios.svgcompost.animation.canvas.CanvasNode;
-import de.berlios.svgcompost.animation.canvas.SkeletonKey;
 
 /**
  * The KeyframeAnim class is responsible for switching keyframes at the right time.

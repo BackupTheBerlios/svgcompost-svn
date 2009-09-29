@@ -1,4 +1,4 @@
-package de.berlios.svgcompost.animation.canvas;
+package de.berlios.svgcompost.animation.anim.chara.skeleton;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -6,9 +6,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import de.berlios.svgcompost.animation.anim.skeleton.Bone;
-import de.berlios.svgcompost.animation.anim.skeleton.CatmullRomTweener;
-import de.berlios.svgcompost.animation.anim.skeleton.RotationMatrixTweener;
+import de.berlios.svgcompost.animation.canvas.CanvasNode;
 
 /**
  * Links from a keyframe CanvasNode to a Bone inside a specific Skeleton.

@@ -1,4 +1,4 @@
-package de.berlios.svgcompost.animation.anim.chara;
+package de.berlios.svgcompost.animation.anim.chara.skeleton;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -6,11 +6,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import de.berlios.svgcompost.animation.anim.skeleton.Bone;
-import de.berlios.svgcompost.animation.anim.skeleton.Skeleton;
-import de.berlios.svgcompost.animation.canvas.BoneKey;
 import de.berlios.svgcompost.animation.canvas.CanvasNode;
-import de.berlios.svgcompost.animation.canvas.SkeletonKey;
 import de.berlios.svgcompost.animation.util.CatmullRomSpline;
 import de.berlios.svgcompost.animation.util.Polar;
 

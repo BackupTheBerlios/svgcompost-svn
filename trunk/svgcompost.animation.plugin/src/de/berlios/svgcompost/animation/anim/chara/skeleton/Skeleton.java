@@ -1,12 +1,10 @@
-package de.berlios.svgcompost.animation.anim.skeleton;
+package de.berlios.svgcompost.animation.anim.chara.skeleton;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import de.berlios.svgcompost.animation.anim.chara.JointedConnection;
 import de.berlios.svgcompost.animation.canvas.CanvasNode;
-import de.berlios.svgcompost.animation.canvas.SkeletonKey;
 
 /**
  * A Skeleton is the root node for a composite Bone tree.

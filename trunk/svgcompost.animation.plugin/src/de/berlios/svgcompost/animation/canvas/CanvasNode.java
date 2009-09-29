@@ -13,8 +13,10 @@ import org.apache.batik.gvt.CompositeGraphicsNode;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.log4j.Logger;
 
-import de.berlios.svgcompost.animation.anim.skeleton.Bone;
-import de.berlios.svgcompost.animation.anim.skeleton.Skeleton;
+import de.berlios.svgcompost.animation.anim.chara.skeleton.Bone;
+import de.berlios.svgcompost.animation.anim.chara.skeleton.BoneKey;
+import de.berlios.svgcompost.animation.anim.chara.skeleton.Skeleton;
+import de.berlios.svgcompost.animation.anim.chara.skeleton.SkeletonKey;
 
 
 public class CanvasNode {
