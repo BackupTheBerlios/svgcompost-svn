@@ -14,6 +14,14 @@ public class LimbKey {
 	protected SkeletonKey skeletonKey;
 	protected AffineTransform limbKeyMatrix;
 	protected CatmullRomTweener limbTweener;
+	
+	/**
+	 * {rotPointOnTarget, rotPointOnChild, rotPointOnParent}
+	 * The rotation point on the target: With an arm, this would be
+	 * the wrist, where the lower arm is jointed to the hand.
+	 * This is not usually not the center of the target, and unless specified,
+	 * it must be calculated dynamically.
+	 */
 	protected Point2D.Float[] limbPoint;
 	
 	public LimbKey(Limb limb, SkeletonKey skeletonKey) {
@@ -41,5 +49,14 @@ public class LimbKey {
 		this.limbPoint = limbPoint;
 	}
 
+	public LimbKey nextKey() {
+		SkeletonKey nextSkeletonKey = skeletonKey.nextKey();
+		return nextSkeletonKey==null?null:nextSkeletonKey.getLimbKey(limb);
+	}
+	
+	public LimbKey previousKey() {
+		SkeletonKey previousSkeletonKey = skeletonKey.previousKey();
+		return previousSkeletonKey==null?null:previousSkeletonKey.getLimbKey(limb);
+	}
 
 }

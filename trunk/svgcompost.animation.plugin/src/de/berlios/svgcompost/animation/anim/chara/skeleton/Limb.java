@@ -2,7 +2,6 @@ package de.berlios.svgcompost.animation.anim.chara.skeleton;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -30,23 +29,8 @@ public class Limb {
 	
 	protected Skeleton skeleton;
 	
-	/**
-	 * The rotation point on the target. With an arm, this would be
-	 * the wrist, where the lower arm is jointed to the hand.
-	 * This is not usually not the center of the target, and unless specified,
-	 * it must be calculated dynamically.
-	 */
-	/*
-	Point2D.Float[] rotPointOnTarget;
-	Point2D.Float[] rotPointOnChild;
-	Point2D.Float[] rotPointOnParent;
-	
-	int numberOfKeys;
-	int numberOfTweenings;
-	*/
-
 	public void calcKeyMatrices( SkeletonKey keyframeLink ) {
-		CanvasNode parent = keyframeLink.getNodeForBone( mParent );
+//		CanvasNode parent = keyframeLink.getNodeForBone( mParent );
 		CanvasNode child = keyframeLink.getNodeForBone( mChild );
 		CanvasNode target = keyframeLink.getNodeForBone( mTarget );
 			
@@ -56,14 +40,12 @@ public class Limb {
 		keyframeLink.getLimbKey(this).setLimbKeyMatrix(targetToChild);
 	}
 			
-	public void setupTweening( List<CanvasNode> frames, int key ) {
+	public void setupTweening( SkeletonKey keyframeLink ) {
 		
 		// TODO: move loop over frames from SkeletonLink to this method.
 		// Then use rotPointOnXXX for first and last key,
 		// for all others, use a 50% linear tween between rotPointOnXXX-1 and rotPointOnXXX+1.
-		if( key < 0 || key >= frames.size() || frames.size() == 1 )
-			return;
-		SkeletonKey keyframeLink = frames.get(key).getSkeletonKey(skeleton);
+
 		LimbKey limbKey = keyframeLink.getLimbKey(this);
 		
 		CanvasNode child = keyframeLink.getNodeForBone(mChild);
@@ -73,18 +55,12 @@ public class Limb {
 		
 		Point2D.Float rotPointOnParent = child.projectCenterToLocal( parent );
 		
-		SkeletonKey nextKeyframeLink = frames.get(key==frames.size()-1?key-1:key+1).getSkeletonKey(skeleton);
+		SkeletonKey nextKeyframeLink = keyframeLink.nextKey()==null?keyframeLink.previousKey():keyframeLink.nextKey();
 		AffineTransform nextTargetToChild = nextKeyframeLink.getLimbKey(this).getLimbKeyMatrix();
 
 		Point2D.Float rotPointOnTarget = findRotationPoint( targetToChild, nextTargetToChild );
 		Point2D.Float rotPointOnChild = new Point2D.Float();
 		targetToChild.transform( rotPointOnTarget, rotPointOnChild );
-		if( rotPointOnTarget == null ) {
-			log.warn( "rotPointOnTarget is null: "+key );
-		}
-		if( rotPointOnChild == null ) {
-			log.warn( "rotPointOnChild is null: "+key );
-		}
 		
 		limbKey.setLimbPoint(new Point2D.Float[]{rotPointOnTarget, rotPointOnChild, rotPointOnParent});
 	}
@@ -97,8 +73,6 @@ public class Limb {
 	 */
 	public void tween( SkeletonKey tweeningKeyLink, SkeletonKey activeKeyLink, double percentage ) {
 		log.debug("tween: "+percentage);
-//		if(0==0)
-//			return;
 		
 		// TODO: optimize, once it works
 		
@@ -113,13 +87,10 @@ public class Limb {
 		Point2D.Float elbowPoint = child.projectCenterToLocal( system );
 		
 		// should be tweeningKey?
-		BoneKey tweeningChild = tweeningKeyLink.getBoneKey(mChild);
-//		Point2D.Float rotPointOnTarget = tweeningChild.getLimbPoint()[0];
-//		Point2D.Float rotPointOnChild = tweeningChild.getLimbPoint()[1];
-//		Point2D.Float rotPointOnParent = tweeningChild.getLimbPoint()[2];
-		Point2D.Float rotPointOnTarget = cmrTweenTargetPoint(tweeningChild, 0, percentage);
-		Point2D.Float rotPointOnChild = cmrTweenTargetPoint(tweeningChild, 1, percentage);
-		Point2D.Float rotPointOnParent = cmrTweenTargetPoint(tweeningChild, 2, percentage);
+		LimbKey limbKey = tweeningKeyLink.getLimbKey(this);
+		Point2D.Float rotPointOnTarget = cmrTweenTargetPoint(limbKey, 0, percentage);
+		Point2D.Float rotPointOnChild = cmrTweenTargetPoint(limbKey, 1, percentage);
+		Point2D.Float rotPointOnParent = cmrTweenTargetPoint(limbKey, 2, percentage);
 		
 		Point2D.Float targetPoint = target.projectPointToLocal( rotPointOnTarget, system );
 		if( rotPointOnChild == null ) {
@@ -173,7 +144,7 @@ public class Limb {
 		newElbow.x += shoulderPoint.x;
 		newElbow.y += shoulderPoint.y;
 		Point2D.Float newElbowForShoulder = system.projectPointToLocal( newElbow, parent.getParent() );
-		Point2D.Float newElbowForChild = system.projectPointToLocal( newElbow, child.getParent() );
+//		Point2D.Float newElbowForChild = system.projectPointToLocal( newElbow, child.getParent() );
 		Point2D.Float targetForChild = system.projectPointToLocal( targetPoint, child.getParent() );
 		
 		log.debug("newElbowForShoulder = "+newElbowForShoulder);
@@ -199,22 +170,17 @@ public class Limb {
 	 * @param percentage
 	 * @return
 	 */
-	protected Point2D.Float cmrTweenTargetPoint( BoneKey currentKey, int targetIndex, double percentage ) {
-		BoneKey prevKey = currentKey.previousKey();// getRelativeKey(-1);
-		BoneKey nextKey = currentKey.nextKey();//getRelativeKey(+1);
-		BoneKey afterKey = nextKey==null?null:nextKey.nextKey();//currentKey.getRelativeKey(+2);
+	protected Point2D.Float cmrTweenTargetPoint( LimbKey currentKey, int targetIndex, double percentage ) {
+		LimbKey prevKey = currentKey.previousKey();
+		LimbKey nextKey = currentKey.nextKey();
+		LimbKey afterKey = nextKey==null?null:nextKey.nextKey();//currentKey.getRelativeKey(+2);
 //		log.debug("afterKey = "+afterKey);
 //		log.debug("afterKey.getLimbPoint() = "+afterKey==null?null:afterKey.getLimbPoint());
 		Point2D.Float rotPointTween = CatmullRomSpline.tween( percentage,
-				prevKey==null?currentKey.getSkeletonKey().getLimbKey(this).getLimbPoint()[targetIndex]:prevKey.getSkeletonKey().getLimbKey(this).getLimbPoint()[targetIndex],
-				currentKey.getSkeletonKey().getLimbKey(this).getLimbPoint()[targetIndex],
-//				afterKey==null?currentKey.getLimbPoint()[targetIndex]:
-					nextKey.getSkeletonKey().getLimbKey(this).getLimbPoint()[targetIndex],
-//				afterKey==null||
-//				afterKey.getRelativeKey(+1)==null?
-//						currentKey.getLimbPoint()[targetIndex]:
-//							afterKey.getLimbPoint()[targetIndex]
-					afterKey==null?nextKey.getSkeletonKey().getLimbKey(this).getLimbPoint()[targetIndex]:afterKey.getSkeletonKey().getLimbKey(this).getLimbPoint()[targetIndex]
+				prevKey==null?currentKey.getLimbPoint()[targetIndex]:prevKey.getLimbPoint()[targetIndex],
+				currentKey.getLimbPoint()[targetIndex],
+				nextKey.getLimbPoint()[targetIndex],
+				afterKey==null?nextKey.getLimbPoint()[targetIndex]:afterKey.getLimbPoint()[targetIndex]
 		);
 		return rotPointTween;
 	}
