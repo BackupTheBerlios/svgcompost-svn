@@ -2,13 +2,14 @@ package de.berlios.svgcompost.animation.anim.chara.skeleton;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
 import de.berlios.svgcompost.animation.canvas.CanvasNode;
 
 /**
- * Provides links to skeletons' bones in a given key frame.
+ * Represents a keyframe of a Skeleton.
  * @author gerrit
  *
  */
@@ -22,13 +23,18 @@ public class SkeletonKey {
 	protected SkeletonKey previousKey;
 	protected SkeletonKey nextKey;
 	
-	protected HashMap<Bone,CanvasNode> nodesForBones = new HashMap<Bone,CanvasNode>();
+	protected Map<Bone,CanvasNode> nodesForBones = new HashMap<Bone,CanvasNode>();
+	protected Map<Limb,LimbKey> limbKeys = new HashMap<Limb,LimbKey>();
 	protected Skeleton skeleton;
 	
 	public SkeletonKey( Skeleton skeleton, CanvasNode canvasNode ) {
 		this.skeleton = skeleton;
 		this.keyFrame = canvasNode;
 		searchForBones(keyFrame);
+		for(Limb limb : skeleton.connectors) {
+			LimbKey limbKey = new LimbKey( limb, this );
+			limbKeys.put(limb, limbKey);
+		}
 	}
 	
 	public CanvasNode getNodeForBone( Bone bone ) {
@@ -45,6 +51,10 @@ public class SkeletonKey {
 		if( node == null )
 			return null;
 		return node.getBoneKey();
+	}
+	
+	public LimbKey getLimbKey( Limb limb ) {
+		return limbKeys.get( limb );
 	}
 	
 	protected void searchForBones( CanvasNode node ) {

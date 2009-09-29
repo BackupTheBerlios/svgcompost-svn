@@ -20,7 +20,7 @@ public class Skeleton extends Bone {
 //	public int currentTweening;
 //	public double currentPercentage;
 	private HashMap<String,Bone> bones = new HashMap<String,Bone>();
-	protected ArrayList<JointedConnection> connectors;
+	protected ArrayList<Limb> connectors;
 //	protected ArrayList<CanvasNode> rootMc;
 	
 	public Skeleton( String name ) {
@@ -30,17 +30,17 @@ public class Skeleton extends Bone {
 	}
 	
 	public void addConnector( String parent, String child, String target ) {
-		addConnector( new JointedConnection( getBone(parent), getBone(child), getBone(target), this ) );
+		addConnector( new Limb( getBone(parent), getBone(child), getBone(target), this ) );
 	}
 	
-	public void addConnector( JointedConnection connector ) {
+	public void addConnector( Limb connector ) {
 		if( connectors == null )
-			connectors = new ArrayList<JointedConnection>();
+			connectors = new ArrayList<Limb>();
 		connector.setSkeleton(this);
 		connectors.add( connector );
 	}
 	
-	public JointedConnection getConnector( int i ) {
+	public Limb getConnector( int i ) {
 		if( connectors == null )
 			return null;
 		return connectors.get( i );
@@ -65,17 +65,17 @@ public class Skeleton extends Bone {
 	}
 
 	public void calcLimbMatrices( SkeletonKey keyframeLink ) {
-		for(JointedConnection limb : connectors)
+		for(Limb limb : connectors)
 			limb.calcKeyMatrices(keyframeLink);
 	}
 	
 	public void setupLimbTweening( List<CanvasNode> frames, int key ) {
-		for(JointedConnection limb : connectors)
+		for(Limb limb : connectors)
 			limb.setupTweening(frames, key);
 	}
 	
 	public void tweenLimbs( SkeletonKey tweeningKeyLink, SkeletonKey activeKeyLink, double percentage ) {
-		for(JointedConnection limb : connectors)
+		for(Limb limb : connectors)
 			limb.tween(tweeningKeyLink, activeKeyLink, percentage);
 	}
 	
@@ -174,7 +174,7 @@ public class Skeleton extends Bone {
 		currentPercentage = percentage;
 		tweenStructure();
 		for (int i = 0; i < connectorSize(); i++) {
-			JointedConnection connector = getConnector(i);
+			Limb connector = getConnector(i);
 			connector.connectTo( currentTweening, currentPercentage, activeKey );
 		}
 	}

@@ -18,7 +18,7 @@ public class JointedConnectionTest extends TestCase {
 		AffineTransform b = new AffineTransform( 16, -25, 34, -43, 52, -61 );
 //		AffineTransform a = new AffineTransform( 1, 0, 0, 1, 0, 0 );
 //		AffineTransform b = new AffineTransform( 1, 0, 0, 1, 10, 10 );
-		Point2D.Float p = JointedConnection.findRotationPoint( a, b );
+		Point2D.Float p = Limb.findRotationPoint( a, b );
 		Point2D.Float pa = new Point2D.Float();
 		Point2D.Float pb = new Point2D.Float();
 		a.transform( p, pa );
@@ -36,7 +36,7 @@ public class JointedConnectionTest extends TestCase {
 		node.setXY( -55, 6 );
 		Point2D.Float a = new Point2D.Float( -33, 10 );
 		Point2D.Float b = new Point2D.Float( 10, -4 );
-		JointedConnection.alignWithPoint( node, a, b );
+		Limb.alignWithPoint( node, a, b );
 		Point2D.Float center = node.projectCenterToLocal( node.getParent() );
 		Point2D.Float aOnParent = node.projectPointToLocal( a, node.getParent() );
 		Polar alignPointPolar = Polar.fromCartesianDiff( center, aOnParent );

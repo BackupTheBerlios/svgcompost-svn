@@ -111,7 +111,6 @@ public class Bone {
 		
 		SkeletonKey keyframeLink = frames.get(key).getSkeletonKey(skeleton);
 		BoneKey keyNodeLink = keyframeLink.getNodeForBone(this).getBoneKey();
-		keyNodeLink.setFrames( frames, key );
 		
 		SkeletonKey nextKeyframeLink = frames.get(key+1).getSkeletonKey(skeleton);
 		BoneKey nextKeyNodeLink = nextKeyframeLink.getNodeForBone(this).getBoneKey();

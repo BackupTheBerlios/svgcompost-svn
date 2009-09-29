@@ -1,36 +1,24 @@
 package de.berlios.svgcompost.animation.anim.chara.skeleton;
 
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-import java.util.List;
-
-import org.apache.log4j.Logger;
 
 import de.berlios.svgcompost.animation.canvas.CanvasNode;
 
 /**
- * Links from a keyframe CanvasNode to a Bone inside a specific Skeleton.
+ * Represents a keyframe of a Bone.
  * @author gerrit
  *
  */
 public class BoneKey {
 
-	private static Logger log = Logger.getLogger(BoneKey.class);
+//	private static Logger log = Logger.getLogger(BoneKey.class);
 
 	protected Bone bone;
 	private CanvasNode canvasNode;
 	protected SkeletonKey skeletonKey;
 	
-//	protected CanvasNode frame;
-	protected List<CanvasNode> frames;
-	protected int key;
-	
 	protected AffineTransform keyMatrix;
 	protected RotationMatrixTweener tweener;
-	
-	protected AffineTransform limbKeyMatrix;
-	protected CatmullRomTweener limbTweener;
-	protected Point2D.Float[] limbPoint;
 	
 	public BoneKey( CanvasNode canvasNode, SkeletonKey skeletonKey ) {
 		this.canvasNode = canvasNode;
@@ -49,24 +37,13 @@ public class BoneKey {
 //		return bone;
 //	}
 	
-	/**
-	 * Returns a link to the same bone in a keyframe
-	 * relative to this bone's keyframe.
-	 */
-	public BoneKey getRelativeKey( int d ) {
-		if(frames == null)
-			return null;
-		int i= d + key;
-		if( i<0 || i>=frames.size())
-			return null;
-		else
-			return frames.get(i).getSkeletonKey(bone.getSkeleton()).getBoneKey(bone);
-	}
 	public BoneKey nextKey() {
-		return skeletonKey.nextKey().getBoneKey(bone);
+		SkeletonKey nextSkeletonKey = skeletonKey.nextKey();
+		return nextSkeletonKey==null?null:nextSkeletonKey.getBoneKey(bone);
 	}
 	public BoneKey previousKey() {
-		return skeletonKey.previousKey().getBoneKey(bone);
+		SkeletonKey previousSkeletonKey = skeletonKey.previousKey();
+		return previousSkeletonKey==null?null:previousSkeletonKey.getBoneKey(bone);
 	}
 
 
@@ -84,33 +61,12 @@ public class BoneKey {
 		return tweener;
 	}
 
-	public CatmullRomTweener getLimbTweener() {
-		return limbTweener;
-	}
-
-	public AffineTransform getLimbKeyMatrix() {
-		return limbKeyMatrix;
-	}
-
-	public void setLimbKeyMatrix(AffineTransform limbKeyMatrix) {
-		this.limbKeyMatrix = limbKeyMatrix;
-	}
-
-	public Point2D.Float[] getLimbPoint() {
-		return limbPoint;
-	}
-
-	public void setLimbPoint(Point2D.Float[] limbPoint) {
-		this.limbPoint = limbPoint;
-	}
-
-	public void setFrames(List<CanvasNode> frames, int key) {
-		this.frames = frames;
-		this.key = key;
-	}
-
 	public void setSkeletonKey(SkeletonKey skeletonKey) {
 		this.skeletonKey = skeletonKey;
+	}
+
+	public SkeletonKey getSkeletonKey() {
+		return skeletonKey;
 	}
 
 

@@ -19,9 +19,9 @@ import de.berlios.svgcompost.animation.util.Polar;
  * @author gerrit
  *
  */
-public class JointedConnection {
+public class Limb {
 	
-	private static Logger log = Logger.getLogger(JointedConnection.class);
+	private static Logger log = Logger.getLogger(Limb.class);
 
 	protected Bone mParent;
 	protected Bone mChild;
@@ -52,7 +52,8 @@ public class JointedConnection {
 			
 		AffineTransform targetToChild = target.getLocalToLocal( child );
 		
-		child.getBoneKey().setLimbKeyMatrix(targetToChild);
+//		child.getBoneKey().setLimbKeyMatrix(targetToChild);
+		keyframeLink.getLimbKey(this).setLimbKeyMatrix(targetToChild);
 	}
 			
 	public void setupTweening( List<CanvasNode> frames, int key ) {
@@ -63,16 +64,17 @@ public class JointedConnection {
 		if( key < 0 || key >= frames.size() || frames.size() == 1 )
 			return;
 		SkeletonKey keyframeLink = frames.get(key).getSkeletonKey(skeleton);
+		LimbKey limbKey = keyframeLink.getLimbKey(this);
 		
 		CanvasNode child = keyframeLink.getNodeForBone(mChild);
 		CanvasNode parent = keyframeLink.getNodeForBone(mParent);
 		
-		AffineTransform targetToChild = child.getBoneKey().getLimbKeyMatrix();
+		AffineTransform targetToChild = limbKey.getLimbKeyMatrix();
 		
 		Point2D.Float rotPointOnParent = child.projectCenterToLocal( parent );
 		
 		SkeletonKey nextKeyframeLink = frames.get(key==frames.size()-1?key-1:key+1).getSkeletonKey(skeleton);
-		AffineTransform nextTargetToChild = nextKeyframeLink.getBoneKey(mChild).getLimbKeyMatrix();
+		AffineTransform nextTargetToChild = nextKeyframeLink.getLimbKey(this).getLimbKeyMatrix();
 
 		Point2D.Float rotPointOnTarget = findRotationPoint( targetToChild, nextTargetToChild );
 		Point2D.Float rotPointOnChild = new Point2D.Float();
@@ -84,7 +86,7 @@ public class JointedConnection {
 			log.warn( "rotPointOnChild is null: "+key );
 		}
 		
-		keyframeLink.getBoneKey(mChild).setLimbPoint(new Point2D.Float[]{rotPointOnTarget, rotPointOnChild, rotPointOnParent});
+		limbKey.setLimbPoint(new Point2D.Float[]{rotPointOnTarget, rotPointOnChild, rotPointOnParent});
 	}
 	
 	/**
@@ -198,21 +200,21 @@ public class JointedConnection {
 	 * @return
 	 */
 	protected Point2D.Float cmrTweenTargetPoint( BoneKey currentKey, int targetIndex, double percentage ) {
-		BoneKey prevKey = currentKey.getRelativeKey(-1);
-		BoneKey nextKey = currentKey.getRelativeKey(+1);
-		BoneKey afterKey = currentKey.getRelativeKey(+2);
+		BoneKey prevKey = currentKey.previousKey();// getRelativeKey(-1);
+		BoneKey nextKey = currentKey.nextKey();//getRelativeKey(+1);
+		BoneKey afterKey = nextKey==null?null:nextKey.nextKey();//currentKey.getRelativeKey(+2);
 //		log.debug("afterKey = "+afterKey);
 //		log.debug("afterKey.getLimbPoint() = "+afterKey==null?null:afterKey.getLimbPoint());
 		Point2D.Float rotPointTween = CatmullRomSpline.tween( percentage,
-				prevKey==null?currentKey.getLimbPoint()[targetIndex]:prevKey.getLimbPoint()[targetIndex],
-				currentKey.getLimbPoint()[targetIndex],
+				prevKey==null?currentKey.getSkeletonKey().getLimbKey(this).getLimbPoint()[targetIndex]:prevKey.getSkeletonKey().getLimbKey(this).getLimbPoint()[targetIndex],
+				currentKey.getSkeletonKey().getLimbKey(this).getLimbPoint()[targetIndex],
 //				afterKey==null?currentKey.getLimbPoint()[targetIndex]:
-					nextKey.getLimbPoint()[targetIndex],
+					nextKey.getSkeletonKey().getLimbKey(this).getLimbPoint()[targetIndex],
 //				afterKey==null||
 //				afterKey.getRelativeKey(+1)==null?
 //						currentKey.getLimbPoint()[targetIndex]:
 //							afterKey.getLimbPoint()[targetIndex]
-					afterKey==null?nextKey.getLimbPoint()[targetIndex]:afterKey.getLimbPoint()[targetIndex]
+					afterKey==null?nextKey.getSkeletonKey().getLimbKey(this).getLimbPoint()[targetIndex]:afterKey.getSkeletonKey().getLimbKey(this).getLimbPoint()[targetIndex]
 		);
 		return rotPointTween;
 	}
@@ -224,7 +226,7 @@ public class JointedConnection {
 	 * @param target The part that the connector connects to, e.g. a foot.
 	 * @param system The part whose coordinate system is used for the calculations, usually the skeleton root. 
 	 */
-	public JointedConnection(Bone parent, Bone child, Bone target, Bone system) {
+	public Limb(Bone parent, Bone child, Bone target, Bone system) {
 		mChild = child;
 		mParent = parent;
 		mTarget = target;
