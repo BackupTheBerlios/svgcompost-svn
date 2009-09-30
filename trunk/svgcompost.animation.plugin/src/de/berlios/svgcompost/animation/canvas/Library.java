@@ -80,9 +80,9 @@ public class Library {
 		for(CanvasNode frame : poses)
 			for( Skeleton skeleton : frame.getSkeletonKeys().keySet() )
 				skeleton.calcLimbMatrices(frame.getSkeletonKey(skeleton));			
-		for(int i=0; i<poses.size(); i++)
-			for( Skeleton skeleton : poses.get(i).getSkeletonKeys().keySet() )
-				skeleton.setupLimbTweening(poses, i);
+//		for(int i=0; i<poses.size(); i++)
+			for( Skeleton skeleton : poses.get(0).getSkeletonKeys().keySet() )
+				skeleton.setupLimbTweening(poses);
 
 		Point2D.Float originalStart = calcCenterPoint( feet, poses.get(0), posesNode );
 		Point2D.Float originalEnd = calcCenterPoint( feet, poses.get(lastPose), posesNode );

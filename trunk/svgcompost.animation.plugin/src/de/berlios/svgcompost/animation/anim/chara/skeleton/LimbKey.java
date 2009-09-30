@@ -12,8 +12,10 @@ public class LimbKey {
 
 	protected Limb limb;
 	protected SkeletonKey skeletonKey;
+	/**
+	 * This transform is used to find the rotation point of the Limb.
+	 */
 	protected AffineTransform limbKeyMatrix;
-	protected CatmullRomTweener limbTweener;
 	
 	/**
 	 * {rotPointOnTarget, rotPointOnChild, rotPointOnParent}
@@ -27,10 +29,6 @@ public class LimbKey {
 	public LimbKey(Limb limb, SkeletonKey skeletonKey) {
 		this.limb = limb;
 		this.skeletonKey = skeletonKey;
-	}
-
-	public CatmullRomTweener getLimbTweener() {
-		return limbTweener;
 	}
 
 	public AffineTransform getLimbKeyMatrix() {

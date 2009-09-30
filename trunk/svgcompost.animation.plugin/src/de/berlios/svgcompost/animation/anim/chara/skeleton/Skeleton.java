@@ -69,9 +69,15 @@ public class Skeleton extends Bone {
 			limb.calcKeyMatrices(keyframeLink);
 	}
 	
-	public void setupLimbTweening( List<CanvasNode> frames, int key ) {
-		for(Limb limb : connectors)
-			limb.setupTweening(frames.get(key).getSkeletonKey(this));
+	public void setupLimbTweening( List<CanvasNode> frames ) {
+		for(int i=0; i<frames.size(); i++) {
+			for(Limb limb : connectors)
+				limb.calcRotationPoints(frames.get(i).getSkeletonKey(this));
+		}
+		for(int i=0; i<frames.size(); i++) {
+			for(Limb limb : connectors)
+				limb.tweenRotationPoints(frames.get(i).getSkeletonKey(this));
+		}
 	}
 	
 	public void tweenLimbs( SkeletonKey tweeningKeyLink, SkeletonKey activeKeyLink, double percentage ) {

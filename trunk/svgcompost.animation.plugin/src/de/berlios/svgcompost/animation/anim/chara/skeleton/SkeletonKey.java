@@ -82,8 +82,11 @@ public class SkeletonKey {
 		for(int i=0; i<frames.size(); i++) {
 			for( Skeleton skeleton : frames.get(i).getSkeletonKeys().keySet() ) {
 				skeleton.setupTweening(frames, i);
-				skeleton.setupLimbTweening(frames, i);
-			}
+				
+			}			
+		}
+		for( Skeleton skeleton : frames.get(0).getSkeletonKeys().keySet() ) {
+			skeleton.setupLimbTweening(frames);
 		}
 	}
 	

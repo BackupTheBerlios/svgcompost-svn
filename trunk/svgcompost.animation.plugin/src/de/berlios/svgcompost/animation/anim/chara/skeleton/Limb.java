@@ -40,7 +40,7 @@ public class Limb {
 		keyframeLink.getLimbKey(this).setLimbKeyMatrix(targetToChild);
 	}
 			
-	public void setupTweening( SkeletonKey keyframeLink ) {
+	public void calcRotationPoints( SkeletonKey keyframeLink ) {
 		
 		// TODO: move loop over frames from SkeletonLink to this method.
 		// Then use rotPointOnXXX for first and last key,
@@ -64,6 +64,24 @@ public class Limb {
 		
 		limbKey.setLimbPoint(new Point2D.Float[]{rotPointOnTarget, rotPointOnChild, rotPointOnParent});
 	}
+	
+	public void tweenRotationPoints( SkeletonKey keyframeLink ) {
+		LimbKey limbKey = keyframeLink.getLimbKey(this);
+		
+		if( limbKey.previousKey() == null || limbKey.nextKey() == null )
+			return;
+		
+		LimbKey nextKey = limbKey.nextKey();
+
+		Point2D.Float[] limbPoint = limbKey.getLimbPoint();
+		Point2D.Float[] nextPoint = nextKey.getLimbPoint();
+		
+		for( int i=1; i<3; i++ ) {
+			limbPoint[i] = new Point2D.Float( (limbPoint[i].x+nextPoint[i].x)/2, (limbPoint[i].y+nextPoint[i].y)/2 );
+		}
+		
+		
+	}	
 	
 	/**
 	 * 
@@ -115,12 +133,12 @@ public class Limb {
 		float elbowHand2 = b*b;
 		float shoulderTarget2 = c*c;
 		// shoulder angle (beta)
-		log.info("a = "+a); 
-		log.info("b = "+b); 
-		log.info("c = "+c); 
-		log.info("elbowHand2 = "+elbowHand2); 
-		log.info("shoulderElbow2 = "+shoulderElbow2); 
-		log.info("shoulderTarget2 = "+shoulderTarget2);
+		log.trace("a = "+a); 
+		log.trace("b = "+b); 
+		log.trace("c = "+c); 
+		log.trace("elbowHand2 = "+elbowHand2); 
+		log.trace("shoulderElbow2 = "+shoulderElbow2); 
+		log.trace("shoulderTarget2 = "+shoulderTarget2);
 		float acos = (elbowHand2 - shoulderElbow2 - shoulderTarget2) / (-2 * a * c);
 		if( acos < -1 )
 			acos = -1;
@@ -136,19 +154,19 @@ public class Limb {
 //			elbowAngle *= -1;
 		}
 		
-		log.debug("shoulderElbow = "+shoulderElbow);
-		log.debug("shoulderTarget = "+shoulderTarget);
-		log.debug("shoulderAngle = "+shoulderAngle);
+		log.trace("shoulderElbow = "+shoulderElbow);
+		log.trace("shoulderTarget = "+shoulderTarget);
+		log.trace("shoulderAngle = "+shoulderAngle);
 		Point2D.Float newElbow = Polar.toCartesian( shoulderElbow.r, shoulderTarget.a + shoulderAngle );
-		log.debug("newElbow = "+newElbow);
+		log.trace("newElbow = "+newElbow);
 		newElbow.x += shoulderPoint.x;
 		newElbow.y += shoulderPoint.y;
 		Point2D.Float newElbowForShoulder = system.projectPointToLocal( newElbow, parent.getParent() );
 //		Point2D.Float newElbowForChild = system.projectPointToLocal( newElbow, child.getParent() );
 		Point2D.Float targetForChild = system.projectPointToLocal( targetPoint, child.getParent() );
 		
-		log.debug("newElbowForShoulder = "+newElbowForShoulder);
-		log.debug("targetForChild = "+targetForChild);
+		log.trace("newElbowForShoulder = "+newElbowForShoulder);
+		log.trace("targetForChild = "+targetForChild);
 		
 		Point2D.Float childOnParent = child.getLocalXY( parent );
 		alignWithPoint( parent, rotPointOnParent, newElbowForShoulder );
