@@ -118,19 +118,19 @@ public class FlagstoneExport implements Export {
         while(!iterator.isDone()) { 
                 switch(iterator.currentSegment(points)) { 
                 case ExtendedPathIterator.SEG_MOVETO: 
-                        constructor.move((int)(points[0]-current[0])*20, (int)(points[1]-current[1])*20); 
+                        constructor.move((int)((points[0]-current[0])*20), (int)((points[1]-current[1])*20)); 
                         current[0] = points[0]; 
                         current[1] = points[1]; 
                         break; 
                 case ExtendedPathIterator.SEG_LINETO: 
-                        constructor.rline((int)(points[0]-current[0])*20, (int)(points[1]-current[1])*20); 
+                        constructor.rline((int)((points[0]-current[0])*20), (int)((points[1]-current[1])*20)); 
                         current[0] = points[0]; 
                         current[1] = points[1]; 
                         break; 
                 case ExtendedPathIterator.SEG_QUADTO: 
                         constructor.rcurve(
-                        	(int)(points[0]-current[0])*20, (int)(points[1]-current[1])*20,
-                        	(int)(points[2]-points[0])*20, (int)(points[3]-points[1])*20);
+                        	(int)((points[0]-current[0])*20), (int)((points[1]-current[1])*20),
+                        	(int)((points[2]-points[0])*20), (int)((points[3]-points[1])*20));
 
                         current[0] = points[2]; 
                         current[1] = points[3]; 
