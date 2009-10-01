@@ -6,7 +6,6 @@ import java.awt.geom.Point2D;
 import org.apache.log4j.Logger;
 
 import de.berlios.svgcompost.animation.canvas.CanvasNode;
-import de.berlios.svgcompost.animation.util.CatmullRomSpline;
 import de.berlios.svgcompost.animation.util.Polar;
 
 /**
@@ -29,59 +28,23 @@ public class Limb {
 	
 	protected Skeleton skeleton;
 	
-	public void calcKeyMatrices( SkeletonKey keyframeLink ) {
-//		CanvasNode parent = keyframeLink.getNodeForBone( mParent );
-		CanvasNode child = keyframeLink.getNodeForBone( mChild );
-		CanvasNode target = keyframeLink.getNodeForBone( mTarget );
-			
-		AffineTransform targetToChild = target.getLocalToLocal( child );
+	/**
+	 * Reads the point where the center of the limb target appears on
+	 * the 2nd limb part in the specified keyframe.
+	 * The position is destroyed once the regular tweening begins, so it has to be read in advance.
+	 * @param keyframeLink
+	 */
+	public void readRotationPoint( SkeletonKey keyframeLink ) {
 		
-//		child.getBoneKey().setLimbKeyMatrix(targetToChild);
-		keyframeLink.getLimbKey(this).setLimbKeyMatrix(targetToChild);
-	}
-			
-	public void calcRotationPoints( SkeletonKey keyframeLink ) {
-		
-		// TODO: move loop over frames from SkeletonLink to this method.
-		// Then use rotPointOnXXX for first and last key,
-		// for all others, use a 50% linear tween between rotPointOnXXX-1 and rotPointOnXXX+1.
-
 		LimbKey limbKey = keyframeLink.getLimbKey(this);
 		
 		CanvasNode child = keyframeLink.getNodeForBone(mChild);
-		CanvasNode parent = keyframeLink.getNodeForBone(mParent);
+		CanvasNode target = keyframeLink.getNodeForBone(mTarget);
 		
-		AffineTransform targetToChild = limbKey.getLimbKeyMatrix();
+		Point2D.Float rotPointOnChild = target.projectCenterToLocal( child );
 		
-		Point2D.Float rotPointOnParent = child.projectCenterToLocal( parent );
-		
-		SkeletonKey nextKeyframeLink = keyframeLink.nextKey()==null?keyframeLink.previousKey():keyframeLink.nextKey();
-		AffineTransform nextTargetToChild = nextKeyframeLink.getLimbKey(this).getLimbKeyMatrix();
-
-		Point2D.Float rotPointOnTarget = findRotationPoint( targetToChild, nextTargetToChild );
-		Point2D.Float rotPointOnChild = new Point2D.Float();
-		targetToChild.transform( rotPointOnTarget, rotPointOnChild );
-		
-		limbKey.setLimbPoint(new Point2D.Float[]{rotPointOnTarget, rotPointOnChild, rotPointOnParent});
+		limbKey.setLimbPoint(rotPointOnChild);
 	}
-	
-	public void tweenRotationPoints( SkeletonKey keyframeLink ) {
-		LimbKey limbKey = keyframeLink.getLimbKey(this);
-		
-		if( limbKey.previousKey() == null || limbKey.nextKey() == null )
-			return;
-		
-		LimbKey nextKey = limbKey.nextKey();
-
-		Point2D.Float[] limbPoint = limbKey.getLimbPoint();
-		Point2D.Float[] nextPoint = nextKey.getLimbPoint();
-		
-		for( int i=1; i<3; i++ ) {
-			limbPoint[i] = new Point2D.Float( (limbPoint[i].x+nextPoint[i].x)/2, (limbPoint[i].y+nextPoint[i].y)/2 );
-		}
-		
-		
-	}	
 	
 	/**
 	 * 
@@ -104,16 +67,22 @@ public class Limb {
 		Point2D.Float shoulderPoint = parent.projectCenterToLocal( system );
 		Point2D.Float elbowPoint = child.projectCenterToLocal( system );
 		
-		// should be tweeningKey?
-		LimbKey limbKey = tweeningKeyLink.getLimbKey(this);
-		Point2D.Float rotPointOnTarget = cmrTweenTargetPoint(limbKey, 0, percentage);
-		Point2D.Float rotPointOnChild = cmrTweenTargetPoint(limbKey, 1, percentage);
-		Point2D.Float rotPointOnParent = cmrTweenTargetPoint(limbKey, 2, percentage);
+		Point2D.Float limbPoint1 = tweeningKeyLink.getLimbKey(this).getLimbPoint();
+		Point2D.Float limbPoint2 = tweeningKeyLink.nextKey().getLimbKey(this).getLimbPoint();
+
+		// Use center of target as reference point.
+		Point2D.Float rotPointOnTarget = new Point2D.Float();
+
+		// TODO: Replace linear tweening with catmull-rom tweening.
+		Point2D.Float rotPointOnChild = 
+			new Point2D.Float(
+				(float)(limbPoint1.x+(limbPoint2.x-limbPoint1.x)*percentage),
+				(float)(limbPoint1.y+(limbPoint2.y-limbPoint1.y)*percentage)
+			);
+		Point2D.Float rotPointOnParent = child.projectCenterToLocal(parent);
 		
 		Point2D.Float targetPoint = target.projectPointToLocal( rotPointOnTarget, system );
-		if( rotPointOnChild == null ) {
-			log.warn( "rotPointOnChild is null: "+child.getName() );
-		}
+
 		Point2D.Float handPoint = child.projectPointToLocal( rotPointOnChild, system );
 		
 		Polar shoulderElbow = Polar.fromCartesianDiff( shoulderPoint, elbowPoint );
@@ -177,33 +146,6 @@ public class Limb {
 				
 	}
 
-	protected Point2D.Float linearTweenTargetPoint( BoneKey currentKey, int targetIndex, double percentage ) {
-		return null;
-	}
-	
-	/**
-	 * Catmull-Rom tweens the target point with the given index.
-	 * @param currentKey
-	 * @param targetIndex
-	 * @param percentage
-	 * @return
-	 */
-	protected Point2D.Float cmrTweenTargetPoint( LimbKey currentKey, int targetIndex, double percentage ) {
-		LimbKey prevKey = currentKey.previousKey();
-		LimbKey nextKey = currentKey.nextKey();
-		LimbKey afterKey = nextKey==null?null:nextKey.nextKey();//currentKey.getRelativeKey(+2);
-//		log.debug("afterKey = "+afterKey);
-//		log.debug("afterKey.getLimbPoint() = "+afterKey==null?null:afterKey.getLimbPoint());
-		Point2D.Float rotPointTween = CatmullRomSpline.tween( percentage,
-				prevKey==null?currentKey.getLimbPoint()[targetIndex]:prevKey.getLimbPoint()[targetIndex],
-				currentKey.getLimbPoint()[targetIndex],
-				nextKey.getLimbPoint()[targetIndex],
-				afterKey==null?nextKey.getLimbPoint()[targetIndex]:afterKey.getLimbPoint()[targetIndex]
-		);
-		return rotPointTween;
-	}
-
-	
 	/**
 	 * @param parent The parent part of the connector, e.g. the upper leg.
 	 * @param child The child part of the connector, e.g. the lower leg.

@@ -76,7 +76,6 @@ public class SkeletonKey {
 		for(CanvasNode frame : frames) {
 			for( Skeleton skeleton : frame.getSkeletonKeys().keySet() ) {
 				skeleton.calcKeyMatrices(frame.getSkeletonKey(skeleton));			
-				skeleton.calcLimbMatrices(frame.getSkeletonKey(skeleton));			
 			}
 		}
 		for(int i=0; i<frames.size(); i++) {

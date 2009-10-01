@@ -77,9 +77,7 @@ public class Library {
 		int noOfPoses = poses.size();
 		int lastPose = noOfPoses-1;
 		
-		for(CanvasNode frame : poses)
-			for( Skeleton skeleton : frame.getSkeletonKeys().keySet() )
-				skeleton.calcLimbMatrices(frame.getSkeletonKey(skeleton));			
+//		for(CanvasNode frame : poses)
 //		for(int i=0; i<poses.size(); i++)
 			for( Skeleton skeleton : poses.get(0).getSkeletonKeys().keySet() )
 				skeleton.setupLimbTweening(poses);
