@@ -16,17 +16,12 @@ import de.berlios.svgcompost.animation.canvas.CanvasNode;
  */
 public class Skeleton extends Bone {
 
-//	public int activeKey;
-//	public int currentTweening;
-//	public double currentPercentage;
 	private HashMap<String,Bone> bones = new HashMap<String,Bone>();
 	protected ArrayList<Limb> connectors;
-//	protected ArrayList<CanvasNode> rootMc;
 	
 	public Skeleton( String name ) {
 		super( name );
 		skeleton = this;
-//		rootMc = new ArrayList<CanvasNode>();
 	}
 	
 	public void addConnector( String parent, String child, String target ) {

@@ -38,24 +38,11 @@ public class Library {
 	protected Canvas libraryCanvas;
 
 	protected HashMap<String,Skeleton> models = new HashMap<String,Skeleton>();
-//	protected HashMap<String,Walk> walks = new HashMap<String,Walk>();
 	
 	public Library( Canvas canvas ) {
 		this.libraryCanvas = canvas;
 	}
 	
-	/*
-	public Walk getWalk( String walkName, String modelName ) {
-		Walk walk = walks.get( walkName );
-		if( walk != null )
-			return walk;
-		Skeleton model = getModel( modelName );
-		walk = loadPosesForWalk( walkName, model );
-		model.discardKeys();
-		return walk;
-	}
-	*/
-
 	// TODO: simplify
 	// FIXME: limbs connect to wrong points
 	public Parallel createWalkAnim( CanvasNode stage, String posesId, String modelName, Point2D.Float start, Point2D.Float end ) {
@@ -77,10 +64,8 @@ public class Library {
 		int noOfPoses = poses.size();
 		int lastPose = noOfPoses-1;
 		
-//		for(CanvasNode frame : poses)
-//		for(int i=0; i<poses.size(); i++)
-			for( Skeleton skeleton : poses.get(0).getSkeletonKeys().keySet() )
-				skeleton.setupLimbTweening(poses);
+		for( Skeleton skeleton : poses.get(0).getSkeletonKeys().keySet() )
+			skeleton.setupLimbTweening(poses);
 
 		Point2D.Float originalStart = calcCenterPoint( feet, poses.get(0), posesNode );
 		Point2D.Float originalEnd = calcCenterPoint( feet, poses.get(lastPose), posesNode );
@@ -106,8 +91,6 @@ public class Library {
 		log.debug("start transformed: "+xy_new);
 		log.debug("startRect.getGlobalXY(): "+startRect.getGlobalXY());
 
-		// set up the 
-		
 		Parallel par = new Parallel();
 		HashMap<String,Skeleton> modelsByName = extractModelsFromDeclaration( poses.get( 0 ) );
 		HashMap<Skeleton,Sequence> seqsByModel = addSequencesForModels( par, modelsByName.values() );
@@ -143,49 +126,6 @@ public class Library {
 		return trafo;
 	}
 	
-	/*
-	public Parallel createWalkAnim( CanvasNode stage, String posesId, String modelName, Point2D.Float start, Point2D.Float end ) {
-		Skeleton model = getModel(modelName);
-		CanvasNode poses = stage.addSymbolInstance(posesId, posesId);
-		for(CanvasNode pose : poses.getChildListCopy())
-			model.addRootKey(pose.getChild(model.getName()));
-		model.setup();
-		ArrayList<Bone> feet = new ArrayList<Bone>();
-		for( int i=0; i<model.connectorSize(); i++ ) {
-			feet.add( model.getConnector(i).getTarget() );
-		}
-		int noOfPoses = poses.getSize();
-		int lastPose = noOfPoses-1;
-		
-		Point2D.Float originalStart = calcCenterPoint( feet, 0, poses );
-		Point2D.Float originalEnd = calcCenterPoint( feet, lastPose, poses );
-		AffineTransform trafo = Walk.skewYbyXscaleX( originalStart, start, originalEnd, end );
-		
-		Point2D.Float xy_new = new Point2D.Float();
-		for( int i=0; i<model.size(); i++ ) {
-			Bone topLevelBone = model.get(i);
-			log.debug("topLevelBone: "+topLevelBone.getName());
-			for( int j=0; j<noOfPoses; j++ ) {
-				CanvasNode node = topLevelBone.getKey(j);
-				Point2D.Float xy = node.getLocalXY( poses );
-				trafo.transform(xy, xy_new);
-				// TODO: read the position the connectors connect to BEFORE the feet get moved
-				topLevelBone.setRecursiveLocalXY(xy_new, j, poses);
-			}
-		}
-		
-		CanvasNode startRect = stage.addSymbolInstance("redrect", "start");
-		trafo.transform(originalStart, xy_new);
-		startRect.setLocalXY(xy_new, poses);
-		log.debug("start transformed: "+xy_new);
-		log.debug("startRect.getGlobalXY(): "+startRect.getGlobalXY());
-
-		model.discardKeys();
-		Parallel par = createAnimFromKeyframesWithoutConnectors(poses.getChildListCopy());
-		return par;
-	}
-	*/
-
 	public static Point2D.Float calcCenterPoint( ArrayList<Bone> bones, CanvasNode frame, CanvasNode system ) {
 		float x = 0;
 		float y = 0;
@@ -199,77 +139,6 @@ public class Library {
 		return new Point2D.Float( x, y );
 	}
 
-	/*
-	protected Walk loadPosesForWalk( String walkName, Skeleton model ) {
-		CanvasNode posesGroup = libraryCanvas.getRoot().addSymbolInstance( walkName, walkName );
-		int noOfPoses = posesGroup.getSize();
-		Walk walk = new Walk( noOfPoses );
-		walk.name = walkName;
-		walk.modelName = model.getName();
-		CanvasNode[] keyMc = new CanvasNode[noOfPoses];
-		for (int i = 0; i < noOfPoses; i++) {
-			keyMc[i] = posesGroup.get( i );
-			walk.poseIds[i] = keyMc[i].getSymbolId();
-			walk.wrapperAbs[i] = keyMc[i].getXY();
-		}
-		loadPosesIntoModel( walk, model, keyMc );
-		posesGroup.removeNode();
-		return walk;
-	}
-	*/
-
-	/*
-	protected void loadPosesIntoModel( Walk walk, Skeleton model, CanvasNode[] keyMc ) {
-		ArrayList<CanvasNode> keyframes = new ArrayList<CanvasNode>();
-		for (CanvasNode keyframe : keyMc)
-			keyframes.add(keyframe);
-		HashMap<String,Skeleton> modelsByName = new HashMap<String,Skeleton>();
-		modelsByName.put(model.getName(), model);
-		
-		loadKeyFramesIntoModels( keyframes, modelsByName, null );
-		
-		model.setup();
-		
-		Bone leftFoot = model.getBone( "elfyLeftFoot" );
-		Bone rightFoot = model.getBone( "elfyRightFoot" );
-		
-		log.debug("keyMc.length:"+keyMc.length);
-		log.debug("leftFoot: "+leftFoot.getKey(keyMc.length-1));
-		
-		int noOfPoses = keyMc.length;
-		for (int i = 0; i < noOfPoses; i++) {
-			walk.footAbs[i][0] = leftFoot.getKey(i).getGlobalXY();
-			walk.footAbs[i][1] = rightFoot.getKey(i).getGlobalXY();
-			walk.centerAbs[i] = new Point2D.Float( (walk.footAbs[i][0].x+walk.footAbs[i][1].x)/2, (walk.footAbs[i][0].y+walk.footAbs[i][1].y)/2 );			
-		}
-		Point2D.Float start = walk.centerAbs[0];
-		Point2D.Float end = walk.centerAbs[noOfPoses-1];
-		loadPositionsIntoWalk( start, end, walk, keyMc );
-	}
-	*/
-	
-	/*
-	protected void loadPositionsIntoWalk( Point2D.Float start, Point2D.Float end, Walk walk, CanvasNode[] keyMc ) {
-		AffineTransform lineSystem = Walk.orthogonalSystem( start, end );
-		
-		int noOfPoses = keyMc.length;
-		for (int i = 0; i < noOfPoses; i++) {
-			Point2D.Float origin = keyMc[i].getXY();
-			walk.centerOffset[i] = new Point2D.Float( walk.centerAbs[i].x-origin.x, walk.centerAbs[i].y-origin.y );
-			walk.centerRel[i] = new Point2D.Float();
-			walk.footRel[i] = new Point2D.Float[] { new Point2D.Float(), new Point2D.Float() };
-			
-			try {
-				lineSystem.inverseTransform( walk.centerAbs[i], walk.centerRel[i] );
-				lineSystem.inverseTransform( walk.footAbs[i][0], walk.footRel[i][0] );
-				lineSystem.inverseTransform( walk.footAbs[i][1], walk.footRel[i][1] );
-			} catch (NoninvertibleTransformException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-	*/
-	
 	/**
 	 * Creates a new model skeleton by parsing the hierarchy of a graphics node
 	 * with the specified id.
@@ -282,11 +151,6 @@ public class Library {
 		log.debug("Model '"+modelName+"' referenced for the first time.");
 		CanvasNode modelNode = libraryCanvas.getRoot().addSymbolInstance( modelName, modelName );
 		model = SkeletonFactory.createSkeleton( modelNode );
-		
-		// TODO: This is a hack for the sample anim. Read from markup instead,
-		// in Skeleton.createModelRoot
-//		model.addConnector( "elfyLeftUpperLeg", "elfyLeftLowerLeg", "elfyLeftFoot" );
-//		model.addConnector( "elfyRightUpperLeg", "elfyRightLowerLeg", "elfyRightFoot" );
 		
 		modelNode.removeNode();
 		models.put(modelName, model);
@@ -385,79 +249,6 @@ public class Library {
 		return tweenAnim;
 	}
 
-	/*
-	public Parallel createAnimFromKeyframeIds( CanvasNode stage, ArrayList<String> keyframeIds ) {
-		ArrayList<CanvasNode> keyframes = new ArrayList<CanvasNode>();
-		
-		for (int i = 0; i < keyframeIds.size(); i++) {
-			String keyframeId = keyframeIds.get(i);
-			setDisplayAttributeToInline( stage.getCanvas().getSourceDoc().getElementById(keyframeId) );
-			CanvasNode keyframe = stage.addSymbolInstance( keyframeId, keyframeId );
-			log.debug( "Adding keyframe: "+keyframe.getPath() );
-			keyframes.add( keyframe );
-		}
-		return createAnimFromKeyframes( keyframes );
-	}
-	*/
-
-	/*
-	public Parallel createAnimFromKeyframes( ArrayList<CanvasNode> keyframes ) {
-		log.debug("createAnimFromKeyframes");
-		
-		Parallel par = new Parallel();
-		
-		HashMap<String,Skeleton> modelsByName = extractModelsFromDeclaration( keyframes.get( 0 ) );
-		HashMap<Skeleton,Sequence> seqsByModel = addSequencesForModels( par, modelsByName.values() );
-		
-		loadKeyFramesIntoModels(keyframes, modelsByName, seqsByModel);
-		
-		log.debug( "seqsByModel.size(): "+seqsByModel.size() );
-		log.debug( "seqsByModel.keySet(): "+seqsByModel.keySet().size() );
-		for(Skeleton model : seqsByModel.keySet())
-			model.setup();
-	
-		for(CanvasNode keyframe : keyframes)
-			keyframe.setVisible(false);
-		
-		if( log.isDebugEnabled() ) {
-			log.debug( "Total length of main par: "+par.getDurationinMillis() );
-			log.debug( "Total length of scene: "+par.getDurationinMillis() );
-			log.debug( "Total sequence levels in scene: "+par.getSize() );
-		}
-		
-		return par;
-	}
-	*/
-
-	/*
-	public Parallel createAnimFromKeyframesWithoutConnectors( ArrayList<CanvasNode> keyframes ) {
-		log.debug("createAnimFromKeyframes");
-		
-		Parallel par = new Parallel();
-		
-		HashMap<String,Skeleton> modelsByName = extractModelsFromDeclaration( keyframes.get( 0 ) );
-		HashMap<Skeleton,Sequence> seqsByModel = addSequencesForModels( par, modelsByName.values() );
-		
-		loadKeyFramesIntoModels(keyframes, modelsByName, seqsByModel);
-		
-		log.debug( "seqsByModel.size(): "+seqsByModel.size() );
-		log.debug( "seqsByModel.keySet(): "+seqsByModel.keySet().size() );
-		for(Skeleton model : seqsByModel.keySet())
-			model.setupWithoutConnectors();
-	
-		for(CanvasNode keyframe : keyframes)
-			keyframe.setVisible(false);
-		
-		if( log.isDebugEnabled() ) {
-			log.debug( "Total length of main par: "+par.getDurationinMillis() );
-			log.debug( "Total length of scene: "+par.getDurationinMillis() );
-			log.debug( "Total sequence levels in scene: "+par.getSize() );
-		}
-		
-		return par;
-	}
-	*/
-
 	/**
 	 * When editing keyframes, all but one are usually made invisible.
 	 * In that case, however, no graphics nodes are constructed by the Batik framework.
@@ -475,53 +266,6 @@ public class Library {
 				element.setAttribute("display", "inline");
 		}
 	}
-	
-	/*
-	private static void loadKeyFramesIntoModels(ArrayList<CanvasNode> keyframes, HashMap<String, Skeleton> modelsByName, HashMap<Skeleton, Sequence> seqsByModel) {
-		log.debug("# of models: "+modelsByName.size());
-		for (int key = 0; key < keyframes.size(); key++) {
-			log.debug( "Loading keyframe #"+key );
-			CanvasNode keyframe = keyframes.get( key );
-						
-			// Search for model keys.
-			for( Skeleton model : modelsByName.values() ) {
-				// If the model isn't wrapped, the frame itself is treated as the wrapper. 
-				CanvasNode modelKey = keyframe.getChild( model.getName() );
-				if( modelKey == null ) {
-					log.debug("model key for '"+model.getName()+"' is null: "+keyframe.getChild( model.getName() ));
-					modelKey = keyframe;
-				}
-				log.debug("model key for '"+model.getName()+"': "+modelKey.getPath());
-				
-				model.addRootKey( modelKey );
-				if( key != keyframes.size()-1 ) {
-					if( seqsByModel != null )
-						seqsByModel.get(model).addAnim( createTweeningAnim( model, keyframes, key ) );
-				}
-			}
-		}
-	}
-	*/
-
-
-	/*
-	private static KeyframeAnim createTweeningAnim(Skeleton model, ArrayList<CanvasNode> keyframes, int key) {
-		CanvasNode keyframe = keyframes.get(key);
-		KeyframeAnim tweenAnim = new KeyframeAnim( model, key, keyframe, keyframes.get(key+1) );
-		SVGElement frameElement = (SVGElement) keyframe.getCanvas().getSourceDoc().getElementById( keyframe.getSymbolId() );
-		String duration = frameElement.getAttribute( "duration" );
-		if( duration == null || duration.equals( "" ) )
-			tweenAnim.setDurationInSeconds( 1 );
-		else
-			tweenAnim.setDurationInSeconds( Double.parseDouble( duration ) );
-		String easing = frameElement.getAttribute( "easing" );
-		if( easing == null || easing.equals( "" ) )
-			tweenAnim.setEasing( Easing.getStandard() );
-		else
-			tweenAnim.setEasing( Quadratic._inOut );
-		return tweenAnim;
-	}
-	*/
 	
 	/**
 	 * Reads all model references from the specified frame.
