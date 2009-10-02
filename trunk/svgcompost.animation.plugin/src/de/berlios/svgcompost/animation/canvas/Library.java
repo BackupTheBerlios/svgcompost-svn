@@ -43,40 +43,99 @@ public class Library {
 		this.libraryCanvas = canvas;
 	}
 	
-	// TODO: simplify
-	// FIXME: limbs connect to wrong points
+	/**
+	 * Creates parallel animation sequences over a set of keyframes.
+	 * All referenced models get their own animation sequence. 
+	 * @param keyframes
+	 * @return
+	 */
+	public Parallel createAnimFromKeyframes( ArrayList<CanvasNode> keyframes ) {
+		Parallel par = new Parallel();
+		HashMap<String,Skeleton> modelsByName = extractModelsFromDeclaration( keyframes.get( 0 ) );
+		HashMap<Skeleton,Sequence> seqsByModel = addSequencesForModels( par, modelsByName.values() );
+		
+		Map<Skeleton,SkeletonKey> skeletonKeys = null;
+		for(CanvasNode keyframe : keyframes) {
+			for(Skeleton skeleton : modelsByName.values())
+				keyframe./*getSkeletonKeys().*/applySkeleton(skeleton, skeletonKeys);
+			skeletonKeys = keyframe.getSkeletonKeys();
+		}
+			
+		SkeletonKey.setupTweening(keyframes);
+
+		for(int i=0; i<keyframes.size()-1; i++)
+			for(Skeleton skeleton : modelsByName.values())
+				seqsByModel.get(skeleton).addAnim( createTweeningAnim( skeleton, keyframes, i ) );
+	
+		for(CanvasNode keyframe : keyframes)
+			keyframe.setVisible(false);
+		
+		return par;
+	}
+	
+	/**
+	 * Creates an animation for the specified model, from the specified keyframe in the given keyframe sequence
+	 * to the next keyframe in the list.
+	 * @param model
+	 * @param keyframes
+	 * @param key
+	 * @return
+	 */
+	private static KeyframeAnim createTweeningAnim(Skeleton model, List<CanvasNode> keyframes, int key) {
+		CanvasNode keyframe = keyframes.get(key);
+		KeyframeAnim tweenAnim = new KeyframeAnim( model, keyframes, key, keyframe, keyframes.get(key+1) );
+		SVGElement frameElement = (SVGElement) keyframe.getCanvas().getSourceDoc().getElementById( keyframe.getSymbolId() );
+		String duration = frameElement.getAttribute( "duration" );
+		if( duration == null || duration.equals( "" ) )
+			tweenAnim.setDurationInSeconds( 1 );
+		else
+			tweenAnim.setDurationInSeconds( Double.parseDouble( duration ) );
+		String easing = frameElement.getAttribute( "easing" );
+		if( easing == null || easing.equals( "" ) )
+			tweenAnim.setEasing( Quadratic._inOut );
+		else
+			tweenAnim.setEasing( Quadratic._inOut );
+//		String align = frameElement.getAttribute( "align" );
+		return tweenAnim;
+	}
+
 	public Parallel createWalkAnim( CanvasNode stage, String posesId, String modelName, Point2D.Float start, Point2D.Float end ) {
 		Skeleton model = getModel(modelName);
 		CanvasNode posesNode = stage.addSymbolInstance(posesId, posesId);
-		List<CanvasNode> poses = posesNode.getChildListCopy();
+		List<CanvasNode> keyframes = posesNode.getChildListCopy();
 
+		// Apply skeleton to all keyframes.
 		Map<Skeleton,SkeletonKey> skeletonKeys = null;
-		for(CanvasNode keyframe : poses) {
-			keyframe./*getSkeletonKeys().*/applySkeleton(model,skeletonKeys);
+		for(CanvasNode keyframe : keyframes) {
+			keyframe.applySkeleton(model,skeletonKeys);
 			skeletonKeys = keyframe.getSkeletonKeys();
 		}
 
+		// Make a list of 2 (or more) feet inside the skeleton. 
 		ArrayList<Bone> feet = new ArrayList<Bone>();
 		for( int i=0; i<model.connectorSize(); i++ ) {
 			feet.add( model.getConnector(i).getTarget() );
 		}
 
-		int noOfPoses = poses.size();
-		int lastPose = noOfPoses-1;
+		int numberOfKeyframes = keyframes.size();
+		int lastKeyframe = numberOfKeyframes-1;
 		
-		for( Skeleton skeleton : poses.get(0).getSkeletonKeys().keySet() )
-			skeleton.setupLimbTweening(poses);
+		// Set up limb tweening for all keyframes.
+		for(CanvasNode keyframe : keyframes) {
+			for( Skeleton skeleton : keyframe.getSkeletonKeys().keySet() )
+				skeleton.setupLimbTweening(keyframe);
+		}
 
-		Point2D.Float originalStart = calcCenterPoint( feet, poses.get(0), posesNode );
-		Point2D.Float originalEnd = calcCenterPoint( feet, poses.get(lastPose), posesNode );
+		Point2D.Float originalStart = calcCenterPoint( feet, keyframes.get(0), posesNode );
+		Point2D.Float originalEnd = calcCenterPoint( feet, keyframes.get(lastKeyframe), posesNode );
 		AffineTransform trafo = skewYbyXscaleX( originalStart, start, originalEnd, end );
 		
 		Point2D.Float xy_new = new Point2D.Float();
 		for( int i=0; i<model.size(); i++ ) {
 			Bone topLevelBone = model.get(i);
 			log.debug("topLevelBone: "+topLevelBone.getName());
-			for( int j=0; j<noOfPoses; j++ ) {
-				SkeletonKey frameLink = poses.get(j).getSkeletonKey(model); 
+			for( int j=0; j<numberOfKeyframes; j++ ) {
+				SkeletonKey frameLink = keyframes.get(j).getSkeletonKey(model); 
 				CanvasNode node = frameLink.getNodeForBone(topLevelBone);
 				Point2D.Float xy = node.getLocalXY( posesNode );
 				trafo.transform(xy, xy_new);
@@ -92,22 +151,18 @@ public class Library {
 		log.debug("startRect.getGlobalXY(): "+startRect.getGlobalXY());
 
 		Parallel par = new Parallel();
-		HashMap<String,Skeleton> modelsByName = extractModelsFromDeclaration( poses.get( 0 ) );
+		HashMap<String,Skeleton> modelsByName = extractModelsFromDeclaration( keyframes.get( 0 ) );
 		HashMap<Skeleton,Sequence> seqsByModel = addSequencesForModels( par, modelsByName.values() );
 		
-			
-		for(CanvasNode frame : poses)
+		for(CanvasNode frame : keyframes)
 			for( Skeleton skeleton : frame.getSkeletonKeys().keySet() )
-				skeleton.calcKeyMatrices(frame.getSkeletonKey(skeleton));			
-		for(int i=0; i<poses.size(); i++)
-			for( Skeleton skeleton : poses.get(i).getSkeletonKeys().keySet() )
-				skeleton.setupTweening(poses, i);
+				skeleton.setupTweening(frame.getSkeletonKey(skeleton));
 
-		for(int i=0; i<poses.size()-1; i++)
+		for(int i=0; i<keyframes.size()-1; i++)
 			for(Skeleton skeleton : modelsByName.values())
-				seqsByModel.get(skeleton).addAnim( createTweeningAnim( skeleton, poses, i ) );
+				seqsByModel.get(skeleton).addAnim( createTweeningAnim( skeleton, keyframes, i ) );
 	
-		for(CanvasNode keyframe : poses)
+		for(CanvasNode keyframe : keyframes)
 			keyframe.setVisible(false);
 		
 		return par;
@@ -193,62 +248,6 @@ public class Library {
 		return createAnimFromKeyframes( keyframes );
 	}
 	
-	/**
-	 * Creates parallel animation sequences over a set of keyframes.
-	 * All referenced models get their own animation sequence. 
-	 * @param keyframes
-	 * @return
-	 */
-	public Parallel createAnimFromKeyframes( ArrayList<CanvasNode> keyframes ) {
-		Parallel par = new Parallel();
-		HashMap<String,Skeleton> modelsByName = extractModelsFromDeclaration( keyframes.get( 0 ) );
-		HashMap<Skeleton,Sequence> seqsByModel = addSequencesForModels( par, modelsByName.values() );
-		
-		Map<Skeleton,SkeletonKey> skeletonKeys = null;
-		for(CanvasNode keyframe : keyframes) {
-			for(Skeleton skeleton : modelsByName.values())
-				keyframe./*getSkeletonKeys().*/applySkeleton(skeleton, skeletonKeys);
-			skeletonKeys = keyframe.getSkeletonKeys();
-		}
-			
-		SkeletonKey.setupTweening(keyframes);
-
-		for(int i=0; i<keyframes.size()-1; i++)
-			for(Skeleton skeleton : modelsByName.values())
-				seqsByModel.get(skeleton).addAnim( createTweeningAnim( skeleton, keyframes, i ) );
-	
-		for(CanvasNode keyframe : keyframes)
-			keyframe.setVisible(false);
-		
-		return par;
-	}
-	
-	/**
-	 * Creates an animation for the specified model, from the specified keyframe in the given keyframe sequence
-	 * to the next keyframe in the list.
-	 * @param model
-	 * @param keyframes
-	 * @param key
-	 * @return
-	 */
-	private static KeyframeAnim createTweeningAnim(Skeleton model, List<CanvasNode> keyframes, int key) {
-		CanvasNode keyframe = keyframes.get(key);
-		KeyframeAnim tweenAnim = new KeyframeAnim( model, keyframes, key, keyframe, keyframes.get(key+1) );
-		SVGElement frameElement = (SVGElement) keyframe.getCanvas().getSourceDoc().getElementById( keyframe.getSymbolId() );
-		String duration = frameElement.getAttribute( "duration" );
-		if( duration == null || duration.equals( "" ) )
-			tweenAnim.setDurationInSeconds( 1 );
-		else
-			tweenAnim.setDurationInSeconds( Double.parseDouble( duration ) );
-		String easing = frameElement.getAttribute( "easing" );
-		if( easing == null || easing.equals( "" ) )
-			tweenAnim.setEasing( Quadratic._inOut );
-		else
-			tweenAnim.setEasing( Quadratic._inOut );
-//		String align = frameElement.getAttribute( "align" );
-		return tweenAnim;
-	}
-
 	/**
 	 * When editing keyframes, all but one are usually made invisible.
 	 * In that case, however, no graphics nodes are constructed by the Batik framework.

@@ -2,7 +2,6 @@ package de.berlios.svgcompost.animation.anim.chara.skeleton;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import de.berlios.svgcompost.animation.canvas.CanvasNode;
 
@@ -59,11 +58,9 @@ public class Skeleton extends Bone {
 		bones.put( forName, bone );
 	}
 
-	public void setupLimbTweening( List<CanvasNode> frames ) {
-		for(int i=0; i<frames.size(); i++) {
-			for(Limb limb : connectors)
-				limb.readRotationPoint(frames.get(i).getSkeletonKey(this));
-		}
+	public void setupLimbTweening( CanvasNode keyframe ) {
+		for(Limb limb : connectors)
+			limb.readRotationPoint(keyframe.getSkeletonKey(this));
 	}
 	
 	public void tweenLimbs( SkeletonKey tweeningKeyLink, SkeletonKey activeKeyLink, double percentage ) {

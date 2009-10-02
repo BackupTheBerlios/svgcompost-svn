@@ -317,14 +317,10 @@ public class CanvasNode {
 		return boneKey;
 	}
 
-//	protected HashMap<Bone,CanvasNode> nodesForBones = new HashMap<Bone,CanvasNode>();
-//	protected List<SkeletonKey> skeletonKeys = new ArrayList<SkeletonKey>();
 	protected Map<Skeleton,SkeletonKey> skeletonKeys = new HashMap<Skeleton,SkeletonKey>();
 	
 	public SkeletonKey applySkeleton( Skeleton skeleton, Map<Skeleton, SkeletonKey> previousKeys ) {
 		SkeletonKey skeletonKey = new SkeletonKey( skeleton, this );
-//		skeletonKey.searchForBones( this, nodesForBones );
-//		log.debug( "Found "+nodesForBones.size()+" bones of skeleton "+skeleton.getName()+" in keyframe "+frameNode.getName()+"." );
 		skeletonKeys.put( skeleton, skeletonKey );
 		if( previousKeys != null && previousKeys.containsKey(skeleton) )
 			skeletonKey.setPreviousKey( previousKeys.get(skeleton) );
@@ -337,28 +333,20 @@ public class CanvasNode {
 		if( skeleton.containsBone( nodeName ) ) {
 			Bone bone = skeleton.getBone( nodeName );
 			node.getBoneKey().setBone( bone );
-//			node.getBoneLink().setFrame( frameNode );
 			nodesForBones.put(bone, node);
 		}
 		else
 			log.debug( "couldn't find a bone named "+node.getName() );
+		
 		for( int i = 0; i < node.getSize(); i++ )
 			searchForBones( skeleton, node.get(i), nodesForBones );
 	}
 
 	public SkeletonKey getSkeletonKey( Skeleton forSkeleton ) {
-//		if( skeletonLink == null )
-//			skeletonLink = new SkeletonKey( this );
-//		if(forSkeleton==null)
-//			log.error("Null skeleton passed to get key.");
-//		if( ! skeletonKeys.containsKey(forSkeleton) )
-//			applySkeleton(forSkeleton);
 		return skeletonKeys.get(forSkeleton);
 	}
 	
 	public Map<Skeleton,SkeletonKey> getSkeletonKeys() {
-//		if( skeletonLink == null )
-//			skeletonLink = new SkeletonKey( this );
 		return skeletonKeys;
 	}
 	

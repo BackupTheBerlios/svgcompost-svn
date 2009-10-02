@@ -73,19 +73,17 @@ public class SkeletonKey {
 	}
 	
 	public static void setupTweening( List<CanvasNode> frames ) {
+
 		for(CanvasNode frame : frames) {
 			for( Skeleton skeleton : frame.getSkeletonKeys().keySet() ) {
-				skeleton.calcKeyMatrices(frame.getSkeletonKey(skeleton));			
-			}
-		}
-		for(int i=0; i<frames.size(); i++) {
-			for( Skeleton skeleton : frames.get(i).getSkeletonKeys().keySet() ) {
-				skeleton.setupTweening(frames, i);
+				skeleton.setupTweening(frame.getSkeletonKey(skeleton));
 				
 			}			
 		}
-		for( Skeleton skeleton : frames.get(0).getSkeletonKeys().keySet() ) {
-			skeleton.setupLimbTweening(frames);
+		for(CanvasNode frame : frames) {
+			for( Skeleton skeleton : frame.getSkeletonKeys().keySet() ) {
+				skeleton.setupLimbTweening(frame);
+			}
 		}
 	}
 	
