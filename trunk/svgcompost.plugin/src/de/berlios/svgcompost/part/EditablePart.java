@@ -177,7 +177,9 @@ public class EditablePart extends AbstractGraphicalEditPart implements PropertyC
 
 	public void propertyChange(PropertyChangeEvent evt) {
 		String prop = evt.getPropertyName();
-		if ( SVGNode.TRANSFORM.equals(prop) ) {
+		if( SVGNode.TRANSFORM.equals(prop) ||
+			SVGNode.XML_ATTRIBUTE.equals(prop)
+		) {
 			refreshVisuals();
 		}
 	}

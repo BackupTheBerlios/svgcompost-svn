@@ -13,17 +13,23 @@ import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.svggen.SVGGeneratorContext;
 import org.apache.batik.svggen.SVGTransform;
 import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.IPropertySource;
+import org.eclipse.ui.views.properties.PropertyDescriptor;
+import org.eclipse.ui.views.properties.TextPropertyDescriptor;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import de.berlios.svgcompost.freetransform.FreeTransformHelper;
 
-public class SVGNode {
+public class SVGNode  implements IPropertySource {
 
 	public static final String TRANSFORM = "Element.Transform";
 	public static final String INSERT = "Element.Insert";
 	public static final String REMOVE = "Element.Remove";
 	public static final String CHANGE_ORDER = "Element.Move";
+	public static final String XML_ATTRIBUTE = "Element.Attribute";
 
 	private transient PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
@@ -169,5 +175,36 @@ public class SVGNode {
 		else
 			element.insertBefore(movedElement, editableElements.get(newIndex+1).getElement());
 		firePropertyChange(CHANGE_ORDER, oldIndex, newIndex);
+	}
+
+	public Object getEditableValue() {
+		return this;
+	}
+	public IPropertyDescriptor[] getPropertyDescriptors() {
+		IPropertyDescriptor[] propertyDescriptors = new IPropertyDescriptor[element.getAttributes().getLength()];
+		for (int i=0;i<element.getAttributes().getLength();i++) {				
+			Attr attribute = (Attr) element.getAttributes().item(i);
+			PropertyDescriptor descriptor = new TextPropertyDescriptor(attribute.getName(),attribute.getName());
+			int delimIndex = attribute.getName().indexOf(':');
+			descriptor.setCategory( delimIndex == -1 ? "no namespace" :  attribute.getName().substring(0, delimIndex));
+			propertyDescriptors[i] = descriptor;
+		}
+		return propertyDescriptors;
+
+	}
+	public Object getPropertyValue(Object name) {
+		return element.getAttribute((String) name);
+	}
+	public boolean isPropertySet(Object id) {
+		return element.hasAttribute((String)id);
+	}
+	public void resetPropertyValue(Object id) {
+	}
+	public void setPropertyValue(Object name, Object value) {
+		String oldValue = element.getAttribute((String) name);
+		element.setAttribute((String) name, (String) value);
+		String newValue = element.getAttribute((String) name);
+		if( ! oldValue.equals(newValue) )
+			firePropertyChange(XML_ATTRIBUTE, oldValue, newValue);
 	}
 }

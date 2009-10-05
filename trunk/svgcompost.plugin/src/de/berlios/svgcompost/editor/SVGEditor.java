@@ -75,6 +75,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+import org.eclipse.ui.views.properties.PropertySheetPage;
 import org.w3c.dom.Element;
 import org.w3c.dom.svg.SVGDocument;
 
@@ -111,6 +112,7 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette implements IDoub
 
 	
 	private SVGTreeOutlinePage outline;
+	private PropertySheetPage propertySheetPage;
 	
 	private SingleLevelFactory factory;
 	
@@ -338,27 +340,35 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette implements IDoub
 	public boolean isSaveAsAllowed() {
 		return true;
 	}
-
-	@Override
-	public void doubleClick(DoubleClickEvent event) {
-		ISelection selection = event.getSelection();
+	
+	public Element getFirstSelectedElement(ISelection selection) {
 		if( selection instanceof StructuredSelection ) {
 			StructuredSelection structured = (StructuredSelection) selection;
 			Object selected = structured.getFirstElement();
 			Element element = null;
 			if( selected instanceof Element )
 				element = (Element) selected;
-			GraphicalViewer viewer = getGraphicalViewer();
-			EditPart part = (EditPart) viewer.getEditPartRegistry().get(element);
-			if( part != null ) {
-				List<EditPart> children = viewer.getRootEditPart().getChildren();
-				if( children.size() > 0 && children.get(0) instanceof BackgroundPart )
-					((BackgroundPart)children.get(0)).setEditRoot( (SVGNode) ((EditablePart)viewer.getEditPartRegistry().get(element)).getModel() );
-				viewer.setSelection( new StructuredSelection(part) );
-			}
-			else
-				viewer.setSelection( new StructuredSelection() );
+			else if( selected instanceof EditPart )
+				element = ( (SVGNode) ( (EditPart)selected ).getModel() ).getElement();
+			return element;
 		}
+		return null;
+	}
+
+	@Override
+	public void doubleClick(DoubleClickEvent event) {
+		ISelection selection = event.getSelection();
+		Element element = getFirstSelectedElement(selection);
+		GraphicalViewer viewer = getGraphicalViewer();
+		if( element != null ) {
+			EditPart part = (EditPart) viewer.getEditPartRegistry().get(element);
+			List<EditPart> children = viewer.getRootEditPart().getChildren();
+			if( children.size() > 0 && children.get(0) instanceof BackgroundPart )
+				((BackgroundPart)children.get(0)).setEditRoot( (SVGNode) ((EditablePart)viewer.getEditPartRegistry().get(element)).getModel() );
+			viewer.setSelection( new StructuredSelection(part) );
+		}
+		else
+			viewer.setSelection( new StructuredSelection() );
 	}
 
 
