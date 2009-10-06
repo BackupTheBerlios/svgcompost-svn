@@ -104,7 +104,7 @@ public class CanvasNode {
 //		return getCanvasNode( (GraphicsNode) ((CompositeGraphicsNode)gNode).get( i ), canvas );
 //	}
 	
-	public ArrayList<CanvasNode> getChildListCopy() {
+	public ArrayList<CanvasNode> getChildren() {
 		List<GraphicsNode> children = getGraphicsNodeList();
 		ArrayList<CanvasNode> childList = new ArrayList<CanvasNode>();
 		for( int i=0; i<children.size(); i++ )

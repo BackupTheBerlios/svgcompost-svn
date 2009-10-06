@@ -22,7 +22,7 @@ public class Bone {
 	
 	protected String name;
 	protected Bone parent;
-	protected List<Bone> children;
+	protected List<Bone> children = new ArrayList<Bone>();
 	protected Skeleton skeleton;
 	protected int level;
 	
@@ -52,6 +52,10 @@ public class Bone {
 		return children.size();
 	}
 	
+	public List<Bone> getBones() {
+		return children;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -74,8 +78,8 @@ public class Bone {
 			subtractFromMatrix( keyframeLink.getNodeForBone(skeleton).getGlobalTransform(), keyMatrix );
 		keyNode.getBoneKey().setKeyMatrix(keyMatrix);
 		
-		for (int i = 0; i < size(); i++)
-			get(i).calcKeyMatrices( keyframeLink );
+		for (Bone bone : children)
+			bone.calcKeyMatrices( keyframeLink );
 	}
 	
 	public void setupTweening( SkeletonKey keyframeLink ) {
@@ -93,8 +97,8 @@ public class Bone {
 		
 		boneKey.getTweener().load( boneKey.getKeyMatrix(), nextBoneKey.getKeyMatrix() );
 		
-		for (int i = 0; i < size(); i++)
-			get(i).setupTweening( keyframeLink );
+		for (Bone bone : children)
+			bone.setupTweening( keyframeLink );
 	}
 	
 	public void tween( SkeletonKey tweeningKeyLink, SkeletonKey activeKeyLink, double percentage ) {
@@ -119,8 +123,8 @@ public class Bone {
 
 		keyNode.setTransform( tween );
 		
-		for (int i = 0; i < size(); i++)
-			get(i).tween( tweeningKeyLink, activeKeyLink, percentage );
+		for (Bone bone : children)
+			bone.tween( tweeningKeyLink, activeKeyLink, percentage );
 	}
 	
 
@@ -212,8 +216,8 @@ public class Bone {
 	
 	protected String toString( int level ) {
 		String string = "";
-		for (int i = 0; i < size(); i++) {
-			string += get( i ).toString( level + 1 );
+		for (Bone bone : children) {
+			string += bone.toString( level + 1 );
 		}
 //		string = string.replaceAll( "\n", "\n  " );
 		String start = "";

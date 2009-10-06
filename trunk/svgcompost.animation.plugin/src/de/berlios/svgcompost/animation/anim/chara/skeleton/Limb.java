@@ -196,15 +196,15 @@ public class Limb {
 	 * @param alignWith
 	 */
 	public static void alignWithPoint(CanvasNode node, Point2D.Float alignPoint, Point2D.Float alignWith) {
-		log.debug("alignWith = "+alignWith);
+		log.trace("alignWith = "+alignWith);
 		Point2D.Float center = node.projectCenterToLocal( node.getParent() );
 		Point2D.Float alignPointOnParent = node.projectPointToLocal( alignPoint, node.getParent() );
 		Polar alignPointPolar = Polar.fromCartesianDiff( center, alignPointOnParent );
-		log.debug("alignPointPolar = "+alignPointPolar);
+		log.trace("alignPointPolar = "+alignPointPolar);
 		Polar alignWithPolar = Polar.fromCartesianDiff( center, alignWith );
-		log.debug("alignWithPolar = "+alignWithPolar);
+		log.trace("alignWithPolar = "+alignWithPolar);
 		float angle = alignWithPolar.a - alignPointPolar.a;
-		log.debug("angle = "+angle);
+		log.trace("angle = "+angle);
 		float x = node.getX();
 		float y = node.getY();
 		AffineTransform trafo = AffineTransform.getTranslateInstance( -x, -y );

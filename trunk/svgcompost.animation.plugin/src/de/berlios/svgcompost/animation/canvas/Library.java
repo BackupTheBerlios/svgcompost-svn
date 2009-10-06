@@ -25,15 +25,18 @@ import de.berlios.svgcompost.animation.anim.chara.skeleton.SkeletonKey;
 import de.berlios.svgcompost.animation.anim.composite.Parallel;
 import de.berlios.svgcompost.animation.anim.composite.Sequence;
 import de.berlios.svgcompost.animation.anim.easing.Quadratic;
+import de.berlios.svgcompost.animation.timeline.Keyframe;
+import de.berlios.svgcompost.animation.timeline.Layer;
+import de.berlios.svgcompost.animation.timeline.Timeline;
 
 public class Library {
 	
 	private static Logger log = Logger.getLogger(Library.class);
 
-	public static final String inkscapeURI = "http://www.inkscape.org/namespaces/inkscape";
-//	public static final NameSpace inkscapeNS = new NameSpace( "inkscape", inkscapeURI );
-	public static final String groupmode = "groupmode";
-	public static final String layer = "layer";
+	public static final String INKSCAPE_URI = "http://www.inkscape.org/namespaces/inkscape";
+//	public static final NameSpace inkscapeNS = new NameSpace( "inkscape", INKSCAPE_URI );
+	public static final String INKSCAPE_GROUPMODE = "INKSCAPE_GROUPMODE";
+	public static final String INKSCAPE_LAYER = "INKSCAPE_LAYER";
 
 	protected Canvas libraryCanvas;
 
@@ -41,6 +44,50 @@ public class Library {
 	
 	public Library( Canvas canvas ) {
 		this.libraryCanvas = canvas;
+	}
+	
+	public Timeline createTimeline() {
+		CanvasNode root = libraryCanvas.renderDocument(libraryCanvas.getSourceDoc());
+		log.debug("Library.createTimeline( "+root.getSize()+" )");
+		Canvas canvas = root.getCanvas();
+		Timeline timeline = new Timeline();
+		for (CanvasNode node : root.getChildren()) {
+			Element element = canvas.getSourceCtx().getElement( node.getGraphicsNode() );
+			log.debug( "element = "+element.getAttribute("id") );
+			if( element != null && element.getAttributeNS( INKSCAPE_URI, INKSCAPE_GROUPMODE ).equals( INKSCAPE_LAYER ) ) {
+				Layer layer = createLayer( node );
+				timeline.addLayer(layer);
+			}
+		}
+		return timeline;
+	}
+	
+	public static Layer createLayer( CanvasNode root ) {
+		Canvas canvas = root.getCanvas();
+		Layer layer = new Layer();
+		for (CanvasNode node : root.getChildren()) {
+			Element element = canvas.getSourceCtx().getElement( node.getGraphicsNode() );
+			if( element != null && hasClass( element, "keyframe" ) ) {
+				double time = 0;
+				try {
+					time = Double.parseDouble(element.getAttribute("time"));
+				}catch (Exception e) {
+				}
+				Keyframe keyframe = new Keyframe( node, time );
+				layer.addKeyframe(keyframe);
+			}
+		}
+		return layer;
+	}
+	
+	public static boolean hasClass( Element element, String className ) {
+		String classAtt = element.getAttribute("class");
+		String[] classes = classAtt.split(" ");
+		for (int i = 0; i < classes.length; i++) {
+			if( classes[i].equals( className ) )
+				return true;
+		}
+		return false;
 	}
 	
 	/**
@@ -102,7 +149,7 @@ public class Library {
 	public Parallel createWalkAnim( CanvasNode stage, String posesId, String modelName, Point2D.Float start, Point2D.Float end ) {
 		Skeleton model = getModel(modelName);
 		CanvasNode posesNode = stage.addSymbolInstance(posesId, posesId);
-		List<CanvasNode> keyframes = posesNode.getChildListCopy();
+		List<CanvasNode> keyframes = posesNode.getChildren();
 
 		// Apply skeleton to all keyframes.
 		Map<Skeleton,SkeletonKey> skeletonKeys = null;
@@ -121,34 +168,30 @@ public class Library {
 		int lastKeyframe = numberOfKeyframes-1;
 		
 		// Set up limb tweening for all keyframes.
+		// The transformation of the feet and body will mess up the the limb positions,
+		// so they need to be saved in advance.
 		for(CanvasNode keyframe : keyframes) {
 			for( Skeleton skeleton : keyframe.getSkeletonKeys().keySet() )
 				skeleton.setupLimbTweening(keyframe);
 		}
 
+		// Transform the original start and end location of the walk to the new ones.
 		Point2D.Float originalStart = calcCenterPoint( feet, keyframes.get(0), posesNode );
 		Point2D.Float originalEnd = calcCenterPoint( feet, keyframes.get(lastKeyframe), posesNode );
 		AffineTransform trafo = skewYbyXscaleX( originalStart, start, originalEnd, end );
 		
-		Point2D.Float xy_new = new Point2D.Float();
-		for( int i=0; i<model.size(); i++ ) {
-			Bone topLevelBone = model.get(i);
-			log.debug("topLevelBone: "+topLevelBone.getName());
-			for( int j=0; j<numberOfKeyframes; j++ ) {
-				SkeletonKey frameLink = keyframes.get(j).getSkeletonKey(model); 
+		// Use the transform to change the position of all bones in the keyframes,
+		// starting from the top level bones (usually body and feet).
+		Point2D.Float xy = null;
+		for(CanvasNode keyframe : keyframes) {
+			for( Bone topLevelBone : model.getBones() ) {
+				SkeletonKey frameLink = keyframe.getSkeletonKey(model); 
 				CanvasNode node = frameLink.getNodeForBone(topLevelBone);
-				Point2D.Float xy = node.getLocalXY( posesNode );
-				trafo.transform(xy, xy_new);
-				// TODO: read the position the connectors connect to BEFORE the feet get moved
-				topLevelBone.setRecursiveLocalXY(xy_new, frameLink, posesNode);
+				xy = node.getLocalXY( posesNode );
+				trafo.transform(xy,xy);
+				topLevelBone.setRecursiveLocalXY(xy, frameLink, posesNode);
 			}
 		}
-		
-		CanvasNode startRect = stage.addSymbolInstance("redrect", "start");
-		trafo.transform(originalStart, xy_new);
-		startRect.setLocalXY(xy_new, posesNode);
-		log.debug("start transformed: "+xy_new);
-		log.debug("startRect.getGlobalXY(): "+startRect.getGlobalXY());
 
 		Parallel par = new Parallel();
 		HashMap<String,Skeleton> modelsByName = extractModelsFromDeclaration( keyframes.get( 0 ) );
@@ -213,7 +256,7 @@ public class Library {
 	}
 
 	/**
-	 * Parses an SVG element to determine its layer children, which are
+	 * Parses an SVG element to determine its INKSCAPE_LAYER children, which are
 	 * interpreted as animation frames.
 	 * @param symbolId
 	 * @return
@@ -231,7 +274,7 @@ public class Library {
 			Node node = list.item( i );
 			if( node instanceof Element ) {
 				Element child = (Element) node;
-				if( child.getAttributeNS( inkscapeURI, groupmode ).equals( layer ) ) {
+				if( child.getAttributeNS( INKSCAPE_URI, INKSCAPE_GROUPMODE ).equals( INKSCAPE_LAYER ) ) {
 					layerIds.add( child.getAttribute( "id" ) );
 				}
 			}

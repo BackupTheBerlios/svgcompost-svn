@@ -2,7 +2,6 @@ package de.berlios.svgcompost.animation;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
 
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.log4j.Logger;
@@ -10,7 +9,6 @@ import org.apache.log4j.Logger;
 import de.berlios.svgcompost.animation.anim.composite.Parallel;
 import de.berlios.svgcompost.animation.anim.composite.Scene;
 import de.berlios.svgcompost.animation.canvas.Canvas;
-import de.berlios.svgcompost.animation.canvas.CanvasNode;
 import de.berlios.svgcompost.animation.export.Export;
 import de.berlios.svgcompost.animation.export.binary.FlagstoneExport;
 

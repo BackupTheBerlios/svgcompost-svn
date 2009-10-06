@@ -164,18 +164,27 @@ public class Canvas {
 		return null;
 	}
 	
+	public CanvasNode renderDocument( SVGDocument document ) {
+		return insertSymbolNode( getRoot(), document.getRootElement(), document.getRootElement().getAttribute("id") );
+	}
+	
 	public CanvasNode insertSymbolNode( CanvasNode cNode, String symbolId, String name ) {
+		Element element = sourceDoc.getElementById( symbolId );
+		if( element == null ) {
+			log.error( "Couldn't find element for ID: "+symbolId );
+			return null;
+		}
+		return insertSymbolNode(cNode, element, name);
+	}
+	
+	protected CanvasNode insertSymbolNode( CanvasNode cNode, Element element, String name ) {
 		GraphicsNode parent = cNode.getGraphicsNode();
 		if( parent == null ) {
 			return null;
 		}
+		String symbolId = element.getAttribute("id");
 		if( parent instanceof CompositeGraphicsNode ) {
 			CompositeGraphicsNode group = (CompositeGraphicsNode) parent;
-			Element element = sourceDoc.getElementById( symbolId );
-			if( element == null ) {
-				log.error( "Couldn't find element for ID: "+symbolId );
-				return null;
-			}
 			if( element.getAttribute("display").equals("none") ) {
 				log.warn("Display was set to 'none' for symbol: "+symbolId+". Set to 'inline'.");
 				element.setAttribute("display","inline");

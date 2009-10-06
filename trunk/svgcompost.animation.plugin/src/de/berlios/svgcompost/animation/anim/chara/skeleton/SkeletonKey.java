@@ -77,13 +77,8 @@ public class SkeletonKey {
 		for(CanvasNode frame : frames) {
 			for( Skeleton skeleton : frame.getSkeletonKeys().keySet() ) {
 				skeleton.setupTweening(frame.getSkeletonKey(skeleton));
-				
-			}			
-		}
-		for(CanvasNode frame : frames) {
-			for( Skeleton skeleton : frame.getSkeletonKeys().keySet() ) {
 				skeleton.setupLimbTweening(frame);
-			}
+			}			
 		}
 	}
 	
