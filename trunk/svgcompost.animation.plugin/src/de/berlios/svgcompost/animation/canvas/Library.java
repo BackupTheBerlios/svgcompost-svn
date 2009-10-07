@@ -17,12 +17,14 @@ import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.svg.SVGElement;
 import org.w3c.dom.svg.SVGStylable;
 
+import de.berlios.svgcompost.animation.anim.Anim;
 import de.berlios.svgcompost.animation.anim.chara.skeleton.Bone;
 import de.berlios.svgcompost.animation.anim.chara.skeleton.KeyframeAnim;
 import de.berlios.svgcompost.animation.anim.chara.skeleton.Skeleton;
 import de.berlios.svgcompost.animation.anim.chara.skeleton.SkeletonFactory;
 import de.berlios.svgcompost.animation.anim.chara.skeleton.SkeletonKey;
 import de.berlios.svgcompost.animation.anim.composite.Parallel;
+import de.berlios.svgcompost.animation.anim.composite.Scene;
 import de.berlios.svgcompost.animation.anim.composite.Sequence;
 import de.berlios.svgcompost.animation.anim.easing.Quadratic;
 import de.berlios.svgcompost.animation.timeline.Keyframe;
@@ -46,11 +48,47 @@ public class Library {
 		this.libraryCanvas = canvas;
 	}
 	
+	public Anim createAnimsForTimeline( Timeline timeline ) {
+		Scene scene = new Scene( timeline.getCanvas() );
+		for (Layer layer : timeline.getLayers()) {
+			scene.addAnim(createAnimsForLayer(layer));
+		}
+		return scene;
+	}
+	
+	public Parallel createAnimsForLayer( Layer layer ) {
+		Parallel par = new Parallel();
+		
+		Map<Skeleton,SkeletonKey> skeletonKeys = null;
+		for (Keyframe keyframe : layer.getKeyframes()) {
+			HashMap<String,Skeleton> modelsByName = extractModelsFromDeclaration( keyframe.getNode() );
+			for(Skeleton skeleton : modelsByName.values()) {
+				keyframe.getNode().applySkeleton(skeleton, skeletonKeys);
+			}
+			skeletonKeys = keyframe.getNode().getSkeletonKeys();
+		}
+		
+			
+		for (Keyframe keyframe : layer.getKeyframes()) {
+			for(Skeleton skeleton : keyframe.getNode().getSkeletonKeys().keySet()) {
+				skeleton.setupTweening(keyframe.getNode().getSkeletonKey(skeleton));
+				skeleton.setupLimbTweening(keyframe.getNode());
+			}
+		}
+	
+		for(Keyframe keyframe : layer.getKeyframes())
+			keyframe.getNode().setVisible(false);
+		
+		return par;
+	}
+
+	
 	public Timeline createTimeline() {
 		CanvasNode root = libraryCanvas.renderDocument(libraryCanvas.getSourceDoc());
 		log.debug("Library.createTimeline( "+root.getSize()+" )");
 		Canvas canvas = root.getCanvas();
 		Timeline timeline = new Timeline();
+		timeline.setCanvas(libraryCanvas);
 		for (CanvasNode node : root.getChildren()) {
 			Element element = canvas.getSourceCtx().getElement( node.getGraphicsNode() );
 			log.debug( "element = "+element.getAttribute("id") );
@@ -130,7 +168,7 @@ public class Library {
 	 */
 	private static KeyframeAnim createTweeningAnim(Skeleton model, List<CanvasNode> keyframes, int key) {
 		CanvasNode keyframe = keyframes.get(key);
-		KeyframeAnim tweenAnim = new KeyframeAnim( model, keyframes, key, keyframe, keyframes.get(key+1) );
+		KeyframeAnim tweenAnim = new KeyframeAnim( model, /*keyframes, key,*/ keyframe, keyframes.get(key+1) );
 		SVGElement frameElement = (SVGElement) keyframe.getCanvas().getSourceDoc().getElementById( keyframe.getSymbolId() );
 		String duration = frameElement.getAttribute( "duration" );
 		if( duration == null || duration.equals( "" ) )
@@ -316,19 +354,19 @@ public class Library {
 		HashMap<String,Skeleton> modelsByName = new HashMap<String,Skeleton>();
 		SVGElement frameElement = (SVGElement) referencingFrame.getCanvas().getSourceDoc().getElementById( referencingFrame.getSymbolId() );
 		String modelReference = frameElement.getAttribute("model");
-		
 		if( modelReference == null || "".equals( modelReference ) ) {
-			log.error( "couldn't find 'model' declaration in first keyframe: "+referencingFrame.getName() );
+			log.error( "couldn't find 'model' declaration in keyframe: "+referencingFrame.getName() );
 			return modelsByName;
 		}
 		log.debug("Found model declaration: "+modelReference);
+		String[] skeletons = modelReference.split(" ");
 		
-		String modelName = modelReference;
-		Skeleton model = getModel(modelName);
-//		log.debug( "model: "+model );
-		modelsByName.put( model.getName(), model );
-		// TODO: add support for several models
-		// TODO: make the modelsByName list global
+		for (int i = 0; i < skeletons.length; i++) {
+			String modelName = skeletons[i];
+			Skeleton model = getModel(modelName);
+//			log.debug( "model: "+model );
+			modelsByName.put( model.getName(), model );
+		}
 		return modelsByName;
 	}
 	

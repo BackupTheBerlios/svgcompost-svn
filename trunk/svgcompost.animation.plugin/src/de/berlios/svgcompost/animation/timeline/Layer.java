@@ -6,8 +6,22 @@ import java.util.List;
 
 public class Layer {
 	
+	private Timeline timeline;
+	
 	private List<Keyframe> keyframes = new ArrayList<Keyframe>();
 
+	public Timeline getTimeline() {
+		return timeline;
+	}
+	
+	public void setTimeline(Timeline timeline) {
+		this.timeline = timeline;
+	}
+	
+	public List<Keyframe> getKeyframes() {
+		return keyframes;
+	}
+	
 	public Keyframe getKeyframeAt( double time ) {
 		int index = Collections.binarySearch(keyframes, new Keyframe(null,time));
 		if( index == -1 )

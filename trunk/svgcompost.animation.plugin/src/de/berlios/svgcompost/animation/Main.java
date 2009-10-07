@@ -45,6 +45,9 @@ public class Main {
 		
 //		ArrayList<String> layerIds = SvgDocumentParser.parseSvgDocument(doc);
 		
+//		Timeline timeline = canvas.getLibrary().createTimeline();
+//		Anim anim = canvas.getLibrary().createAnimsForTimeline(timeline);
+		
 		
 		Scene scene = new Scene( canvas );
 		canvas.getRoot().setXY(canvas.width/2, canvas.height/2);

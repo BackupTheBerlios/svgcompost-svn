@@ -1,11 +1,8 @@
 package de.berlios.svgcompost.animation.anim.chara.skeleton;
 
-import java.util.List;
-
 import org.apache.log4j.Logger;
 
 import de.berlios.svgcompost.animation.anim.Anim;
-import de.berlios.svgcompost.animation.anim.chara.skeleton.Skeleton;
 import de.berlios.svgcompost.animation.anim.easing.Easing;
 import de.berlios.svgcompost.animation.canvas.CanvasNode;
 
@@ -20,22 +17,24 @@ public class KeyframeAnim extends Anim {
 
 	private static Logger log = Logger.getLogger(KeyframeAnim.class);
 
-	protected int tweeningPairIndex;
+//	protected int tweeningPairIndex;
 	protected Skeleton model;
 	protected CanvasNode frame1;
 	protected CanvasNode frame2;
 	protected boolean switchActiveFrame = false;
-	protected List<CanvasNode> frames;
+//	protected List<CanvasNode> frames;
 	
-	protected int activeKey;
-	protected int inactiveKey;
+//	protected int activeKey;
+//	protected int inactiveKey;
+	protected CanvasNode activeKey;
+	protected CanvasNode inactiveKey;
 	
-	public KeyframeAnim(Skeleton model, List<CanvasNode> frames, int tweeningPairIndex, CanvasNode frame1, CanvasNode frame2) {
+	public KeyframeAnim(Skeleton model, /*List<CanvasNode> frames, int tweeningPairIndex,*/ CanvasNode frame1, CanvasNode frame2) {
 		this.model = model;
-		this.tweeningPairIndex = tweeningPairIndex;
+//		this.tweeningPairIndex = tweeningPairIndex;
 		this.frame1 = frame1;
 		this.frame2 = frame2;
-		this.frames = frames;
+//		this.frames = frames;
 	}
 
 	@Override
@@ -62,20 +61,23 @@ public class KeyframeAnim extends Anim {
 			setActiveFrame( percentage < 0.5 );
 		}
 		
-		SkeletonKey.tween(frames.get(tweeningPairIndex), frames.get(activeKey), percentage);
+//		SkeletonKey.tween(frames.get(tweeningPairIndex), frames.get(activeKey), percentage);
+		SkeletonKey.tween(frame1, activeKey, percentage);
 	}
 	
 	protected void setActiveFrame( boolean firstFrameActive ) {
 		if( firstFrameActive ) {
-			activeKey = tweeningPairIndex;
-			inactiveKey = tweeningPairIndex+1;
+			activeKey = frame1; //tweeningPairIndex;
+			inactiveKey = frame2; //tweeningPairIndex+1;
 		}
 		else {
-			activeKey = tweeningPairIndex+1;
-			inactiveKey = tweeningPairIndex;
+			activeKey = frame2; //tweeningPairIndex+1;
+			inactiveKey = frame1; //tweeningPairIndex;
 		}
-		frames.get(activeKey).setVisible(true);
-		frames.get(inactiveKey).setVisible(false);
+//		frames.get(activeKey).setVisible(true);
+//		frames.get(inactiveKey).setVisible(false);
+		activeKey.setVisible(true);
+		inactiveKey.setVisible(false);
 	}
 	
 	@Override

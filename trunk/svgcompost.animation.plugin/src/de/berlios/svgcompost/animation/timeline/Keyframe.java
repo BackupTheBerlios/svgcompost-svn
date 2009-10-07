@@ -23,6 +23,10 @@ public class Keyframe implements Comparable<Keyframe> {
 		return time;
 	}
 
+	public CanvasNode getNode() {
+		return node;
+	}
+
 	@Override
 	public int compareTo(Keyframe keyframe) {
 		if( keyframe.getTime() < time )
