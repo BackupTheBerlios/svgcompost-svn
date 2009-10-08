@@ -36,7 +36,7 @@ public class Layer {
 	public int addKeyframe( Keyframe keyframe ) {
 		int index = Collections.binarySearch(keyframes, keyframe);
 		if( index >= 0 ) {
-			while( index <= keyframes.size() && keyframes.get(index).getTime() <= keyframe.getTime() )
+			while( index < keyframes.size() && keyframes.get(index).getTime() <= keyframe.getTime() )
 				index ++;
 		}
 		else {

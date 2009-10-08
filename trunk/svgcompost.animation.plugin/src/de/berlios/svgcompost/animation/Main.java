@@ -2,6 +2,7 @@ package de.berlios.svgcompost.animation;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.log4j.Logger;
@@ -11,6 +12,7 @@ import de.berlios.svgcompost.animation.anim.composite.Scene;
 import de.berlios.svgcompost.animation.canvas.Canvas;
 import de.berlios.svgcompost.animation.export.Export;
 import de.berlios.svgcompost.animation.export.binary.FlagstoneExport;
+import de.berlios.svgcompost.animation.timeline.Timeline;
 
 public class Main {
 
@@ -19,7 +21,7 @@ public class Main {
 //	public static String infile = "res/elfy-walk-connect.svg";
 //	public static String infile = "res/hansel-scene-02.svg";
 
-	public static String infile = "res/elfy-walk-connect-layers.svg";
+	public static String infile = "res/elfy-timeline-layers-keyframe.svg";
 //	public static String infile = "res/steps.svg";
 
 //	public static String placeObject = "elfyEar";
@@ -45,7 +47,7 @@ public class Main {
 		
 //		ArrayList<String> layerIds = SvgDocumentParser.parseSvgDocument(doc);
 		
-//		Timeline timeline = canvas.getLibrary().createTimeline();
+		Timeline timeline = canvas.getLibrary().createTimeline();
 //		Anim anim = canvas.getLibrary().createAnimsForTimeline(timeline);
 		
 		
@@ -70,7 +72,8 @@ public class Main {
 		
 		Point2D.Float start = new Point2D.Float(-50,-200);
 		Point2D.Float end = new Point2D.Float(50,-200);
-		Parallel par = canvas.getLibrary().createWalkAnim(canvas.getRoot(), "elfyWalkPoses", "elfy", start, end);
+//		Parallel par = canvas.getLibrary().createWalkAnim(canvas.getRoot(), "elfyWalkPoses", "elfy", start, end);
+		Parallel par = canvas.getLibrary().createWalkAnim(timeline.getLayers().get(0), "elfy", start, end);
 		scene.addAnim(par);
 		scene.setDurationInSeconds(10);
 		

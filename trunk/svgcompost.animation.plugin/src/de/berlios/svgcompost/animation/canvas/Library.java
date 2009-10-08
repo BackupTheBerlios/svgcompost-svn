@@ -40,12 +40,14 @@ public class Library {
 	public static final String INKSCAPE_GROUPMODE = "INKSCAPE_GROUPMODE";
 	public static final String INKSCAPE_LAYER = "INKSCAPE_LAYER";
 
+	protected Canvas stage;
 	protected Canvas libraryCanvas;
 
 	protected HashMap<String,Skeleton> models = new HashMap<String,Skeleton>();
 	
-	public Library( Canvas canvas ) {
-		this.libraryCanvas = canvas;
+	public Library( Canvas stage, Canvas libraryCanvas ) {
+		this.stage = stage;
+		this.libraryCanvas = libraryCanvas;
 	}
 	
 	public Anim createAnimsForTimeline( Timeline timeline ) {
@@ -84,7 +86,7 @@ public class Library {
 
 	
 	public Timeline createTimeline() {
-		CanvasNode root = libraryCanvas.renderDocument(libraryCanvas.getSourceDoc());
+		CanvasNode root = stage.renderDocument(stage.getSourceDoc());
 		log.debug("Library.createTimeline( "+root.getSize()+" )");
 		Canvas canvas = root.getCanvas();
 		Timeline timeline = new Timeline();
@@ -92,9 +94,13 @@ public class Library {
 		for (CanvasNode node : root.getChildren()) {
 			Element element = canvas.getSourceCtx().getElement( node.getGraphicsNode() );
 			log.debug( "element = "+element.getAttribute("id") );
-			if( element != null && element.getAttributeNS( INKSCAPE_URI, INKSCAPE_GROUPMODE ).equals( INKSCAPE_LAYER ) ) {
+			if( element != null && hasClass(element, "layer") ) {
+//			if( element != null && element.getAttributeNS( INKSCAPE_URI, INKSCAPE_GROUPMODE ).equals( INKSCAPE_LAYER ) ) {
 				Layer layer = createLayer( node );
 				timeline.addLayer(layer);
+			}
+			else {
+				node.setVisible(false);
 			}
 		}
 		return timeline;
@@ -110,6 +116,7 @@ public class Library {
 				try {
 					time = Double.parseDouble(element.getAttribute("time"));
 				}catch (Exception e) {
+					time = 1000;
 				}
 				Keyframe keyframe = new Keyframe( node, time );
 				layer.addKeyframe(keyframe);
@@ -117,6 +124,75 @@ public class Library {
 		}
 		return layer;
 	}
+
+	public Parallel createWalkAnim( Layer layer, String modelName, Point2D.Float start, Point2D.Float end ) {
+		Skeleton model = getModel(modelName);
+		List<Keyframe> keyframes = layer.getKeyframes();
+		return createWalkAnim(keyframes, model, start, end);
+	}
+	
+	public Parallel createWalkAnim( List<Keyframe> keyframes, Skeleton model, Point2D.Float start, Point2D.Float end ) {
+		// Apply skeleton to all keyframes.
+		Map<Skeleton,SkeletonKey> skeletonKeys = null;
+		for(Keyframe keyframe : keyframes) {
+			keyframe.getNode().applySkeleton(model,skeletonKeys);
+			skeletonKeys = keyframe.getNode().getSkeletonKeys();
+		}
+
+		// Make a list of 2 (or more) feet inside the skeleton. 
+		ArrayList<Bone> feet = new ArrayList<Bone>();
+		for( int i=0; i<model.connectorSize(); i++ ) {
+			feet.add( model.getConnector(i).getTarget() );
+		}
+
+		int numberOfKeyframes = keyframes.size();
+		int lastKeyframe = numberOfKeyframes-1;
+		
+		// Set up limb tweening for all keyframes.
+		// The transformation of the feet and body will mess up the the limb positions,
+		// so they need to be saved in advance.
+		for(Keyframe keyframe : keyframes) {
+			for( Skeleton skeleton : keyframe.getNode().getSkeletonKeys().keySet() )
+				skeleton.setupLimbTweening(keyframe.getNode());
+		}
+
+		// Transform the original start and end location of the walk to the new ones.
+		Point2D.Float originalStart = calcCenterPoint( feet, keyframes.get(0).getNode(), keyframes.get(0).getNode() );
+		Point2D.Float originalEnd = calcCenterPoint( feet, keyframes.get(lastKeyframe).getNode(), keyframes.get(lastKeyframe).getNode() );
+		AffineTransform trafo = skewYbyXscaleX( originalStart, start, originalEnd, end );
+		
+		// Use the transform to change the position of all bones in the keyframes,
+		// starting from the top level bones (usually body and feet).
+		Point2D.Float xy = null;
+		for(Keyframe keyframe : keyframes) {
+			for( Bone topLevelBone : model.getBones() ) {
+				SkeletonKey frameLink = keyframe.getNode().getSkeletonKey(model); 
+				CanvasNode node = frameLink.getNodeForBone(topLevelBone);
+				xy = node.getLocalXY( keyframe.getNode() );
+				trafo.transform(xy,xy);
+				topLevelBone.setRecursiveLocalXY(xy, frameLink, keyframe.getNode());
+			}
+		}
+
+		Parallel par = new Parallel();
+		HashMap<String,Skeleton> modelsByName = extractModelsFromDeclaration( keyframes.get( 0 ).getNode() );
+		HashMap<Skeleton,Sequence> seqsByModel = addSequencesForModels( par, modelsByName.values() );
+		
+		for(Keyframe frame : keyframes)
+			for( Skeleton skeleton : frame.getNode().getSkeletonKeys().keySet() )
+				skeleton.setupTweening(frame.getNode().getSkeletonKey(skeleton));
+
+//		createAnimsForLayer(layer);
+		for(int i=0; i<keyframes.size()-1; i++)
+			for(Skeleton skeleton : modelsByName.values())
+				seqsByModel.get(skeleton).addAnim( createTweeningAnim( skeleton, keyframes.get(i), keyframes.get(i+1) ) );
+	
+		for(Keyframe keyframe : keyframes)
+			keyframe.getNode().setVisible(false);
+		
+		return par;
+	}
+
 	
 	public static boolean hasClass( Element element, String className ) {
 		String classAtt = element.getAttribute("class");
@@ -134,6 +210,7 @@ public class Library {
 	 * @param keyframes
 	 * @return
 	 */
+	/*
 	public Parallel createAnimFromKeyframes( ArrayList<CanvasNode> keyframes ) {
 		Parallel par = new Parallel();
 		HashMap<String,Skeleton> modelsByName = extractModelsFromDeclaration( keyframes.get( 0 ) );
@@ -142,7 +219,7 @@ public class Library {
 		Map<Skeleton,SkeletonKey> skeletonKeys = null;
 		for(CanvasNode keyframe : keyframes) {
 			for(Skeleton skeleton : modelsByName.values())
-				keyframe./*getSkeletonKeys().*/applySkeleton(skeleton, skeletonKeys);
+				keyframe.applySkeleton(skeleton, skeletonKeys);
 			skeletonKeys = keyframe.getSkeletonKeys();
 		}
 			
@@ -157,6 +234,7 @@ public class Library {
 		
 		return par;
 	}
+	*/
 	
 	/**
 	 * Creates an animation for the specified model, from the specified keyframe in the given keyframe sequence
@@ -166,10 +244,9 @@ public class Library {
 	 * @param key
 	 * @return
 	 */
-	private static KeyframeAnim createTweeningAnim(Skeleton model, List<CanvasNode> keyframes, int key) {
-		CanvasNode keyframe = keyframes.get(key);
-		KeyframeAnim tweenAnim = new KeyframeAnim( model, /*keyframes, key,*/ keyframe, keyframes.get(key+1) );
-		SVGElement frameElement = (SVGElement) keyframe.getCanvas().getSourceDoc().getElementById( keyframe.getSymbolId() );
+	private static KeyframeAnim createTweeningAnim(Skeleton model, Keyframe keyframe1, Keyframe keyframe2) {
+		KeyframeAnim tweenAnim = new KeyframeAnim( model, /*keyframes, key,*/ keyframe1.getNode(), keyframe2.getNode() );
+		SVGElement frameElement = (SVGElement) keyframe1.getNode().getCanvas().getSourceDoc().getElementById( keyframe1.getNode().getSymbolId() );
 		String duration = frameElement.getAttribute( "duration" );
 		if( duration == null || duration.equals( "" ) )
 			tweenAnim.setDurationInSeconds( 1 );
@@ -180,10 +257,26 @@ public class Library {
 			tweenAnim.setEasing( Quadratic._inOut );
 		else
 			tweenAnim.setEasing( Quadratic._inOut );
-//		String align = frameElement.getAttribute( "align" );
 		return tweenAnim;
 	}
 
+	private static KeyframeAnim createTweeningAnim(Skeleton model, CanvasNode keyframe1, CanvasNode keyframe2) {
+		KeyframeAnim tweenAnim = new KeyframeAnim( model, /*keyframes, key,*/ keyframe1, keyframe2 );
+		SVGElement frameElement = (SVGElement) keyframe1.getCanvas().getSourceDoc().getElementById( keyframe1.getSymbolId() );
+		String duration = frameElement.getAttribute( "duration" );
+		if( duration == null || duration.equals( "" ) )
+			tweenAnim.setDurationInSeconds( 1 );
+		else
+			tweenAnim.setDurationInSeconds( Double.parseDouble( duration ) );
+		String easing = frameElement.getAttribute( "easing" );
+		if( easing == null || easing.equals( "" ) )
+			tweenAnim.setEasing( Quadratic._inOut );
+		else
+			tweenAnim.setEasing( Quadratic._inOut );
+		return tweenAnim;
+	}
+
+	//*
 	public Parallel createWalkAnim( CanvasNode stage, String posesId, String modelName, Point2D.Float start, Point2D.Float end ) {
 		Skeleton model = getModel(modelName);
 		CanvasNode posesNode = stage.addSymbolInstance(posesId, posesId);
@@ -241,13 +334,14 @@ public class Library {
 
 		for(int i=0; i<keyframes.size()-1; i++)
 			for(Skeleton skeleton : modelsByName.values())
-				seqsByModel.get(skeleton).addAnim( createTweeningAnim( skeleton, keyframes, i ) );
+				seqsByModel.get(skeleton).addAnim( createTweeningAnim( skeleton, keyframes.get(i), keyframes.get(i+1) ) );
 	
 		for(CanvasNode keyframe : keyframes)
 			keyframe.setVisible(false);
 		
 		return par;
 	}
+	//*/
 
 	public static AffineTransform skewYbyXscaleX( Point2D.Float a_old, Point2D.Float a_new, Point2D.Float b_old, Point2D.Float b_new ) {
 		Point2D.Float d_old = new Point2D.Float( b_old.x - a_old.x, b_old.y - a_old.y );
@@ -320,14 +414,14 @@ public class Library {
 		return layerIds;
 	}
 	
-	public Parallel createAnimFromKeyframeIds( CanvasNode stage, ArrayList<String> keyframeIds ) {
-		ArrayList<CanvasNode> keyframes = new ArrayList<CanvasNode>();
-		for (String keyframeId : keyframeIds) {
-			setDisplayAttributeToInline( stage.getCanvas().getSourceDoc().getElementById(keyframeId) );
-			keyframes.add( stage.addSymbolInstance( keyframeId, keyframeId ) );
-		}
-		return createAnimFromKeyframes( keyframes );
-	}
+//	public Parallel createAnimFromKeyframeIds( CanvasNode stage, ArrayList<String> keyframeIds ) {
+//		ArrayList<CanvasNode> keyframes = new ArrayList<CanvasNode>();
+//		for (String keyframeId : keyframeIds) {
+//			setDisplayAttributeToInline( stage.getCanvas().getSourceDoc().getElementById(keyframeId) );
+//			keyframes.add( stage.addSymbolInstance( keyframeId, keyframeId ) );
+//		}
+//		return createAnimFromKeyframes( keyframes );
+//	}
 	
 	/**
 	 * When editing keyframes, all but one are usually made invisible.

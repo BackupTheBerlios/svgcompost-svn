@@ -106,7 +106,7 @@ public class Canvas {
 	}
 
 	public void setLibrary( BridgeContext sourceCtx ) {
-		library = new Library( new Canvas( sourceCtx ) );
+		library = new Library( this, new Canvas( sourceCtx ) );
 	}
 	
 	public static Iterator getChildIterator( GraphicsNode parent ) {
