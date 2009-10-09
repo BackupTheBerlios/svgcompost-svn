@@ -34,15 +34,15 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.867874"
+     inkscape:zoom="1.3675"
      inkscape:cx="135.86721"
      inkscape:cy="247.565"
      inkscape:document-units="px"
      inkscape:current-layer="svg2"
-     inkscape:window-width="1440"
-     inkscape:window-height="842"
-     inkscape:window-x="0"
-     inkscape:window-y="26"
+     inkscape:window-width="962"
+     inkscape:window-height="743"
+     inkscape:window-x="31"
+     inkscape:window-y="0"
      showgrid="false" />
   <metadata
      id="metadata7">
@@ -394,79 +394,574 @@
         </g>
       </g>
     </g>
-  </g><g id="elfyWalkPoses" transform="translate(-63.83849,265.2611)" inkscape:label="#g1390" class="layer">
-      <g inkscape:label="frame1" id="g2411" inkscape:groupmode="layer" model="elfy" class="keyframe">
-        <g transform="translate(-9.844155,-30.81359)" inkscape:label="elfy" id="elfyPose1">
-          <path sodipodi:type="arc" style="opacity:1;fill:#ffd300;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" id="circle" sodipodi:cx="-2.5853996" sodipodi:cy="-4.8735819" sodipodi:rx="12.926998" sodipodi:ry="12.926998" d="M 10.341599,-4.8735819 A 12.926998,12.926998 0 1 1 -15.512398,-4.8735819 A 12.926998,12.926998 0 1 1 10.341599,-4.8735819 z" transform="matrix(0.7447681,0,0,0.7447681,1.9255231,3.62969)" inkscape:label="circle" />
-          <use inkscape:label="elfyLeftUpperArm" x="0" y="0" xlink:href="#elfyUpperArm" id="use3421" transform="matrix(0.254194,-0.250854,0.250854,0.254194,142.4319,-105.5381)" width="744.09448" height="1052.3622" />
-          <use x="0" y="0" xlink:href="#elfyLowerArm" id="use3425" transform="matrix(2.342359e-2,-0.356362,0.356362,2.342359e-2,174.081,-82.02944)" width="744.09448" height="1052.3622" inkscape:label="elfyLeftLowerArm" />
-          <use x="0" y="0" xlink:href="#elfyHand" id="use3427" transform="matrix(0.357131,0,0,0.357131,210.8136,-81.26157)" width="744.09448" height="1052.3622" inkscape:label="elfyLeftHand" />
-          <use x="0" y="0" xlink:href="#elfyNeck" id="use3431" transform="matrix(0.357131,0,0,0.357131,136.8365,-109.832)" width="744.09448" height="1052.3622" inkscape:label="elfyNeck" />
-          <use inkscape:label="elfyLeftEar" height="1052.3622" width="744.09448" transform="matrix(-0.275467,0.133327,0.155587,0.321458,150.4171,-146.4306)" id="use3435" xlink:href="#elfyEar" y="0" x="0" />
-          <use x="0" y="0" xlink:href="#elfyHead" id="use3437" transform="matrix(0.357131,0,0,0.357131,131.7346,-132.7904)" width="744.09448" height="1052.3622" inkscape:label="elfyHead" />
-          <use x="0" y="0" xlink:href="#elfyEar" id="use3439" transform="matrix(0.357131,0,0,0.357131,115.9188,-144.0146)" width="744.09448" height="1052.3622" inkscape:label="elfyRightEar" />
-          <use x="0" y="0" xlink:href="#elfyUpperLeg" id="use3443" transform="matrix(0.334802,-0.124299,0.124299,0.334802,149.2413,-65.39964)" width="744.09448" height="1052.3622" inkscape:label="elfyLeftUpperLeg" />
-          <use inkscape:label="elfyLeftFoot" x="0" y="0" xlink:href="#elfyFoot" id="use3449" transform="matrix(6.521601e-2,-0.351126,0.351126,6.521601e-2,166.6805,45.15043)" width="744.09448" height="1052.3622" />
-          <use x="0" y="0" xlink:href="#elfyToes" id="use3451" transform="matrix(-2.980196e-2,-0.355885,0.355885,-2.980196e-2,188.2341,55.04621)" width="744.09448" height="1052.3622" inkscape:label="elfyLeftToes" />
-          <use x="0" y="0" xlink:href="#elfyLowerLeg" id="use3453" transform="matrix(0.357131,0,0,0.357131,163.8108,-12.24512)" width="744.09448" height="1052.3622" inkscape:label="elfyLeftLowerLeg" />
-          <use x="0" y="0" xlink:href="#elfyBody" id="use3455" transform="matrix(0.357131,0,0,0.357131,134.2855,-73.60879)" width="744.09448" height="1052.3622" inkscape:label="elfyBody" />
-          <use x="0" y="0" xlink:href="#elfyUpperLeg" id="use3461" transform="matrix(0.357131,0,0,0.357131,128.6735,-61.87448)" width="744.09448" height="1052.3622" inkscape:label="elfyRightUpperLeg" />
-          <use x="0" y="0" xlink:href="#elfyFoot" id="use3467" transform="matrix(6.521601e-2,-0.351126,0.351126,6.521601e-2,131.0329,50.62124)" width="744.09448" height="1052.3622" inkscape:label="elfyRightFoot" />
-          <use x="0" y="0" xlink:href="#elfyToes" id="use3469" transform="matrix(-2.980196e-2,-0.355885,0.355885,-2.980196e-2,152.5866,60.51701)" width="744.09448" height="1052.3622" inkscape:label="elfyRightToes" />
-          <use x="0" y="0" xlink:href="#elfyLowerLeg" id="use3471" transform="matrix(0.357131,0,0,0.357131,128.1633,-6.774305)" width="744.09448" height="1052.3622" inkscape:label="elfyRightLowerLeg" />
-          <use inkscape:label="elfyRightUpperArm" height="1052.3622" width="744.09448" transform="matrix(0.357131,0,0,0.357131,114.3883,-105.7506)" id="use3475" xlink:href="#elfyUpperArm" y="0" x="0" />
-          <use inkscape:label="elfyRightLowerArm" height="1052.3622" width="744.09448" transform="matrix(0.357131,0,0,0.357131,114.3883,-71.56804)" id="use3479" xlink:href="#elfyLowerArm" y="0" x="0" />
-          <use inkscape:label="elfyRightHand" height="1052.3622" width="744.09448" transform="matrix(9.488965e-2,0.344294,-0.344294,9.488965e-2,118.7921,-35.36444)" id="use3481" xlink:href="#elfyHand" y="0" x="0" />
-        </g>
-      </g>
-      <g inkscape:groupmode="layer" id="layer2" inkscape:label="frame2" style="display:inline" class="keyframe">
-        <g transform="translate(-9.395513,-31.669625)" inkscape:label="elfy" id="g2261">
-          <use inkscape:label="elfyLeftUpperArm" x="0" y="0" xlink:href="#elfyUpperArm" id="use2263" transform="matrix(0.254194,-0.250854,0.250854,0.254194,182.76414,-105.79664)" width="744.09448" height="1052.3622" />
-          <use x="0" y="0" xlink:href="#elfyLowerArm" id="use2265" transform="matrix(2.342359e-2,-0.356362,0.356362,2.342359e-2,214.41324,-82.28798)" width="744.09448" height="1052.3622" inkscape:label="elfyLeftLowerArm" />
-          <use x="0" y="0" xlink:href="#elfyHand" id="use2267" transform="matrix(0.357131,0,0,0.357131,251.14584,-81.52011)" width="744.09448" height="1052.3622" inkscape:label="elfyLeftHand" />
-          <use x="0" y="0" xlink:href="#elfyNeck" id="use2269" transform="matrix(0.357131,0,0,0.357131,173.54918,-108.28076)" width="744.09448" height="1052.3622" inkscape:label="elfyNeck" />
-          <use inkscape:label="elfyLeftEar" height="1052.3622" width="744.09448" transform="matrix(-0.2347339,0.1963623,0.2291465,0.2739242,176.90473,-149.67062)" id="use2271" xlink:href="#elfyEar" y="0" x="0" />
-          <use x="0" y="0" xlink:href="#elfyHead" id="use2273" transform="matrix(0.357131,0,0,0.357131,160.174,-135.89288)" width="744.09448" height="1052.3622" inkscape:label="elfyHead" />
-          <use x="0" y="0" xlink:href="#elfyEar" id="use2275" transform="matrix(0.357131,0,0,0.357131,144.3582,-147.11708)" width="744.09448" height="1052.3622" inkscape:label="elfyRightEar" />
-          <use x="0" y="0" xlink:href="#elfyUpperLeg" id="use2277" transform="matrix(0.1525923,-0.3228904,0.3228904,0.1525923,177.58152,-62.12886)" width="744.09448" height="1052.3622" inkscape:label="elfyLeftUpperLeg" />
-          <use inkscape:label="elfyLeftFoot" x="0" y="0" xlink:href="#elfyFoot" id="use2279" transform="matrix(0.2330025,-0.2706518,0.2706518,0.2330025,190.33174,-10.132542)" width="744.09448" height="1052.3622" />
-          <use x="0" y="0" xlink:href="#elfyToes" id="use2281" transform="matrix(0.348123,7.9703284e-2,-7.9703284e-2,0.348123,195.67587,17.448053)" width="744.09448" height="1052.3622" inkscape:label="elfyLeftToes" />
-          <use x="0" y="0" xlink:href="#elfyLowerLeg" id="use2283" transform="matrix(0.1673444,0.3154971,-0.3154971,0.1673444,229.45725,-39.137643)" width="744.09448" height="1052.3622" inkscape:label="elfyLeftLowerLeg" />
-          <use x="0" y="0" xlink:href="#elfyBody" id="use2285" transform="matrix(0.357131,0,0,0.357131,173.0665,-68.955071)" width="744.09448" height="1052.3622" inkscape:label="elfyBody" />
-          <use x="0" y="0" xlink:href="#elfyUpperLeg" id="use2287" transform="matrix(0.3347687,0.1243883,-0.1243883,0.3347687,166.90031,-51.281407)" width="744.09448" height="1052.3622" inkscape:label="elfyRightUpperLeg" />
-          <use x="0" y="0" xlink:href="#elfyFoot" id="use2289" transform="matrix(6.521601e-2,-0.351126,0.351126,6.521601e-2,131.0329,50.62124)" width="744.09448" height="1052.3622" inkscape:label="elfyRightFoot" />
-          <use x="0" y="0" xlink:href="#elfyToes" id="use2291" transform="matrix(-2.980196e-2,-0.355885,0.355885,-2.980196e-2,152.5866,60.51701)" width="744.09448" height="1052.3622" inkscape:label="elfyRightToes" />
-          <use x="0" y="0" xlink:href="#elfyLowerLeg" id="use2293" transform="matrix(0.321009,0.1565112,-0.1565112,0.321009,148.47995,0.2122087)" width="744.09448" height="1052.3622" inkscape:label="elfyRightLowerLeg" />
-          <use inkscape:label="elfyRightUpperArm" height="1052.3622" width="744.09448" transform="matrix(0.357131,0,0,0.357131,157.82302,-96.960242)" id="use2295" xlink:href="#elfyUpperArm" y="0" x="0" />
-          <use inkscape:label="elfyRightLowerArm" height="1052.3622" width="744.09448" transform="matrix(0.357131,0,0,0.357131,157.82302,-62.777682)" id="use2297" xlink:href="#elfyLowerArm" y="0" x="0" />
-          <use inkscape:label="elfyRightHand" height="1052.3622" width="744.09448" transform="matrix(9.488965e-2,0.344294,-0.344294,9.488965e-2,162.22682,-26.574082)" id="use2299" xlink:href="#elfyHand" y="0" x="0" />
-        </g>
-      </g>
-      <g inkscape:groupmode="layer" id="layer3" inkscape:label="frame3" class="keyframe">
-        <g transform="translate(113.6962,29.57151)" inkscape:label="elfy" id="elfyPose2">
-          <use inkscape:label="elfyLeftUpperArm" x="0" y="0" xlink:href="#elfyUpperArm" id="use3489" transform="matrix(0.276359,-0.272728,0.272728,0.276359,141.9486,-105.0993)" width="744.09448" height="1052.3622" />
-          <use x="0" y="0" xlink:href="#elfyLowerArm" id="use3493" transform="matrix(2.546605e-2,-0.387435,0.387435,2.546605e-2,176.3574,-79.54072)" width="744.09448" height="1052.3622" inkscape:label="elfyLeftLowerArm" />
-          <use x="0" y="0" xlink:href="#elfyHand" id="use3495" transform="matrix(0.240962,-0.304454,0.304454,0.240962,213.2988,-86.86336)" width="744.09448" height="1052.3622" inkscape:label="elfyLeftHand" />
-          <use x="0" y="0" xlink:href="#elfyNeck" id="use3499" transform="matrix(0.371408,0.113186,-0.113186,0.371408,148.0446,-109.7387)" width="744.09448" height="1052.3622" inkscape:label="elfyNeck" />
-          <use inkscape:label="elfyLeftEar" height="1052.3622" width="744.09448" transform="matrix(-0.121713,0.309661,0.36136,0.142033,177.2016,-144.3342)" id="use3503" xlink:href="#elfyEar" y="0" x="0" />
-          <use x="0" y="0" xlink:href="#elfyHead" id="use3505" transform="matrix(0.328973,0.206231,-0.206231,0.328973,151.9656,-140.0387)" width="744.09448" height="1052.3622" inkscape:label="elfyHead" />
-          <use x="0" y="0" xlink:href="#elfyEar" id="use3507" transform="matrix(0.378012,-8.866489e-2,8.866489e-2,0.378012,142.2488,-156.7539)" width="744.09448" height="1052.3622" inkscape:label="elfyRightEar" />
-          <use x="0" y="0" xlink:href="#elfyUpperLeg" id="use3511" transform="matrix(0.1570779,-0.3550786,0.3550786,0.1570779,125.37935,-62.462134)" width="744.09448" height="1052.3622" inkscape:label="elfyLeftUpperLeg" />
-          <use inkscape:label="elfyLeftFoot" x="0" y="0" xlink:href="#elfyFoot" id="use3517" transform="matrix(7.090263e-2,-0.381743,0.381743,7.090263e-2,218.3235,14.97708)" width="744.09448" height="1052.3622" />
-          <use x="0" y="0" xlink:href="#elfyToes" id="use3519" transform="matrix(-3.24006e-2,-0.386917,0.386917,-3.24006e-2,245.6787,24.95131)" width="744.09448" height="1052.3622" inkscape:label="elfyLeftToes" />
-          <use x="0" y="0" xlink:href="#elfyLowerLeg" id="use3521" transform="matrix(0.309087,-0.234989,0.234989,0.309087,177.46738,-31.37596)" width="744.09448" height="1052.3622" inkscape:label="elfyLeftLowerLeg" />
-          <use x="0" y="0" xlink:href="#elfyBody" id="use3523" transform="matrix(0.288085,0.260312,-0.260312,0.288085,117.6838,-80.02784)" width="744.09448" height="1052.3622" inkscape:label="elfyBody" />
-          <use x="0" y="0" xlink:href="#elfyUpperLeg" id="use3529" transform="matrix(0.300121,0.246338,-0.246338,0.300121,106.7127,-69.86538)" width="744.09448" height="1052.3622" inkscape:label="elfyRightUpperLeg" />
-          <use x="0" y="0" xlink:href="#elfyFoot" id="use3535" transform="matrix(7.090263e-2,-0.381743,0.381743,7.090263e-2,13.93216,-5.926434)" width="744.09448" height="1052.3622" inkscape:label="elfyRightFoot" />
-          <use x="0" y="0" xlink:href="#elfyToes" id="use3537" transform="matrix(-3.24006e-2,-0.386917,0.386917,-3.24006e-2,37.36523,4.832226)" width="744.09448" height="1052.3622" inkscape:label="elfyRightToes" />
-          <use x="0" y="0" xlink:href="#elfyLowerLeg" id="use3539" transform="matrix(0.105712,0.373604,-0.373604,0.105712,69.09898,-26.65742)" width="744.09448" height="1052.3622" inkscape:label="elfyRightLowerLeg" />
-          <use inkscape:label="elfyRightUpperArm" height="1052.3622" width="744.09448" transform="matrix(0.21726,0.321796,-0.321796,0.21726,126.8837,-114.3475)" id="use3543" xlink:href="#elfyUpperArm" y="0" x="0" />
-          <use inkscape:label="elfyRightLowerArm" height="1052.3622" width="744.09448" transform="matrix(0.237019,-0.307533,0.307533,0.237019,100.5357,-86.91112)" id="use3547" xlink:href="#elfyLowerArm" y="0" x="0" />
-          <use inkscape:label="elfyRightHand" height="1052.3622" width="744.09448" transform="matrix(0.380139,7.905323e-2,-7.905323e-2,0.380139,136.0437,-66.32978)" id="use3549" xlink:href="#elfyHand" y="0" x="0" />
-        </g>
-      </g>
-      <g inkscape:groupmode="layer" id="layer4" inkscape:label="frame4" class="keyframe">
-        <use height="400" width="500" transform="translate(182.8572,34.75001)" id="use1388" xlink:href="#elfyPose1" y="0" x="0" inkscape:label="elfy" />
+  </g>
+  <g
+     id="elfyWalkPoses"
+     transform="translate(-63.83849,265.2611)"
+     inkscape:label="#g1390"
+     class="layer">
+    <g
+       inkscape:label="frame1"
+       id="g2411"
+       inkscape:groupmode="layer"
+       model="elfy"
+       class="keyframe">
+      <g
+         transform="translate(-9.844155,-30.81359)"
+         inkscape:label="elfy"
+         id="elfyPose1">
+        <use
+           inkscape:label="elfyLeftUpperArm"
+           x="0"
+           y="0"
+           xlink:href="#elfyUpperArm"
+           id="use3421"
+           transform="matrix(0.254194,-0.250854,0.250854,0.254194,142.4319,-105.5381)"
+           width="744.09448"
+           height="1052.3622" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyLowerArm"
+           id="use3425"
+           transform="matrix(2.342359e-2,-0.356362,0.356362,2.342359e-2,174.081,-82.02944)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyLeftLowerArm" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyHand"
+           id="use3427"
+           transform="matrix(0.357131,0,0,0.357131,210.8136,-81.26157)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyLeftHand" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyNeck"
+           id="use3431"
+           transform="matrix(0.357131,0,0,0.357131,136.8365,-109.832)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyNeck" />
+        <use
+           inkscape:label="elfyLeftEar"
+           height="1052.3622"
+           width="744.09448"
+           transform="matrix(-0.275467,0.133327,0.155587,0.321458,150.4171,-146.4306)"
+           id="use3435"
+           xlink:href="#elfyEar"
+           y="0"
+           x="0" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyHead"
+           id="use3437"
+           transform="matrix(0.357131,0,0,0.357131,131.7346,-132.7904)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyHead" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyEar"
+           id="use3439"
+           transform="matrix(0.357131,0,0,0.357131,115.9188,-144.0146)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyRightEar" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyUpperLeg"
+           id="use3443"
+           transform="matrix(0.334802,-0.124299,0.124299,0.334802,149.2413,-65.39964)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyLeftUpperLeg" />
+        <use
+           inkscape:label="elfyLeftFoot"
+           x="0"
+           y="0"
+           xlink:href="#elfyFoot"
+           id="use3449"
+           transform="matrix(6.521601e-2,-0.351126,0.351126,6.521601e-2,166.6805,45.15043)"
+           width="744.09448"
+           height="1052.3622" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyToes"
+           id="use3451"
+           transform="matrix(-2.980196e-2,-0.355885,0.355885,-2.980196e-2,188.2341,55.04621)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyLeftToes" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyLowerLeg"
+           id="use3453"
+           transform="matrix(0.357131,0,0,0.357131,163.8108,-12.24512)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyLeftLowerLeg" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyBody"
+           id="use3455"
+           transform="matrix(0.357131,0,0,0.357131,134.2855,-73.60879)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyBody" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyUpperLeg"
+           id="use3461"
+           transform="matrix(0.357131,0,0,0.357131,128.6735,-61.87448)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyRightUpperLeg" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyFoot"
+           id="use3467"
+           transform="matrix(6.521601e-2,-0.351126,0.351126,6.521601e-2,131.0329,50.62124)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyRightFoot" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyToes"
+           id="use3469"
+           transform="matrix(-2.980196e-2,-0.355885,0.355885,-2.980196e-2,152.5866,60.51701)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyRightToes" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyLowerLeg"
+           id="use3471"
+           transform="matrix(0.357131,0,0,0.357131,128.1633,-6.774305)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyRightLowerLeg" />
+        <use
+           inkscape:label="elfyRightUpperArm"
+           height="1052.3622"
+           width="744.09448"
+           transform="matrix(0.357131,0,0,0.357131,114.3883,-105.7506)"
+           id="use3475"
+           xlink:href="#elfyUpperArm"
+           y="0"
+           x="0" />
+        <use
+           inkscape:label="elfyRightLowerArm"
+           height="1052.3622"
+           width="744.09448"
+           transform="matrix(0.357131,0,0,0.357131,114.3883,-71.56804)"
+           id="use3479"
+           xlink:href="#elfyLowerArm"
+           y="0"
+           x="0" />
+        <use
+           inkscape:label="elfyRightHand"
+           height="1052.3622"
+           width="744.09448"
+           transform="matrix(9.488965e-2,0.344294,-0.344294,9.488965e-2,118.7921,-35.36444)"
+           id="use3481"
+           xlink:href="#elfyHand"
+           y="0"
+           x="0" />
       </g>
     </g>
+    <g
+       inkscape:groupmode="layer"
+       id="layer2"
+       inkscape:label="frame2"
+       style="display:inline"
+       class="keyframe">
+      <g
+         transform="translate(-9.395513,-31.669625)"
+         inkscape:label="elfy"
+         id="g2261">
+        <use
+           inkscape:label="elfyLeftUpperArm"
+           x="0"
+           y="0"
+           xlink:href="#elfyUpperArm"
+           id="use2263"
+           transform="matrix(0.254194,-0.250854,0.250854,0.254194,182.76414,-105.79664)"
+           width="744.09448"
+           height="1052.3622" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyLowerArm"
+           id="use2265"
+           transform="matrix(2.342359e-2,-0.356362,0.356362,2.342359e-2,214.41324,-82.28798)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyLeftLowerArm" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyHand"
+           id="use2267"
+           transform="matrix(0.357131,0,0,0.357131,251.14584,-81.52011)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyLeftHand" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyNeck"
+           id="use2269"
+           transform="matrix(0.357131,0,0,0.357131,173.54918,-108.28076)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyNeck" />
+        <use
+           inkscape:label="elfyLeftEar"
+           height="1052.3622"
+           width="744.09448"
+           transform="matrix(-0.2347339,0.1963623,0.2291465,0.2739242,176.90473,-149.67062)"
+           id="use2271"
+           xlink:href="#elfyEar"
+           y="0"
+           x="0" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyHead"
+           id="use2273"
+           transform="matrix(0.357131,0,0,0.357131,160.174,-135.89288)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyHead" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyEar"
+           id="use2275"
+           transform="matrix(0.357131,0,0,0.357131,144.3582,-147.11708)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyRightEar" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyUpperLeg"
+           id="use2277"
+           transform="matrix(0.1525923,-0.3228904,0.3228904,0.1525923,177.58152,-62.12886)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyLeftUpperLeg" />
+        <use
+           inkscape:label="elfyLeftFoot"
+           x="0"
+           y="0"
+           xlink:href="#elfyFoot"
+           id="use2279"
+           transform="matrix(0.2330025,-0.2706518,0.2706518,0.2330025,190.33174,-10.132542)"
+           width="744.09448"
+           height="1052.3622" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyToes"
+           id="use2281"
+           transform="matrix(0.348123,7.9703284e-2,-7.9703284e-2,0.348123,195.67587,17.448053)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyLeftToes" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyLowerLeg"
+           id="use2283"
+           transform="matrix(0.1673444,0.3154971,-0.3154971,0.1673444,229.45725,-39.137643)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyLeftLowerLeg" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyBody"
+           id="use2285"
+           transform="matrix(0.357131,0,0,0.357131,173.0665,-68.955071)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyBody" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyUpperLeg"
+           id="use2287"
+           transform="matrix(0.3347687,0.1243883,-0.1243883,0.3347687,166.90031,-51.281407)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyRightUpperLeg" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyFoot"
+           id="use2289"
+           transform="matrix(6.521601e-2,-0.351126,0.351126,6.521601e-2,131.0329,50.62124)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyRightFoot" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyToes"
+           id="use2291"
+           transform="matrix(-2.980196e-2,-0.355885,0.355885,-2.980196e-2,152.5866,60.51701)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyRightToes" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyLowerLeg"
+           id="use2293"
+           transform="matrix(0.321009,0.1565112,-0.1565112,0.321009,148.47995,0.2122087)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyRightLowerLeg" />
+        <use
+           inkscape:label="elfyRightUpperArm"
+           height="1052.3622"
+           width="744.09448"
+           transform="matrix(0.357131,0,0,0.357131,157.82302,-96.960242)"
+           id="use2295"
+           xlink:href="#elfyUpperArm"
+           y="0"
+           x="0" />
+        <use
+           inkscape:label="elfyRightLowerArm"
+           height="1052.3622"
+           width="744.09448"
+           transform="matrix(0.357131,0,0,0.357131,157.82302,-62.777682)"
+           id="use2297"
+           xlink:href="#elfyLowerArm"
+           y="0"
+           x="0" />
+        <use
+           inkscape:label="elfyRightHand"
+           height="1052.3622"
+           width="744.09448"
+           transform="matrix(9.488965e-2,0.344294,-0.344294,9.488965e-2,162.22682,-26.574082)"
+           id="use2299"
+           xlink:href="#elfyHand"
+           y="0"
+           x="0" />
+      </g>
+    </g>
+    <g
+       inkscape:groupmode="layer"
+       id="layer3"
+       inkscape:label="frame3"
+       class="keyframe">
+      <g
+         transform="translate(113.6962,29.57151)"
+         inkscape:label="elfy"
+         id="elfyPose2">
+        <use
+           inkscape:label="elfyLeftUpperArm"
+           x="0"
+           y="0"
+           xlink:href="#elfyUpperArm"
+           id="use3489"
+           transform="matrix(0.276359,-0.272728,0.272728,0.276359,141.9486,-105.0993)"
+           width="744.09448"
+           height="1052.3622" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyLowerArm"
+           id="use3493"
+           transform="matrix(2.546605e-2,-0.387435,0.387435,2.546605e-2,176.3574,-79.54072)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyLeftLowerArm" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyHand"
+           id="use3495"
+           transform="matrix(0.240962,-0.304454,0.304454,0.240962,213.2988,-86.86336)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyLeftHand" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyNeck"
+           id="use3499"
+           transform="matrix(0.371408,0.113186,-0.113186,0.371408,148.0446,-109.7387)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyNeck" />
+        <use
+           inkscape:label="elfyLeftEar"
+           height="1052.3622"
+           width="744.09448"
+           transform="matrix(-0.121713,0.309661,0.36136,0.142033,177.2016,-144.3342)"
+           id="use3503"
+           xlink:href="#elfyEar"
+           y="0"
+           x="0" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyHead"
+           id="use3505"
+           transform="matrix(0.328973,0.206231,-0.206231,0.328973,151.9656,-140.0387)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyHead" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyEar"
+           id="use3507"
+           transform="matrix(0.378012,-8.866489e-2,8.866489e-2,0.378012,142.2488,-156.7539)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyRightEar" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyUpperLeg"
+           id="use3511"
+           transform="matrix(0.1570779,-0.3550786,0.3550786,0.1570779,125.37935,-62.462134)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyLeftUpperLeg" />
+        <use
+           inkscape:label="elfyLeftFoot"
+           x="0"
+           y="0"
+           xlink:href="#elfyFoot"
+           id="use3517"
+           transform="matrix(7.090263e-2,-0.381743,0.381743,7.090263e-2,218.3235,14.97708)"
+           width="744.09448"
+           height="1052.3622" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyToes"
+           id="use3519"
+           transform="matrix(-3.24006e-2,-0.386917,0.386917,-3.24006e-2,245.6787,24.95131)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyLeftToes" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyLowerLeg"
+           id="use3521"
+           transform="matrix(0.309087,-0.234989,0.234989,0.309087,177.46738,-31.37596)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyLeftLowerLeg" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyBody"
+           id="use3523"
+           transform="matrix(0.288085,0.260312,-0.260312,0.288085,117.6838,-80.02784)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyBody" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyUpperLeg"
+           id="use3529"
+           transform="matrix(0.300121,0.246338,-0.246338,0.300121,106.7127,-69.86538)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyRightUpperLeg" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyFoot"
+           id="use3535"
+           transform="matrix(7.090263e-2,-0.381743,0.381743,7.090263e-2,13.93216,-5.926434)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyRightFoot" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyToes"
+           id="use3537"
+           transform="matrix(-3.24006e-2,-0.386917,0.386917,-3.24006e-2,37.36523,4.832226)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyRightToes" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#elfyLowerLeg"
+           id="use3539"
+           transform="matrix(0.105712,0.373604,-0.373604,0.105712,69.09898,-26.65742)"
+           width="744.09448"
+           height="1052.3622"
+           inkscape:label="elfyRightLowerLeg" />
+        <use
+           inkscape:label="elfyRightUpperArm"
+           height="1052.3622"
+           width="744.09448"
+           transform="matrix(0.21726,0.321796,-0.321796,0.21726,126.8837,-114.3475)"
+           id="use3543"
+           xlink:href="#elfyUpperArm"
+           y="0"
+           x="0" />
+        <use
+           inkscape:label="elfyRightLowerArm"
+           height="1052.3622"
+           width="744.09448"
+           transform="matrix(0.237019,-0.307533,0.307533,0.237019,100.5357,-86.91112)"
+           id="use3547"
+           xlink:href="#elfyLowerArm"
+           y="0"
+           x="0" />
+        <use
+           inkscape:label="elfyRightHand"
+           height="1052.3622"
+           width="744.09448"
+           transform="matrix(0.380139,7.905323e-2,-7.905323e-2,0.380139,136.0437,-66.32978)"
+           id="use3549"
+           xlink:href="#elfyHand"
+           y="0"
+           x="0" />
+      </g>
+    </g>
+    <g
+       inkscape:groupmode="layer"
+       id="layer4"
+       inkscape:label="frame4"
+       class="keyframe">
+      <use
+         height="400"
+         width="500"
+         transform="translate(182.8572,34.75001)"
+         id="use1388"
+         xlink:href="#elfyPose1"
+         y="0"
+         x="0"
+         inkscape:label="elfy" />
+    </g>
+  </g>
 </svg>
