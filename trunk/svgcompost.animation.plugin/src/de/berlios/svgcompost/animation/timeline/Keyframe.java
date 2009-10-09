@@ -1,6 +1,5 @@
 package de.berlios.svgcompost.animation.timeline;
 
-import de.berlios.svgcompost.animation.anim.chara.skeleton.SkeletonKey;
 import de.berlios.svgcompost.animation.canvas.CanvasNode;
 
 public class Keyframe implements Comparable<Keyframe> {
@@ -50,6 +49,10 @@ public class Keyframe implements Comparable<Keyframe> {
 		if( previousKey != null ) {
 			previousKey.nextKey = this;
 		}
+	}
+
+	public boolean hasNext() {
+		return nextKey != null;
 	}
 
 

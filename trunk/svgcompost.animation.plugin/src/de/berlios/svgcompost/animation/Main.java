@@ -2,12 +2,10 @@ package de.berlios.svgcompost.animation;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
 
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.log4j.Logger;
 
-import de.berlios.svgcompost.animation.anim.composite.Parallel;
 import de.berlios.svgcompost.animation.anim.composite.Scene;
 import de.berlios.svgcompost.animation.canvas.Canvas;
 import de.berlios.svgcompost.animation.export.Export;
@@ -48,11 +46,11 @@ public class Main {
 //		ArrayList<String> layerIds = SvgDocumentParser.parseSvgDocument(doc);
 		
 		Timeline timeline = canvas.getLibrary().createTimeline();
-//		Anim anim = canvas.getLibrary().createAnimsForTimeline(timeline);
+		Scene scene = canvas.getLibrary().createAnimsForTimeline(timeline);
 		
 		
-		Scene scene = new Scene( canvas );
-		canvas.getRoot().setXY(canvas.width/2, canvas.height/2);
+//		Scene scene = new Scene( canvas );
+//		canvas.getRoot().setXY(canvas.width/2, canvas.height/2);
 		// TODO: frame origin is centered in swf symbols and top left for main movie
 		// keep that in mind!
 
@@ -73,8 +71,8 @@ public class Main {
 		Point2D.Float start = new Point2D.Float(-50,-200);
 		Point2D.Float end = new Point2D.Float(50,-200);
 //		Parallel par = canvas.getLibrary().createWalkAnim(canvas.getRoot(), "elfyWalkPoses", "elfy", start, end);
-		Parallel par = canvas.getLibrary().createWalkAnim(timeline.getLayers().get(0), "elfy", start, end);
-		scene.addAnim(par);
+//		Parallel par = canvas.getLibrary().createWalkAnim(timeline.getLayers().get(0), "elfy", start, end);
+//		scene.addAnim(par);
 		scene.setDurationInSeconds(10);
 		
 //		Walk.placeSteps(canvas, "steps", start, end);

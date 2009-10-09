@@ -38,7 +38,7 @@
      inkscape:cx="135.86721"
      inkscape:cy="247.565"
      inkscape:document-units="px"
-     inkscape:current-layer="svg2"
+     inkscape:current-layer="elfyWalkPoses"
      inkscape:window-width="962"
      inkscape:window-height="743"
      inkscape:window-x="31"
@@ -588,7 +588,8 @@
        id="layer2"
        inkscape:label="frame2"
        style="display:inline"
-       class="keyframe">
+       class="keyframe"
+       model="elfy">
       <g
          transform="translate(-9.395513,-31.669625)"
          inkscape:label="elfy"
@@ -770,7 +771,8 @@
        inkscape:groupmode="layer"
        id="layer3"
        inkscape:label="frame3"
-       class="keyframe">
+       class="keyframe"
+       model="elfy">
       <g
          transform="translate(113.6962,29.57151)"
          inkscape:label="elfy"
@@ -952,7 +954,8 @@
        inkscape:groupmode="layer"
        id="layer4"
        inkscape:label="frame4"
-       class="keyframe">
+       class="keyframe"
+       model="elfy">
       <use
          height="400"
          width="500"

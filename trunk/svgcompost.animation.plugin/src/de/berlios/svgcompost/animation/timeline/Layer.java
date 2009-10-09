@@ -42,7 +42,7 @@ public class Layer {
 		else {
 			index = - index - 1;
 		}
-		keyframes.add(index, keyframe);
+		insertKeyframe(index, keyframe);
 		return index;
 	}
 	
@@ -51,7 +51,7 @@ public class Layer {
 		if( index > 0 ) {
 			keyframe.setPreviousKey( keyframes.get(index-1) );
 		}
-		if( index < keyframes.size()-1 ) {
+		else if( index < keyframes.size()-1 ) {
 			keyframes.get(index+1).setPreviousKey( keyframe );
 		}
 	}

@@ -17,7 +17,6 @@ import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.svg.SVGElement;
 import org.w3c.dom.svg.SVGStylable;
 
-import de.berlios.svgcompost.animation.anim.Anim;
 import de.berlios.svgcompost.animation.anim.chara.skeleton.Bone;
 import de.berlios.svgcompost.animation.anim.chara.skeleton.KeyframeAnim;
 import de.berlios.svgcompost.animation.anim.chara.skeleton.Skeleton;
@@ -50,7 +49,7 @@ public class Library {
 		this.libraryCanvas = libraryCanvas;
 	}
 	
-	public Anim createAnimsForTimeline( Timeline timeline ) {
+	public Scene createAnimsForTimeline( Timeline timeline ) {
 		Scene scene = new Scene( timeline.getCanvas() );
 		for (Layer layer : timeline.getLayers()) {
 			scene.addAnim(createAnimsForLayer(layer));
@@ -59,31 +58,40 @@ public class Library {
 	}
 	
 	public Parallel createAnimsForLayer( Layer layer ) {
-		Parallel par = new Parallel();
+		List<Keyframe> keyframes = layer.getKeyframes();
 		
 		Map<Skeleton,SkeletonKey> skeletonKeys = null;
-		for (Keyframe keyframe : layer.getKeyframes()) {
-			HashMap<String,Skeleton> modelsByName = extractModelsFromDeclaration( keyframe.getNode() );
-			for(Skeleton skeleton : modelsByName.values()) {
-				keyframe.getNode().applySkeleton(skeleton, skeletonKeys);
-			}
+		for(Keyframe keyframe : keyframes) {
+			for(Skeleton skeleton : extractModelsFromDeclaration( keyframe.getNode() ).values() )
+				keyframe.getNode().applySkeleton(skeleton,skeletonKeys);
 			skeletonKeys = keyframe.getNode().getSkeletonKeys();
 		}
-		
-			
-		for (Keyframe keyframe : layer.getKeyframes()) {
-			for(Skeleton skeleton : keyframe.getNode().getSkeletonKeys().keySet()) {
+
+		for(Keyframe keyframe : keyframes) {
+			for( Skeleton skeleton : keyframe.getNode().getSkeletonKeys().keySet() ) {
 				skeleton.setupTweening(keyframe.getNode().getSkeletonKey(skeleton));
 				skeleton.setupLimbTweening(keyframe.getNode());
 			}
 		}
+
+		Parallel par = new Parallel();
+		HashMap<String,Skeleton> modelsByName = extractModelsFromDeclaration( keyframes.get( 0 ).getNode() );
+		HashMap<Skeleton,Sequence> seqsByModel = addSequencesForModels( par, modelsByName.values() );
+		
+		for(Keyframe frame : keyframes)
+			for( Skeleton skeleton : frame.getNode().getSkeletonKeys().keySet() )
+				skeleton.setupTweening(frame.getNode().getSkeletonKey(skeleton));
+
+		for(Keyframe keyframe : keyframes)
+			if( keyframe.hasNext() )
+				for(Skeleton skeleton : modelsByName.values())
+					seqsByModel.get(skeleton).addAnim( createTweeningAnim( skeleton, keyframe, keyframe.nextKey() ) );
 	
-		for(Keyframe keyframe : layer.getKeyframes())
+		for(Keyframe keyframe : keyframes)
 			keyframe.getNode().setVisible(false);
 		
 		return par;
 	}
-
 	
 	public Timeline createTimeline() {
 		CanvasNode root = stage.renderDocument(stage.getSourceDoc());
@@ -95,6 +103,7 @@ public class Library {
 			Element element = canvas.getSourceCtx().getElement( node.getGraphicsNode() );
 			log.debug( "element = "+element.getAttribute("id") );
 			if( element != null && hasClass(element, "layer") ) {
+				setDisplayAttributeToInline(element);
 //			if( element != null && element.getAttributeNS( INKSCAPE_URI, INKSCAPE_GROUPMODE ).equals( INKSCAPE_LAYER ) ) {
 				Layer layer = createLayer( node );
 				timeline.addLayer(layer);
@@ -112,6 +121,7 @@ public class Library {
 		for (CanvasNode node : root.getChildren()) {
 			Element element = canvas.getSourceCtx().getElement( node.getGraphicsNode() );
 			if( element != null && hasClass( element, "keyframe" ) ) {
+				setDisplayAttributeToInline(element);
 				double time = 0;
 				try {
 					time = Double.parseDouble(element.getAttribute("time"));
