@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+	<extension point="org.eclipse.ui.popupMenus">
+		<objectContribution
+			adaptable="true"
+			objectClass="org.eclipse.core.resources.IResource"
+			id="com.ibm.scm.docuengine.popupBuild">
+		<visibility>
+		<and>
+			<objectClass name="org.eclipse.core.resources.IFile"/>
+			<objectState name="extension" value="svg"/>
+		</and>
+		</visibility>
+		<action
+			label="Build SWF Movie"
+			class="de.berlios.svgcompost.animation.plugin.SWFBuildAction"
+			menubarPath="svg"
+			enablesFor="1"
+			icon="icons/sample.gif"
+			id="de.berlios.svgcompost.animation.plugin.SWFBuildAction">
+		</action>
+		</objectContribution>
+	</extension>
+</plugin>
