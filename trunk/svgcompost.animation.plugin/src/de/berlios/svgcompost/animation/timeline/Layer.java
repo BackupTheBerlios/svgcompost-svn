@@ -48,5 +48,11 @@ public class Layer {
 	
 	protected void insertKeyframe( int index, Keyframe keyframe ) {
 		keyframes.add(index, keyframe);
+		if( index > 0 ) {
+			keyframe.setPreviousKey( keyframes.get(index-1) );
+		}
+		if( index < keyframes.size()-1 ) {
+			keyframes.get(index+1).setPreviousKey( keyframe );
+		}
 	}
 }
