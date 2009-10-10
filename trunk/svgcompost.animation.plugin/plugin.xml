@@ -22,4 +22,40 @@
 		</action>
 		</objectContribution>
 	</extension>
+	
+	<extension point="org.eclipse.ui.commands">
+		<command
+		id="svgcompost.animation.flipforward"
+		name="Flip to next keyframe">
+		</command>
+	</extension>
+	<extension point="org.eclipse.ui.menus">
+		<menuContribution locationURI="menu:org.eclipse.ui.main.menu">
+			<menu id="navigate" label="Navigate">
+				<command commandId="svgcompost.animation.flipforward" style="push"/>
+			</menu>
+		</menuContribution>
+	</extension>
+	<extension point="org.eclipse.ui.handlers">
+		<handler
+		class="de.berlios.svgcompost.animation.plugin.command.FlipForwardHandler"
+		commandId="svgcompost.animation.flipforward">
+			<activeWhen>
+				<with variable="activePartId">
+					<equals value="svgcompost.editors.SVGEditor"/>
+				</with>
+			</activeWhen>
+		</handler>
+	</extension>
+	<extension point="org.eclipse.ui.bindings">
+		<key
+		commandId="svgcompost.animation.flipforward"
+		schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+		sequence="F6">
+		</key>
+	</extension>
+
+
+
+	
 </plugin>

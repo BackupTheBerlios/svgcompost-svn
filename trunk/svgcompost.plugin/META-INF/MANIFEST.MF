@@ -20,3 +20,6 @@ Require-Bundle: org.w3c.dom.svg,
  org.eclipse.wst.sse.ui;bundle-version="1.1.4"
 Bundle-Activator: de.berlios.svgcompost.plugin.SVGCompostPlugin
 Bundle-ActivationPolicy: lazy
+Export-Package: de.berlios.svgcompost.editor,
+ de.berlios.svgcompost.model,
+ de.berlios.svgcompost.part
