@@ -1,6 +1,6 @@
 package de.berlios.svgcompost.animation.anim.chara.skeleton;
 
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
 
 import de.berlios.svgcompost.animation.anim.Anim;
 import de.berlios.svgcompost.animation.anim.easing.Easing;
@@ -15,7 +15,7 @@ import de.berlios.svgcompost.animation.canvas.CanvasNode;
  */
 public class KeyframeAnim extends Anim {
 
-	private static Logger log = Logger.getLogger(KeyframeAnim.class);
+//	private static Logger log = Logger.getLogger(KeyframeAnim.class);
 
 //	protected int tweeningPairIndex;
 	protected Skeleton model;
@@ -55,7 +55,7 @@ public class KeyframeAnim extends Anim {
 
 	@Override
 	protected void animate( double percentage ) {
-		log.debug( "KeyTweening.animate: "+percentage );
+//		log.debug( "KeyTweening.animate: "+percentage );
 
 		if( switchActiveFrame ) {
 			setActiveFrame( percentage < 0.5 );

@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -32,8 +31,6 @@ import de.berlios.svgcompost.animation.timeline.Timeline;
 
 public class Library {
 	
-	private static Logger log = Logger.getLogger(Library.class);
-
 	public static final String INKSCAPE_URI = "http://www.inkscape.org/namespaces/inkscape";
 //	public static final NameSpace inkscapeNS = new NameSpace( "inkscape", INKSCAPE_URI );
 	public static final String INKSCAPE_GROUPMODE = "INKSCAPE_GROUPMODE";
@@ -95,13 +92,11 @@ public class Library {
 	
 	public Timeline createTimeline() {
 		CanvasNode root = stage.renderDocument(stage.getSourceDoc());
-		log.debug("Library.createTimeline( "+root.getSize()+" )");
 		Canvas canvas = root.getCanvas();
 		Timeline timeline = new Timeline();
 		timeline.setCanvas(libraryCanvas);
 		for (CanvasNode node : root.getChildren()) {
 			Element element = canvas.getSourceCtx().getElement( node.getGraphicsNode() );
-			log.debug( "element = "+element.getAttribute("id") );
 			if( element != null && hasClass(element, "layer") ) {
 				setDisplayAttributeToInline(element);
 //			if( element != null && element.getAttributeNS( INKSCAPE_URI, INKSCAPE_GROUPMODE ).equals( INKSCAPE_LAYER ) ) {
@@ -388,7 +383,6 @@ public class Library {
 		Skeleton model = models.get( modelName );
 		if( model != null )
 			return model;
-		log.debug("Model '"+modelName+"' referenced for the first time.");
 		CanvasNode modelNode = libraryCanvas.getRoot().addSymbolInstance( modelName, modelName );
 		model = SkeletonFactory.createSkeleton( modelNode );
 		
@@ -405,12 +399,8 @@ public class Library {
 	 */
 	public ArrayList<String> getFrameIds( String symbolId ) {
 		Document doc = libraryCanvas.getSourceDoc();
-		log.debug("doc: "+doc);
 		ArrayList<String> layerIds = new ArrayList<String>();
 		Element symbolElement = doc.getElementById( symbolId ); 
-		log.debug("symbolElement: "+symbolElement );
-		if( symbolElement == null )
-			log.warn( "Couldn't find symbol with id "+symbolId );
 		NodeList list = symbolElement.getChildNodes();
 		for (int i=0; i<list.getLength(); i++) {
 			Node node = list.item( i );
@@ -459,10 +449,8 @@ public class Library {
 		SVGElement frameElement = (SVGElement) referencingFrame.getCanvas().getSourceDoc().getElementById( referencingFrame.getSymbolId() );
 		String modelReference = frameElement.getAttribute("model");
 		if( modelReference == null || "".equals( modelReference ) ) {
-			log.error( "couldn't find 'model' declaration in keyframe: "+referencingFrame.getName() );
 			return modelsByName;
 		}
-		log.debug("Found model declaration: "+modelReference);
 		String[] skeletons = modelReference.split(" ");
 		
 		for (int i = 0; i < skeletons.length; i++) {

@@ -11,7 +11,6 @@ import org.apache.batik.ext.awt.geom.ExtendedPathIterator;
 import org.apache.batik.gvt.CompositeGraphicsNode;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.gvt.ShapeNode;
-import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
 import org.w3c.dom.svg.SVGDocument;
 
@@ -37,8 +36,6 @@ import de.berlios.svgcompost.animation.export.Export;
 
 public class FlagstoneExport implements Export {
 	
-	private static Logger log = Logger.getLogger(FlagstoneExport.class);
-
 	protected Canvas canvas;
 	
 	protected FSMovie movie;
@@ -86,8 +83,6 @@ public class FlagstoneExport implements Export {
 	protected void captureShape( Element shapeElement ) {
 			
 		String shapeId = shapeElement.getAttribute("id");
-		
-		log.debug("capture shape "+shapeId);
 		
 		int swfId = swfIds.get( shapeId );
 		ShapeNode shapeNode = (ShapeNode) canvas.getSourceBld().build( canvas.getSourceCtx(), shapeElement );
@@ -152,8 +147,6 @@ public class FlagstoneExport implements Export {
 	}
 	
 	public void captureFrame() {
-		
-		log.debug("capture frame");
 		
 		int highestDepth = captureNode( canvas.getRoot().getGraphicsNode(), 1 );
 	

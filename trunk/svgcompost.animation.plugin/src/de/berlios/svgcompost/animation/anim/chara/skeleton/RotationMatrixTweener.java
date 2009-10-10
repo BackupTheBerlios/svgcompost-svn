@@ -3,8 +3,6 @@ package de.berlios.svgcompost.animation.anim.chara.skeleton;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 
-import org.apache.log4j.Logger;
-
 import de.berlios.svgcompost.animation.anim.Tweener;
 import de.berlios.svgcompost.animation.canvas.CanvasNode;
 import de.berlios.svgcompost.animation.canvas.PathConverter;
@@ -16,8 +14,6 @@ import de.berlios.svgcompost.animation.util.Polar;
  *
  */
 public class RotationMatrixTweener extends Tweener {
-
-	private static Logger log = Logger.getLogger(RotationMatrixTweener.class);
 
 	public AffineTransform[] matrix;
 	protected Polar[] xAxis;
@@ -62,8 +58,6 @@ public class RotationMatrixTweener extends Tweener {
 		// Check for a missing matrix.
 		for (int i = 0; i < 2; i++) {
 			if( matrix[i] == null ) {
-				if( node != null )
-					log.debug( "One key matrix null for "+node.getName() );
 				matrix[i] = (AffineTransform) matrix[1-i].clone();
 				noTweening = true;
 				return;
@@ -72,8 +66,6 @@ public class RotationMatrixTweener extends Tweener {
 		// Check if both matrices are equal.
 		if( matrix[0].equals( matrix[1] )  ) {
 				noTweening = true;
-				if( node != null )
-					log.debug("Both matrices are equal for "+node.getName());
 				return;
 		}
 //		if( matrix[0].a == matrix[1].a && matrix[0].b == matrix[1].b &&
@@ -120,7 +112,6 @@ public class RotationMatrixTweener extends Tweener {
 		adjustAnglesToMinDist( xAxis[0], xAxis[1] );
 		adjustAnglesToMinDist( yAxis[0], yAxis[1] );
 		if( left[0] != left[1] ) {
-			log.debug( "flip" );
 			xAxis[1].a *= -1;
 			flip = true;
 		}

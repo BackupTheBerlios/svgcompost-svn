@@ -4,7 +4,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 
 import org.apache.batik.bridge.BridgeContext;
-import org.apache.log4j.Logger;
 
 import de.berlios.svgcompost.animation.anim.composite.Scene;
 import de.berlios.svgcompost.animation.canvas.Canvas;
@@ -13,8 +12,6 @@ import de.berlios.svgcompost.animation.export.binary.FlagstoneExport;
 import de.berlios.svgcompost.animation.timeline.Timeline;
 
 public class Main {
-
-	private static Logger log = Logger.getLogger(Main.class);
 
 //	public static String infile = "res/elfy-walk-connect.svg";
 //	public static String infile = "res/hansel-scene-02.svg";
@@ -32,7 +29,6 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		log.info("start application");
 
 		BridgeContext ctx = GraphicsBuilder.readLibrary(infile);
 
@@ -80,13 +76,11 @@ public class Main {
 		
 
 		AnimControl ctrl = new AnimControl( scene );
-		log.debug("scene.getDurationinSeconds() = "+scene.getDurationInSeconds());
 		ctrl.setCapture( capture );
 
 		
 		int frame = 1;
 		while( ctrl.nextFrame() ) {
-			log.debug( "Frame: "+(frame++) );
 		}
 		
 //		CompositeGraphicsNode canvasRoot = canvas.getRoot();
@@ -140,7 +134,6 @@ public class Main {
 		
 		capture.end();
 		capture.writeOutput( outfile );
-		log.info("done.");
 	}
 
 	public static void subtractFromMatrix( AffineTransform sourceMatrix, AffineTransform targetMatrix ) {

@@ -14,7 +14,6 @@ import org.apache.batik.gvt.CanvasGraphicsNode;
 import org.apache.batik.gvt.CompositeGraphicsNode;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.gvt.RootGraphicsNode;
-import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -30,8 +29,6 @@ import org.w3c.dom.svg.SVGRect;
  *
  */
 public class Canvas {
-	
-	private static Logger log = Logger.getLogger(Canvas.class);
 	
 	public int width = 400;
 	public int height = 300;
@@ -75,10 +72,7 @@ public class Canvas {
 		canvasNode.setRenderingHint( KEY_LABEL, "canvas" );
 
 		SVGOMElement rootEl = (SVGOMElement) sourceDoc.getRootElement();
-		log.debug("sourceDoc.getRootElement() = "+rootEl);
-		log.debug("rootEl.getSVGContext() = "+rootEl.getSVGContext());
 		SVGRect bounds = sourceDoc.getRootElement().getBBox();
-		log.debug("bounds = "+bounds);
 		width = (int) bounds.getWidth();
 		height = (int) bounds.getWidth();
 	}
@@ -100,8 +94,6 @@ public class Canvas {
 	}
 	
 	public Library getLibrary() {
-		if( library == null )
-			log.error( "Library is requested, but none was attached with setLibrary(BridgeContext)." );
 		return library;
 	}
 
@@ -171,7 +163,6 @@ public class Canvas {
 	public CanvasNode insertSymbolNode( CanvasNode cNode, String symbolId, String name ) {
 		Element element = sourceDoc.getElementById( symbolId );
 		if( element == null ) {
-			log.error( "Couldn't find element for ID: "+symbolId );
 			return null;
 		}
 		return insertSymbolNode(cNode, element, name);
@@ -186,12 +177,10 @@ public class Canvas {
 		if( parent instanceof CompositeGraphicsNode ) {
 			CompositeGraphicsNode group = (CompositeGraphicsNode) parent;
 			if( element.getAttribute("display").equals("none") ) {
-				log.warn("Display was set to 'none' for symbol: "+symbolId+". Set to 'inline'.");
 				element.setAttribute("display","inline");
 			}
 			GraphicsNode gNode = sourceBld.build( sourceCtx, element );
 			if( gNode == null ) {
-				log.warn( "Null node built for symbol: "+symbolId+". (Empty or invisible element?) Using empty group node instead." );
 				return insertGroupNode(cNode, name);
 			}
 			group.add( gNode );
@@ -200,8 +189,7 @@ public class Canvas {
 			setChildLabels( gNode, element );
 			return CanvasNode.getCanvasNode( gNode, this );
 		}
-		else
-			log.error("Cannot add child to non-group node "+cNode.getName());
+
 		return null;
 	}
 	
@@ -242,8 +230,7 @@ public class Canvas {
 					gNode.setRenderingHint( KEY_SYMBOL_ID, symbolId );
 				setChildLabels( gNode, (Element) childNode );
 			}
-			else if( ! childNode.getNodeName().endsWith("use") )
-				log.debug( "Found non-graphical Svg element: "+childNode.getNodeName() );
+
 		}
 	}
 	

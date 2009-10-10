@@ -2,14 +2,8 @@ package de.berlios.svgcompost.animation.util;
 
 import java.awt.geom.Point2D;
 
-import org.apache.log4j.Logger;
-
-import de.berlios.svgcompost.animation.Main;
-
 public class Polar {
 	
-	private static Logger log = Logger.getLogger(Polar.class);
-
 	public static float rad2deg = 180 / (float) Math.PI;
 	
 	public float r;

@@ -3,8 +3,6 @@ package de.berlios.svgcompost.animation.anim.chara.skeleton;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 
-import org.apache.log4j.Logger;
-
 import de.berlios.svgcompost.animation.canvas.CanvasNode;
 import de.berlios.svgcompost.animation.util.Polar;
 
@@ -19,8 +17,6 @@ import de.berlios.svgcompost.animation.util.Polar;
  */
 public class Limb {
 	
-	private static Logger log = Logger.getLogger(Limb.class);
-
 	protected Bone mParent;
 	protected Bone mChild;
 	protected Bone mTarget;
@@ -53,7 +49,7 @@ public class Limb {
 	 * @param percentage The percentage of tweening.
 	 */
 	public void tween( SkeletonKey tweeningKeyLink, SkeletonKey activeKeyLink, double percentage ) {
-		log.debug("tween: "+percentage);
+//		log.debug("tween: "+percentage);
 		
 		// TODO: optimize, once it works
 		
@@ -102,12 +98,6 @@ public class Limb {
 		float elbowHand2 = b*b;
 		float shoulderTarget2 = c*c;
 		// shoulder angle (beta)
-		log.trace("a = "+a); 
-		log.trace("b = "+b); 
-		log.trace("c = "+c); 
-		log.trace("elbowHand2 = "+elbowHand2); 
-		log.trace("shoulderElbow2 = "+shoulderElbow2); 
-		log.trace("shoulderTarget2 = "+shoulderTarget2);
 		float acos = (elbowHand2 - shoulderElbow2 - shoulderTarget2) / (-2 * a * c);
 		if( acos < -1 )
 			acos = -1;
@@ -123,19 +113,12 @@ public class Limb {
 //			elbowAngle *= -1;
 		}
 		
-		log.trace("shoulderElbow = "+shoulderElbow);
-		log.trace("shoulderTarget = "+shoulderTarget);
-		log.trace("shoulderAngle = "+shoulderAngle);
 		Point2D.Float newElbow = Polar.toCartesian( shoulderElbow.r, shoulderTarget.a + shoulderAngle );
-		log.trace("newElbow = "+newElbow);
 		newElbow.x += shoulderPoint.x;
 		newElbow.y += shoulderPoint.y;
 		Point2D.Float newElbowForShoulder = system.projectPointToLocal( newElbow, parent.getParent() );
 //		Point2D.Float newElbowForChild = system.projectPointToLocal( newElbow, child.getParent() );
 		Point2D.Float targetForChild = system.projectPointToLocal( targetPoint, child.getParent() );
-		
-		log.trace("newElbowForShoulder = "+newElbowForShoulder);
-		log.trace("targetForChild = "+targetForChild);
 		
 		Point2D.Float childOnParent = child.getLocalXY( parent );
 		alignWithPoint( parent, rotPointOnParent, newElbowForShoulder );
@@ -196,15 +179,11 @@ public class Limb {
 	 * @param alignWith
 	 */
 	public static void alignWithPoint(CanvasNode node, Point2D.Float alignPoint, Point2D.Float alignWith) {
-		log.trace("alignWith = "+alignWith);
 		Point2D.Float center = node.projectCenterToLocal( node.getParent() );
 		Point2D.Float alignPointOnParent = node.projectPointToLocal( alignPoint, node.getParent() );
 		Polar alignPointPolar = Polar.fromCartesianDiff( center, alignPointOnParent );
-		log.trace("alignPointPolar = "+alignPointPolar);
 		Polar alignWithPolar = Polar.fromCartesianDiff( center, alignWith );
-		log.trace("alignWithPolar = "+alignWithPolar);
 		float angle = alignWithPolar.a - alignPointPolar.a;
-		log.trace("angle = "+angle);
 		float x = node.getX();
 		float y = node.getY();
 		AffineTransform trafo = AffineTransform.getTranslateInstance( -x, -y );

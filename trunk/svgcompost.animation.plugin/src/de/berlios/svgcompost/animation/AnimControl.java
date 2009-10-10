@@ -1,14 +1,12 @@
 package de.berlios.svgcompost.animation;
 
-import org.apache.log4j.Logger;
-
 import de.berlios.svgcompost.animation.anim.composite.Scene;
 import de.berlios.svgcompost.animation.export.Export;
 
 
 public class AnimControl {
 
-	private static Logger log = Logger.getLogger(AnimControl.class);
+//	private static Logger log = Logger.getLogger(AnimControl.class);
 
 	public double timePerFrame = 83;
 	public int millis = 0;
@@ -22,7 +20,7 @@ public class AnimControl {
 
 	public boolean nextFrame() {
 		millis += timePerFrame;
-		log.info("millis: "+millis);
+//		log.info("millis: "+millis);
 		if( millis > scene.getDurationinMillis() ) {
 			return false;
 		}

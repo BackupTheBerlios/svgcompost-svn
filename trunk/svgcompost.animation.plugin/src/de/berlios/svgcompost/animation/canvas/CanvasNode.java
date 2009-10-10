@@ -11,7 +11,6 @@ import java.util.Map;
 
 import org.apache.batik.gvt.CompositeGraphicsNode;
 import org.apache.batik.gvt.GraphicsNode;
-import org.apache.log4j.Logger;
 
 import de.berlios.svgcompost.animation.anim.chara.skeleton.Bone;
 import de.berlios.svgcompost.animation.anim.chara.skeleton.BoneKey;
@@ -21,8 +20,6 @@ import de.berlios.svgcompost.animation.anim.chara.skeleton.SkeletonKey;
 
 public class CanvasNode {
 	
-	private static Logger log = Logger.getLogger(CanvasNode.class);
-
 	protected static final double[] matrixDummy = new double[6];
 	protected static final Point2D.Float pointDummy = new Point2D.Float();
 	protected static final List<GraphicsNode> emptyList = new ArrayList<GraphicsNode>();
@@ -57,6 +54,7 @@ public class CanvasNode {
 		return cNode;
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected List<GraphicsNode> getGraphicsNodeList() {
 		if( gNode == null || ! (gNode instanceof CompositeGraphicsNode) )
 			return emptyList;
@@ -161,7 +159,7 @@ public class CanvasNode {
 		try {
 			getParent().getGlobalTransform().inverseTransform( global, pointDummy );
 		} catch (NoninvertibleTransformException e) {
-			log.error( e.getMessage(), e );
+			e.printStackTrace();
 		}
 		setXY( pointDummy.x, pointDummy.y );
 	}
@@ -183,7 +181,7 @@ public class CanvasNode {
 		try {
 			getParent().getGlobalTransform().inverseTransform( pointDummy, pointDummy );
 		} catch (NoninvertibleTransformException e) {
-			log.error( e.getMessage(), e );
+			e.printStackTrace();
 		}
 		setXY( pointDummy.x, pointDummy.y );
 	}
@@ -246,7 +244,7 @@ public class CanvasNode {
 	public void setTransform( AffineTransform transform ) {
 		gNode.setTransform( (AffineTransform) transform.clone() );
 		if( ! getTransform().equals( transform ) ) {
-			log.warn( "transforms NOT equal (NaN values?): "+transform );
+//			log.warn( "transforms NOT equal (NaN values?): "+transform );
 //			log.warn( transform );
 //			log.warn( getTransform() );
 		}
@@ -263,7 +261,6 @@ public class CanvasNode {
 	
 	public AffineTransform getGlobalTransform() {
 		if( gNode.getGlobalTransform() == null ) {
-			log.warn( "GlobalTransform was NULL for "+getPath() );
 //			System.out.println( "GlobalTransform was NULL." );
 			return new AffineTransform();
 		}
@@ -276,7 +273,7 @@ public class CanvasNode {
 			try {
 				transform.preConcatenate( gNode.getParent().getGlobalTransform().createInverse() );
 			} catch (NoninvertibleTransformException e) {
-				log.error( e.getMessage(), e );
+				e.printStackTrace();
 			}
 		}
 		setTransform( transform );
@@ -289,7 +286,7 @@ public class CanvasNode {
 		try {
 			trafo.preConcatenate( toLocal.getGlobalTransform().createInverse() );
 		} catch (NoninvertibleTransformException e) {
-			log.error( e.getMessage(), e );
+			e.printStackTrace();
 			return null;
 		}
 		return trafo;
@@ -335,8 +332,6 @@ public class CanvasNode {
 			node.getBoneKey().setBone( bone );
 			nodesForBones.put(bone, node);
 		}
-		else
-			log.debug( "couldn't find a bone named "+node.getName() );
 		
 		for( int i = 0; i < node.getSize(); i++ )
 			searchForBones( skeleton, node.get(i), nodesForBones );

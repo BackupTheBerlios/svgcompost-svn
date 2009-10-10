@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
 import de.berlios.svgcompost.animation.canvas.CanvasNode;
 
 /**
@@ -14,9 +12,6 @@ import de.berlios.svgcompost.animation.canvas.CanvasNode;
  *
  */
 public class SkeletonKey {
-
-	private static Logger log = Logger.getLogger(SkeletonKey.class);
-
 
 	private CanvasNode keyFrame;
 	
@@ -66,8 +61,7 @@ public class SkeletonKey {
 			node.getBoneKey().setSkeletonKey( this );
 			nodesForBones.put(bone, node);
 		}
-		else
-			log.debug( "couldn't find a bone named "+node.getName()+" for skeleton "+skeleton.getName() );
+
 		for( int i = 0; i < node.getSize(); i++ )
 			searchForBones( node.get(i) );
 	}

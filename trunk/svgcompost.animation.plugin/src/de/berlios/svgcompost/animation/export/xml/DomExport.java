@@ -16,7 +16,6 @@ import org.apache.batik.dom.AbstractDocument;
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.dom.GenericDocument;
 import org.apache.batik.dom.GenericElement;
-import org.apache.log4j.Logger;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Element;
@@ -26,8 +25,6 @@ import de.berlios.svgcompost.animation.canvas.Canvas;
 import de.berlios.svgcompost.animation.export.Export;
 
 public abstract class DomExport implements Export {
-
-	private static Logger log = Logger.getLogger(DomExport.class);
 
 	public Canvas canvas;
 	protected GenericDocument document;
@@ -94,7 +91,6 @@ public abstract class DomExport implements Export {
 	}
 	
 	public void writeOutput( String fileName ) {
-		log.info( "write outfile \""+fileName+"\"..." );
 //		System.out.println( "write outfile..." );
 		try {
             // Prepare the DOM document for writing
@@ -106,11 +102,9 @@ public abstract class DomExport implements Export {
             Transformer xformer = TransformerFactory.newInstance().newTransformer();
             xformer.setOutputProperty(OutputKeys.INDENT, "yes");
             xformer.transform( source, result );
-            log.info( "done." );
 //    		System.out.println( "done." );
         } catch ( Exception e ) {
         	e.printStackTrace();
-        	log.error( e.getMessage(), e );
         }
 	}
 }

@@ -49,7 +49,7 @@ public class SWFBuildAction implements IWorkbenchWindowActionDelegate {
 
 	@Override
 	public void init(IWorkbenchWindow window) {
-		// TODO Auto-generated method stub
+		this.page = window.getActivePage();
 		
 	}
 
@@ -79,6 +79,10 @@ public class SWFBuildAction implements IWorkbenchWindowActionDelegate {
 					break;
 				}
 			}
+		}
+		if( buildJob != null ) {
+			buildJob.setPriority(Job.LONG);
+			buildJob.schedule();
 		}
 	}
 	

@@ -8,18 +8,14 @@ import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.UserAgentAdapter;
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 import org.apache.batik.util.XMLResourceDescriptor;
-import org.apache.log4j.Logger;
 import org.w3c.dom.svg.SVGDocument;
 
 public class GraphicsBuilder {
 	
-	private static Logger log = Logger.getLogger(GraphicsBuilder.class);
-
 	public static BridgeContext readLibrary(String fileName) {
 		
         String xmlReaderClassName = XMLResourceDescriptor.getXMLParserClassName();
 		SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(xmlReaderClassName);
-		log.info( "read infile \""+fileName+"\"..." );
 //		System.out.println( "read infile..." );
 		SVGDocument doc = null;
 		BridgeContext ctx = null;
@@ -36,7 +32,6 @@ public class GraphicsBuilder {
 		}
 		catch( IOException exc ) {
 //			exc.printStackTrace();
-			log.error( exc.getMessage(), exc );
 		}
 
 		return ctx;
