@@ -1,15 +1,10 @@
 package de.berlios.svgcompost.animation.plugin;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.apache.batik.bridge.BridgeContext;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -88,11 +83,9 @@ public class SWFBuildAction implements IWorkbenchWindowActionDelegate {
 	
 	private void runSWFBuild(IFile file, IProgressMonitor monitor) {
 		String svgPath = file.getLocation().toString();
-		String pathWithoutExtension = svgPath.substring(0,file.getName().lastIndexOf(file.getFileExtension()));
+		String filenameWithoutExtension = file.getName().substring(0,file.getName().lastIndexOf(file.getFileExtension()));
+		String swfPath = file.getParent().getFile( new Path( filenameWithoutExtension+"swf" ) ).getLocation().toString();
 		
-		String swfPath = pathWithoutExtension + "swf";
-		System.out.println( "swfPath = "+swfPath );
-
 		monitor.beginTask("Running SWF build.", 1);
 
 		BridgeContext ctx = GraphicsBuilder.readLibrary(svgPath);
