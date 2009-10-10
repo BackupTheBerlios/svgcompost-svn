@@ -20,6 +20,7 @@ public class SkeletonKey {
 	protected SkeletonKey nextKey;
 	
 	protected Map<Bone,CanvasNode> nodesForBones = new HashMap<Bone,CanvasNode>();
+	protected Map<CanvasNode,BoneKey> keysForNodes = new HashMap<CanvasNode,BoneKey>();
 	protected Map<Limb,LimbKey> limbKeys = new HashMap<Limb,LimbKey>();
 	protected Skeleton skeleton;
 	
@@ -44,9 +45,11 @@ public class SkeletonKey {
 	 */
 	public BoneKey getBoneKey( Bone bone ) {
 		CanvasNode node = getNodeForBone( bone );
-		if( node == null )
-			return null;
-		return node.getBoneKey();
+		return getBoneKey(node);
+	}
+	
+	public BoneKey getBoneKey( CanvasNode node ) {
+		return keysForNodes.get(node);
 	}
 	
 	public LimbKey getLimbKey( Limb limb ) {
@@ -58,9 +61,9 @@ public class SkeletonKey {
 
 		if( skeleton.containsBone( nodeName ) ) {
 			Bone bone = skeleton.getBone( nodeName );
-			node.getBoneKey().setBone( bone );
-			node.getBoneKey().setSkeletonKey( this );
+			BoneKey key = new BoneKey(bone, node, this);
 			nodesForBones.put(bone, node);
+			keysForNodes.put(node, key);
 		}
 
 		for( int i = 0; i < node.getSize(); i++ )

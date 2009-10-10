@@ -5,17 +5,10 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.batik.gvt.CompositeGraphicsNode;
 import org.apache.batik.gvt.GraphicsNode;
-
-import de.berlios.svgcompost.animation.anim.chara.skeleton.Bone;
-import de.berlios.svgcompost.animation.anim.chara.skeleton.BoneKey;
-import de.berlios.svgcompost.animation.anim.chara.skeleton.Skeleton;
-import de.berlios.svgcompost.animation.anim.chara.skeleton.SkeletonKey;
 
 
 public class CanvasNode {
@@ -31,7 +24,6 @@ public class CanvasNode {
 	public static final String inkscapePrefix = "inkscape";
 	
 	private GraphicsNode gNode;
-	private BoneKey boneKey = new BoneKey( this, null );
 	
 	private Canvas canvas;
 	
@@ -310,23 +302,6 @@ public class CanvasNode {
 		return gNode;
 	}
 	
-	public BoneKey getBoneKey() {
-		return boneKey;
-	}
-
-	protected void searchForBones( Skeleton skeleton, CanvasNode node, HashMap<Bone,CanvasNode> nodesForBones ) {
-		String nodeName = node.getName();
-
-		if( skeleton.containsBone( nodeName ) ) {
-			Bone bone = skeleton.getBone( nodeName );
-			node.getBoneKey().setBone( bone );
-			nodesForBones.put(bone, node);
-		}
-		
-		for( int i = 0; i < node.getSize(); i++ )
-			searchForBones( skeleton, node.get(i), nodesForBones );
-	}
-
 	public Canvas getCanvas() {
 		return canvas;
 	}

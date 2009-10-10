@@ -20,25 +20,17 @@ public class BoneKey {
 	protected AffineTransform keyMatrix;
 	protected RotationMatrixTweener tweener;
 	
-	public BoneKey( CanvasNode canvasNode, SkeletonKey skeletonKey ) {
+	public BoneKey( Bone bone, CanvasNode canvasNode, SkeletonKey skeletonKey ) {
+		this.bone = bone;
 		this.canvasNode = canvasNode;
 		this.skeletonKey = skeletonKey;
 	}
 	
-//	public void setFrame(CanvasNode frame) {
-//		this.frame = frame;
-//	}
-
-	public void setBone(Bone bone) {
-		this.bone = bone;
-	}
-
-//	public Bone getBone() {
-//		return bone;
-//	}
-	
 	public BoneKey nextKey() {
 		SkeletonKey nextSkeletonKey = skeletonKey.nextKey();
+		if( nextSkeletonKey == null || nextSkeletonKey.getBoneKey(bone) == null ) {
+			System.out.println( "no key for bone "+bone+" in "+nextSkeletonKey );
+		}
 		return nextSkeletonKey==null?null:nextSkeletonKey.getBoneKey(bone);
 	}
 	public BoneKey previousKey() {

@@ -64,10 +64,10 @@ public class Bone {
 		return skeleton;
 	}
 	
-	protected void calcKeyMatrices( SkeletonKey keyframeLink ) {
+	protected void calcKeyMatrices( SkeletonKey skeletonKey ) {
 		
-		CanvasNode keyNode = keyframeLink.getNodeForBone(this);
-		CanvasNode parentKeyNode = parent == null ? null : keyframeLink.getNodeForBone(parent);
+		CanvasNode keyNode = skeletonKey.getNodeForBone(this);
+		CanvasNode parentKeyNode = parent == null ? null : skeletonKey.getNodeForBone(parent);
 		AffineTransform keyMatrix = keyNode.getGlobalTransform();
 		
 		if( parent == null )
@@ -75,48 +75,48 @@ public class Bone {
 		else if( parentKeyNode != null )
 			subtractFromMatrix( parentKeyNode.getGlobalTransform(), keyMatrix );
 		else
-			subtractFromMatrix( keyframeLink.getNodeForBone(skeleton).getGlobalTransform(), keyMatrix );
-		keyNode.getBoneKey().setKeyMatrix(keyMatrix);
+			subtractFromMatrix( skeletonKey.getNodeForBone(skeleton).getGlobalTransform(), keyMatrix );
+		skeletonKey.getBoneKey(keyNode).setKeyMatrix(keyMatrix);
 		
 		for (Bone bone : children)
-			bone.calcKeyMatrices( keyframeLink );
+			bone.calcKeyMatrices( skeletonKey );
 	}
 	
-	public void setupTweening( SkeletonKey keyframeLink ) {
+	public void setupTweening( SkeletonKey skeletonKey ) {
 
-		if( keyframeLink == null || keyframeLink.nextKey() == null )
+		if( skeletonKey == null || skeletonKey.nextKey() == null )
 			return;
 		
-		BoneKey boneKey = keyframeLink.getNodeForBone(this).getBoneKey();
+		BoneKey boneKey = skeletonKey.getBoneKey(this);
 		BoneKey nextBoneKey = boneKey.nextKey();
 		
 		if( boneKey.getKeyMatrix() == null )
-			calcKeyMatrices(keyframeLink);
+			calcKeyMatrices(skeletonKey);
 		if( nextBoneKey.getKeyMatrix() == null )
-			calcKeyMatrices(keyframeLink.nextKey());
+			calcKeyMatrices(skeletonKey.nextKey());
 		
 		boneKey.getTweener().load( boneKey.getKeyMatrix(), nextBoneKey.getKeyMatrix() );
 		
 		for (Bone bone : children)
-			bone.setupTweening( keyframeLink );
+			bone.setupTweening( skeletonKey );
 	}
 	
-	public void tween( SkeletonKey tweeningKeyLink, SkeletonKey activeKeyLink, double percentage ) {
+	public void tween( SkeletonKey tweeningKey, SkeletonKey activeKey, double percentage ) {
 
-		CanvasNode keyNode = activeKeyLink.getNodeForBone(this);
+		CanvasNode keyNode = activeKey.getNodeForBone(this);
 		if( keyNode == null )
 			return;
 
-		AffineTransform tween = tweeningKeyLink.getBoneKey(this).getTweener().tween( percentage );
+		AffineTransform tween = tweeningKey.getBoneKey(this).getTweener().tween( percentage );
 		
 		if( parent != null ) {
 			// Add the parent Bone's current CanvasNode matrix, to get a global transform.
-			CanvasNode parentKeyNode = activeKeyLink.getNodeForBone(parent);
+			CanvasNode parentKeyNode = activeKey.getNodeForBone(parent);
 
 			if( parentKeyNode != null )
 				tween.preConcatenate( parentKeyNode.getGlobalTransform() );
 			else
-				tween.preConcatenate( activeKeyLink.getNodeForBone(skeleton).getGlobalTransform() );
+				tween.preConcatenate( activeKey.getNodeForBone(skeleton).getGlobalTransform() );
 			// Subtract the Bone's CanvasNode's parent's matrix, to get a local transform.
 			subtractFromMatrix( keyNode.getParent().getGlobalTransform(), tween );
 		}
@@ -124,7 +124,7 @@ public class Bone {
 		keyNode.setTransform( tween );
 		
 		for (Bone bone : children)
-			bone.tween( tweeningKeyLink, activeKeyLink, percentage );
+			bone.tween( tweeningKey, activeKey, percentage );
 	}
 	
 
@@ -180,34 +180,34 @@ public class Bone {
 	 * on the shifted ancestor.
 	 * @param newPosition the position the Bone is shifted to.
 	 */
-	public void setRecursiveLocalXY( Point2D.Float newPosition, SkeletonKey frameLink, CanvasNode local ) {
-		CanvasNode node = frameLink.getNodeForBone(this); 
+	public void setRecursiveLocalXY( Point2D.Float newPosition, SkeletonKey skeletonKey, CanvasNode local ) {
+		CanvasNode node = skeletonKey.getNodeForBone(this); 
 		for (Bone child : children)
-			child.savePosition( frameLink );
+			child.savePosition( skeletonKey );
 		node.setLocalXY( newPosition, local );
 		for (Bone child : children)
-			child.recallPosition( frameLink );
+			child.recallPosition( skeletonKey );
 	}
 	
 	// TODO: make this a temporary method scope variable.
 	private Point2D.Float position;
 	
-	public void savePosition( SkeletonKey frameLink ) {
-		CanvasNode node = frameLink.getNodeForBone(this); 
-		position = node.getLocalXY( parent != null ? frameLink.getNodeForBone(parent) : node.getParent() );
+	public void savePosition( SkeletonKey skeletonKey ) {
+		CanvasNode node = skeletonKey.getNodeForBone(this); 
+		position = node.getLocalXY( parent != null ? skeletonKey.getNodeForBone(parent) : node.getParent() );
 		if( children == null )
 			return;
 		for (Bone child : children)
-			child.savePosition( frameLink );
+			child.savePosition( skeletonKey );
 	}
 	
-	public void recallPosition( SkeletonKey frameLink ) {
-		CanvasNode node = frameLink.getNodeForBone(this); 
-		node.setLocalXY( position, parent != null ? frameLink.getNodeForBone(parent) : node.getParent() );
+	public void recallPosition( SkeletonKey skeletonKey ) {
+		CanvasNode node = skeletonKey.getNodeForBone(this); 
+		node.setLocalXY( position, parent != null ? skeletonKey.getNodeForBone(parent) : node.getParent() );
 		if( children == null )
 			return;
 		for (Bone child : children)
-			child.recallPosition( frameLink );
+			child.recallPosition( skeletonKey );
 	}
 	
 	public String toString() {
