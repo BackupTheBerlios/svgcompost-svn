@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: SWF Transform Framework
+Bundle-SymbolicName: com.flagstone.transform
+Bundle-Version: 1.0.0
+Export-Package: com.flagstone.transform,
+ com.flagstone.transform.util
+Bundle-Vendor: Flagstone Software
