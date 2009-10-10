@@ -314,16 +314,6 @@ public class CanvasNode {
 		return boneKey;
 	}
 
-	protected Map<Skeleton,SkeletonKey> skeletonKeys = new HashMap<Skeleton,SkeletonKey>();
-	
-	public SkeletonKey applySkeleton( Skeleton skeleton, Map<Skeleton, SkeletonKey> previousKeys ) {
-		SkeletonKey skeletonKey = new SkeletonKey( skeleton, this );
-		skeletonKeys.put( skeleton, skeletonKey );
-		if( previousKeys != null && previousKeys.containsKey(skeleton) )
-			skeletonKey.setPreviousKey( previousKeys.get(skeleton) );
-		return skeletonKey;
-	}
-	
 	protected void searchForBones( Skeleton skeleton, CanvasNode node, HashMap<Bone,CanvasNode> nodesForBones ) {
 		String nodeName = node.getName();
 
@@ -337,14 +327,6 @@ public class CanvasNode {
 			searchForBones( skeleton, node.get(i), nodesForBones );
 	}
 
-	public SkeletonKey getSkeletonKey( Skeleton forSkeleton ) {
-		return skeletonKeys.get(forSkeleton);
-	}
-	
-	public Map<Skeleton,SkeletonKey> getSkeletonKeys() {
-		return skeletonKeys;
-	}
-	
 	public Canvas getCanvas() {
 		return canvas;
 	}

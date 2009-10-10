@@ -4,7 +4,7 @@ package de.berlios.svgcompost.animation.anim.chara.skeleton;
 
 import de.berlios.svgcompost.animation.anim.Anim;
 import de.berlios.svgcompost.animation.anim.easing.Easing;
-import de.berlios.svgcompost.animation.canvas.CanvasNode;
+import de.berlios.svgcompost.animation.timeline.Keyframe;
 
 /**
  * The KeyframeAnim class is responsible for switching keyframes at the right time.
@@ -19,17 +19,17 @@ public class KeyframeAnim extends Anim {
 
 //	protected int tweeningPairIndex;
 	protected Skeleton model;
-	protected CanvasNode frame1;
-	protected CanvasNode frame2;
+	protected Keyframe frame1;
+	protected Keyframe frame2;
 	protected boolean switchActiveFrame = false;
 //	protected List<CanvasNode> frames;
 	
 //	protected int activeKey;
 //	protected int inactiveKey;
-	protected CanvasNode activeKey;
-	protected CanvasNode inactiveKey;
+	protected Keyframe activeKey;
+	protected Keyframe inactiveKey;
 	
-	public KeyframeAnim(Skeleton model, /*List<CanvasNode> frames, int tweeningPairIndex,*/ CanvasNode frame1, CanvasNode frame2) {
+	public KeyframeAnim(Skeleton model, /*List<CanvasNode> frames, int tweeningPairIndex,*/ Keyframe frame1, Keyframe frame2) {
 		this.model = model;
 //		this.tweeningPairIndex = tweeningPairIndex;
 		this.frame1 = frame1;
@@ -76,8 +76,8 @@ public class KeyframeAnim extends Anim {
 		}
 //		frames.get(activeKey).setVisible(true);
 //		frames.get(inactiveKey).setVisible(false);
-		activeKey.setVisible(true);
-		inactiveKey.setVisible(false);
+		activeKey.getNode().setVisible(true);
+		inactiveKey.getNode().setVisible(false);
 	}
 	
 	@Override

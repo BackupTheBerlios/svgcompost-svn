@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.berlios.svgcompost.animation.canvas.CanvasNode;
+import de.berlios.svgcompost.animation.timeline.Keyframe;
 
 /**
  * Represents a keyframe of a Skeleton.
@@ -66,9 +67,9 @@ public class SkeletonKey {
 			searchForBones( node.get(i) );
 	}
 	
-	public static void setupTweening( List<CanvasNode> frames ) {
+	public static void setupTweening( List<Keyframe> frames ) {
 
-		for(CanvasNode frame : frames) {
+		for(Keyframe frame : frames) {
 			for( Skeleton skeleton : frame.getSkeletonKeys().keySet() ) {
 				skeleton.setupTweening(frame.getSkeletonKey(skeleton));
 				skeleton.setupLimbTweening(frame);
@@ -76,7 +77,7 @@ public class SkeletonKey {
 		}
 	}
 	
-	public static void tween( CanvasNode tweeningKey, CanvasNode activeKey, double percentage ) {
+	public static void tween( Keyframe tweeningKey, Keyframe activeKey, double percentage ) {
 		for( Skeleton skeleton : tweeningKey.getSkeletonKeys().keySet() ) {
 			skeleton.tween(tweeningKey.getSkeletonKey(skeleton), activeKey.getSkeletonKey(skeleton), percentage);
 			skeleton.tweenLimbs(tweeningKey.getSkeletonKey(skeleton), activeKey.getSkeletonKey(skeleton), percentage);

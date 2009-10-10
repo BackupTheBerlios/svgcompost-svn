@@ -3,7 +3,7 @@ package de.berlios.svgcompost.animation.anim.chara.skeleton;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import de.berlios.svgcompost.animation.canvas.CanvasNode;
+import de.berlios.svgcompost.animation.timeline.Keyframe;
 
 /**
  * A Skeleton is the root node for a composite Bone tree.
@@ -58,7 +58,7 @@ public class Skeleton extends Bone {
 		bones.put( forName, bone );
 	}
 
-	public void setupLimbTweening( CanvasNode keyframe ) {
+	public void setupLimbTweening( Keyframe keyframe ) {
 		for(Limb limb : connectors)
 			limb.readRotationPoint(keyframe.getSkeletonKey(this));
 	}
