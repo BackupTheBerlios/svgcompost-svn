@@ -23,6 +23,7 @@
 		</objectContribution>
 	</extension>
 	
+	<!-- Flip forward -->
 	<extension point="org.eclipse.ui.commands">
 		<command
 		id="svgcompost.animation.flipforward"
@@ -50,6 +51,38 @@
 	<extension point="org.eclipse.ui.bindings">
 		<key
 		commandId="svgcompost.animation.flipforward"
+		schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+		sequence="F7">
+		</key>
+	</extension>
+	<!-- Flip backward -->
+	<extension point="org.eclipse.ui.commands">
+		<command
+		id="svgcompost.animation.flipbackward"
+		name="Flip to previous keyframe">
+		</command>
+	</extension>
+	<extension point="org.eclipse.ui.menus">
+		<menuContribution locationURI="menu:org.eclipse.ui.main.menu">
+			<menu id="navigate" label="Navigate">
+				<command commandId="svgcompost.animation.flipbackward" style="push"/>
+			</menu>
+		</menuContribution>
+	</extension>
+	<extension point="org.eclipse.ui.handlers">
+		<handler
+		class="de.berlios.svgcompost.animation.plugin.command.FlipBackwardHandler"
+		commandId="svgcompost.animation.flipbackward">
+			<activeWhen>
+				<with variable="activePartId">
+					<equals value="svgcompost.editors.SVGEditor"/>
+				</with>
+			</activeWhen>
+		</handler>
+	</extension>
+	<extension point="org.eclipse.ui.bindings">
+		<key
+		commandId="svgcompost.animation.flipbackward"
 		schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
 		sequence="F6">
 		</key>

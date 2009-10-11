@@ -19,7 +19,8 @@ Require-Bundle: org.eclipse.ui,
  org.apache.commons.logging;bundle-version="1.0.4",
  com.flagstone.transform,
  svgcompost.plugin;bundle-version="0.0.1",
- org.eclipse.gef;bundle-version="3.4.1"
+ org.eclipse.gef;bundle-version="3.4.1",
+ org.eclipse.ui.views;bundle-version="3.3.0"
 Bundle-ActivationPolicy: lazy
 Bundle-Version: 1.0.0
 Bundle-Name: AnimPlugin
