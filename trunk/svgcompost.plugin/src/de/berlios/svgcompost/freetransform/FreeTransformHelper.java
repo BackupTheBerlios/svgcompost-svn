@@ -26,6 +26,9 @@ import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef.requests.ChangeBoundsRequest;
+import org.w3c.dom.Element;
+import org.w3c.dom.css.CSSStyleDeclaration;
+import org.w3c.dom.svg.SVGStylable;
 
 import de.berlios.svgcompost.plugin.SVGCompostConstants;
 import de.berlios.svgcompost.plugin.SVGCompostPlugin;
@@ -345,11 +348,13 @@ public class FreeTransformHelper {
 	}
 	
 	public static Rectangle2D getGlobalBounds(GraphicsNode gNode) {
-		Rectangle2D bounds;
-		if( gNode.getParent() != null )
-			bounds = gNode.getTransformedBounds(gNode.getParent().getGlobalTransform());
-		else
-			bounds = gNode.getBounds();
+		Rectangle2D bounds = null;
+		if( gNode != null ) {
+			if( gNode.getParent() != null )
+				bounds = gNode.getTransformedBounds(gNode.getParent().getGlobalTransform());
+			else
+				bounds = gNode.getBounds();
+		}
 		
 		if(bounds == null) // Happens with empty groups.
 			bounds = new Rectangle2D.Float(0,0,1,1);
@@ -362,6 +367,62 @@ public class FreeTransformHelper {
 			return gNode.getTransformedBounds(gNode.getTransform());
 //		else
 //			return gNode.getBounds();
+	}
+
+	/**
+	 * When editing keyframes, all but one are usually made invisible.
+	 * In that case, however, no graphics nodes are constructed by the Batik framework.
+	 * In order to access the keyframes, all must be made visible by setting the display attribute
+	 * to inline mode. 
+	 */
+	public static boolean setDisplayToInline( Element element ) {
+		boolean wasSetToNone = false;
+		if( element instanceof SVGStylable ) {
+			CSSStyleDeclaration style = ((SVGStylable)element).getStyle();
+			if( style.getPropertyValue("display").equals("none") ) {
+				style.setProperty("display", "inline", "");
+				wasSetToNone = true;
+			}
+		}
+		if( element.getAttribute("display").equals("none") ) {
+			element.setAttribute("display", "inline");
+			wasSetToNone = true;
+		}
+		return wasSetToNone;
+	}
+
+	public static boolean setDisplayValue( Element element, boolean display ) {
+		String displayValue = display ? "inline" : "none";
+		boolean oldValue = true;
+		String oldProperty = "";
+		if( element instanceof SVGStylable ) {
+			CSSStyleDeclaration style = ((SVGStylable)element).getStyle();
+			oldProperty = style.getPropertyValue("display");
+			if( ! oldProperty.equals("") ) {
+				oldValue = oldProperty.equals("none");
+				style.setProperty("display", displayValue, "");
+			}
+		}
+		String oldAttribute = element.getAttribute("display");
+		if( ! oldAttribute.equals("") || (! display && oldProperty.equals("")) ) {
+			oldValue = oldAttribute.equals("none");
+			element.setAttribute("display", displayValue);
+		}
+		return oldValue;
+	}
+
+	public static void setVisibility( Element element, boolean visible ) {
+		String visibility = visible ? "visible" : "hidden";
+		if( element instanceof SVGStylable ) {
+			CSSStyleDeclaration style = ((SVGStylable)element).getStyle();
+			if( ! style.getPropertyValue("visibility").equals("") )
+				style.setProperty("visibility", visibility, "");
+			else
+				element.setAttribute("visibility", visibility);
+		}
+		else {
+			element.setAttribute("visibility", visibility);
+		}
 	}
 	
 }

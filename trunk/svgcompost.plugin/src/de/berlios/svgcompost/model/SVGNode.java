@@ -1,15 +1,17 @@
 package de.berlios.svgcompost.model;
 
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.dom.svg.SVGGraphicsElement;
 import org.apache.batik.ext.awt.g2d.TransformStackElement;
 import org.apache.batik.gvt.GraphicsNode;
+import org.apache.batik.parser.AWTTransformProducer;
+import org.apache.batik.parser.TransformListParser;
 import org.apache.batik.svggen.SVGGeneratorContext;
 import org.apache.batik.svggen.SVGTransform;
 import org.eclipse.draw2d.geometry.Dimension;
@@ -20,6 +22,7 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.svg.SVGRect;
 
 import de.berlios.svgcompost.freetransform.FreeTransformHelper;
 
@@ -33,6 +36,9 @@ public class SVGNode  implements IPropertySource {
 
 	private transient PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
+	private TransformListParser parser = new TransformListParser();
+	private AWTTransformProducer tp = new AWTTransformProducer();
+	
 	public synchronized void addPropertyChangeListener(PropertyChangeListener listener) {
 		if (listener == null) {
 			throw new IllegalArgumentException();
@@ -88,6 +94,11 @@ public class SVGNode  implements IPropertySource {
 		NodeList list = element.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
 			if( list.item(i) instanceof Element ) {
+				Element gElement = (Element) list.item(i);
+				// FIXME: Elements without a GraphicsNode cause the editor to crash in some places.
+				// Thus, they can never be edited and remade visible.
+				// Therefore, as a workaround, make all elements visible by setting display to inline.
+				FreeTransformHelper.setDisplayValue(gElement,true);
 				GraphicsNode gNode = ctx.getGraphicsNode((Element)list.item(i));
 				// We don't want to edit empty elements, they cause lots of crashes.
 				if( gNode != null && gNode.getBounds() != null ) {
@@ -102,15 +113,13 @@ public class SVGNode  implements IPropertySource {
 		setParent(parent);
 	}
 	
-	public void applySvgValues() {
-		GraphicsNode gNode = ctx.getGraphicsNode(element);
-		if( gNode == null )
-			return;
-	}
-
 	public Dimension getSize() {
-		Rectangle2D bounds = FreeTransformHelper.getGlobalBounds(getGraphicsNode());
-		return new Dimension( (int)bounds.getWidth(), (int)bounds.getHeight() );
+		if( element instanceof SVGGraphicsElement ) {
+			SVGRect bounds = ((SVGGraphicsElement)element).getBBox();
+			if( bounds != null )
+				return new Dimension( (int)bounds.getWidth(), (int)bounds.getHeight() );
+		}
+		return new Dimension();
 	}
 
 	public void setTransform(AffineTransform transform) {
@@ -128,7 +137,12 @@ public class SVGNode  implements IPropertySource {
 	}
 
 	public AffineTransform getTransform() {
-		return getGraphicsNode().getTransform();
+		String value = element.getAttribute("transform");
+		if( value == null || value.equals("") )
+			return new AffineTransform();
+        parser.setTransformListHandler(tp);
+        parser.parse(value);
+        return tp.getAffineTransform();
 	}
 
 	public void addChild(int index, SVGNode child) {

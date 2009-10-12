@@ -12,9 +12,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.svg.SVGElement;
-import org.w3c.dom.svg.SVGStylable;
 
 import de.berlios.svgcompost.animation.anim.chara.skeleton.Bone;
 import de.berlios.svgcompost.animation.anim.chara.skeleton.KeyframeAnim;
@@ -28,6 +26,7 @@ import de.berlios.svgcompost.animation.anim.easing.Quadratic;
 import de.berlios.svgcompost.animation.timeline.Keyframe;
 import de.berlios.svgcompost.animation.timeline.Layer;
 import de.berlios.svgcompost.animation.timeline.Timeline;
+import de.berlios.svgcompost.freetransform.FreeTransformHelper;
 
 public class Library {
 	
@@ -98,7 +97,7 @@ public class Library {
 		for (CanvasNode node : root.getChildren()) {
 			Element element = canvas.getSourceCtx().getElement( node.getGraphicsNode() );
 			if( element != null && hasClass(element, "layer") ) {
-				setDisplayAttributeToInline(element);
+				FreeTransformHelper.setDisplayToInline(element);
 //			if( element != null && element.getAttributeNS( INKSCAPE_URI, INKSCAPE_GROUPMODE ).equals( INKSCAPE_LAYER ) ) {
 				Layer layer = createLayer( node );
 				timeline.addLayer(layer);
@@ -116,7 +115,7 @@ public class Library {
 		for (CanvasNode node : root.getChildren()) {
 			Element element = canvas.getSourceCtx().getElement( node.getGraphicsNode() );
 			if( element != null && hasClass( element, "keyframe" ) ) {
-				setDisplayAttributeToInline(element);
+				FreeTransformHelper.setDisplayToInline(element);
 				double time = 0;
 				try {
 					time = Double.parseDouble(element.getAttribute("time"));
@@ -296,24 +295,6 @@ public class Library {
 			}
 		}		
 		return layerIds;
-	}
-	
-	/**
-	 * When editing keyframes, all but one are usually made invisible.
-	 * In that case, however, no graphics nodes are constructed by the Batik framework.
-	 * In order to access the keyframes, all must be made visible by setting the display attribute
-	 * to inline mode. 
-	 */
-	private static void setDisplayAttributeToInline( Element element ) {
-		if( element instanceof SVGStylable ) {
-			CSSStyleDeclaration style = ((SVGStylable)element).getStyle();
-			if( style.getPropertyValue("display").equals("none") )
-				style.setProperty("display", "inline", "");
-		}
-		else {
-			if( element.getAttribute("display").equals("none") )
-				element.setAttribute("display", "inline");
-		}
 	}
 	
 	/**

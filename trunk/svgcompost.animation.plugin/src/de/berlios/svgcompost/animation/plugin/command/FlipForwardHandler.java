@@ -11,6 +11,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.berlios.svgcompost.editor.SVGEditor;
+import de.berlios.svgcompost.freetransform.FreeTransformHelper;
 import de.berlios.svgcompost.model.SVGNode;
 import de.berlios.svgcompost.part.BackgroundPart;
 import de.berlios.svgcompost.part.EditablePart;
@@ -45,8 +46,10 @@ public class FlipForwardHandler extends AbstractHandler {
 			}
 			// TODO: only flip selection, have visibility managed by the BackgroundElement.
 			// problem with display:none is that no GVT nodes are generated if saved and reloaded.
-			keyframe.getElement().setAttribute("display", "none");
-			nextKeyframe.getElement().setAttribute("display", "inline");
+//			keyframe.getElement().setAttribute("display", "none");
+//			nextKeyframe.getElement().setAttribute("display", "inline");
+			FreeTransformHelper.setDisplayValue(keyframe.getElement(), false);
+			FreeTransformHelper.setDisplayValue(nextKeyframe.getElement(), true);
 			GraphicalViewer viewer = (GraphicalViewer) editor.getAdapter(GraphicalViewer.class);
 			EditablePart flipLayerPart = (EditablePart) viewer.getEditPartRegistry().get(nextKeyframe.getElement());
 			viewer.setSelection( new StructuredSelection(flipLayerPart) );
