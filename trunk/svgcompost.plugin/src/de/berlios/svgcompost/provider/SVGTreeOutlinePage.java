@@ -39,6 +39,9 @@ import de.berlios.svgcompost.part.BackgroundPart;
 import de.berlios.svgcompost.part.EditablePart;
 
 
+// TODO: Try to use Orangevolt plugin outline page.
+// (allegedly uses wst outline without wst dom model) 
+
 /**
  * Outline view for SVG documents which displays their elements as a tree.
  * @author Gerrit Karius

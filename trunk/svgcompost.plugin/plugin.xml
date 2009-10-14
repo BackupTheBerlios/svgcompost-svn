@@ -24,4 +24,18 @@
             name="SVG Compost">
       </page>
    </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="de.berlios.svgcompost"
+            name="SVG">
+      </category>
+      <wizard
+            category="svgcompost.plugin"
+            class="de.berlios.svgcompost.wizard.NewSVGFileWizard"
+            icon="icons/sample.gif"
+            id="de.berlios.svgcompost.wizard.NewSVGFileWizard"
+            name="New SVG File">
+      </wizard>
+   </extension>
 </plugin>

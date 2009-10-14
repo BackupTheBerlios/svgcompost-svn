@@ -7,9 +7,9 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.berlios.svgcompost.editor.SVGEditor;
-import de.berlios.svgcompost.freetransform.FreeTransformHelper;
 import de.berlios.svgcompost.model.SVGNode;
 import de.berlios.svgcompost.part.BackgroundPart;
+import de.berlios.svgcompost.util.VisibilityHelper;
 
 public class HideAndShowHandler extends AbstractHandler {
 
@@ -41,7 +41,8 @@ public class HideAndShowHandler extends AbstractHandler {
 		visible = ! visible;
 		for (SVGNode sibling : siblings) {
 			if( sibling != layer ) {
-				FreeTransformHelper.setDisplayValue( sibling.getElement(), visible );
+//				FreeTransformHelper.setDisplayValue( sibling.getElement(), visible );
+				VisibilityHelper.setVisibility( sibling.getElement(), visible );
 			}
 		}
 	}

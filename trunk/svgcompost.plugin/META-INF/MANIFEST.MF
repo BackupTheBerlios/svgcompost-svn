@@ -19,10 +19,13 @@ Require-Bundle: org.w3c.dom.svg,
  org.eclipse.wst.sse.core;bundle-version="1.1.303",
  org.eclipse.wst.sse.ui;bundle-version="1.1.4",
  org.apache.batik.parser;bundle-version="1.6.0",
- org.apache.batik.css;bundle-version="1.6.0"
+ org.apache.batik.css;bundle-version="1.6.0",
+ org.eclipse.core.resources,
+ org.eclipse.ui,
+ org.eclipse.core.runtime
 Bundle-Activator: de.berlios.svgcompost.plugin.SVGCompostPlugin
 Bundle-ActivationPolicy: lazy
 Export-Package: de.berlios.svgcompost.editor,
- de.berlios.svgcompost.freetransform,
  de.berlios.svgcompost.model,
- de.berlios.svgcompost.part
+ de.berlios.svgcompost.part,
+ de.berlios.svgcompost.util

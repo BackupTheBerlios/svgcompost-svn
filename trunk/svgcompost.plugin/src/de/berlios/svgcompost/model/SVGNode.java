@@ -24,7 +24,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.svg.SVGRect;
 
-import de.berlios.svgcompost.freetransform.FreeTransformHelper;
+import de.berlios.svgcompost.util.VisibilityHelper;
 
 public class SVGNode  implements IPropertySource {
 
@@ -94,15 +94,18 @@ public class SVGNode  implements IPropertySource {
 		NodeList list = element.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
 			if( list.item(i) instanceof Element ) {
-				Element gElement = (Element) list.item(i);
+				Element childElement = (Element) list.item(i);
 				// FIXME: Elements without a GraphicsNode cause the editor to crash in some places.
 				// Thus, they can never be edited and remade visible.
 				// Therefore, as a workaround, make all elements visible by setting display to inline.
-				FreeTransformHelper.setDisplayValue(gElement,true);
-				GraphicsNode gNode = ctx.getGraphicsNode((Element)list.item(i));
+				boolean wasDisplayed = VisibilityHelper.setDisplayValue(childElement,true);
+				if( ! wasDisplayed ) {
+					VisibilityHelper.setVisibility(childElement, false);
+				}
+				GraphicsNode gNode = ctx.getGraphicsNode(childElement);
 				// We don't want to edit empty elements, they cause lots of crashes.
 				if( gNode != null && gNode.getBounds() != null ) {
-					editableElements.add( new SVGNode( (Element) list.item(i), ctx, this ) );
+					editableElements.add( new SVGNode( childElement, ctx, this ) );
 				}
 			}
 		}

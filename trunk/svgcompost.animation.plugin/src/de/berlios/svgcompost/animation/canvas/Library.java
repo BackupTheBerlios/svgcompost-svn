@@ -26,7 +26,7 @@ import de.berlios.svgcompost.animation.anim.easing.Quadratic;
 import de.berlios.svgcompost.animation.timeline.Keyframe;
 import de.berlios.svgcompost.animation.timeline.Layer;
 import de.berlios.svgcompost.animation.timeline.Timeline;
-import de.berlios.svgcompost.freetransform.FreeTransformHelper;
+import de.berlios.svgcompost.util.VisibilityHelper;
 
 public class Library {
 	
@@ -97,7 +97,7 @@ public class Library {
 		for (CanvasNode node : root.getChildren()) {
 			Element element = canvas.getSourceCtx().getElement( node.getGraphicsNode() );
 			if( element != null && hasClass(element, "layer") ) {
-				FreeTransformHelper.setDisplayToInline(element);
+				VisibilityHelper.setDisplayToInline(element);
 //			if( element != null && element.getAttributeNS( INKSCAPE_URI, INKSCAPE_GROUPMODE ).equals( INKSCAPE_LAYER ) ) {
 				Layer layer = createLayer( node );
 				timeline.addLayer(layer);
@@ -115,7 +115,7 @@ public class Library {
 		for (CanvasNode node : root.getChildren()) {
 			Element element = canvas.getSourceCtx().getElement( node.getGraphicsNode() );
 			if( element != null && hasClass( element, "keyframe" ) ) {
-				FreeTransformHelper.setDisplayToInline(element);
+				VisibilityHelper.setDisplayToInline(element);
 				double time = 0;
 				try {
 					time = Double.parseDouble(element.getAttribute("time"));
