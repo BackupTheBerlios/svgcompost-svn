@@ -38,4 +38,26 @@
             name="New SVG File">
       </wizard>
    </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            id="svgcompost.plugin.contribution1"
+            objectClass="de.berlios.svgcompost.part.EditablePart">
+         <menu
+               id="svgcompost.plugin.menu1"
+               label="Attributes"
+               path="additions">
+            <separator
+                  name="group1">
+            </separator>
+         </menu>
+         <action
+               class="de.berlios.svgcompost.popup.AddAttributeAction"
+               enablesFor="1"
+               id="svgcompost.plugin.newAction"
+               label="Add Attribute"
+               menubarPath="svgcompost.plugin.menu1/group1">
+         </action>
+      </objectContribution>
+   </extension>
 </plugin>
