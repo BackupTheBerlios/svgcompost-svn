@@ -246,8 +246,10 @@ public class Graphics2DToGraphicsAdaptor
 			AlphaComposite ac = (AlphaComposite)c;
 			
 			// swt graphics doesn't support blitting onto transparency mask explicitly.
-			if (ac.getAlpha() != 1.0)
-				throw new UnsupportedOperationException();
+			
+			//...but we don't care for the time being.
+//			if (ac.getAlpha() != 1.0)
+//				throw new UnsupportedOperationException();
 			
 			swtGC.setAlpha(Math.round(ac.getAlpha() * 255));
 			if (ac.getRule() == AlphaComposite.SRC_OVER)
