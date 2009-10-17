@@ -118,7 +118,6 @@ IResourceChangeListener, IResourceDeltaVisitor {
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		String arg1Name = oldInput == null ? "null" : oldInput.getClass().getSimpleName();
 		String arg2Name = newInput == null ? "null" : newInput.getClass().getSimpleName();
-		System.out.println( "inputChanged: "+arg1Name+", "+arg2Name );
 		this.viewer = (StructuredViewer) viewer;
 	}
 
