@@ -33,7 +33,6 @@ import org.apache.batik.transcoder.keys.BooleanKey;
 import org.apache.batik.transcoder.keys.LengthKey;
 import org.apache.batik.transcoder.keys.Rectangle2DKey;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.FigureUtilities;
-import org.eclipse.gmf.runtime.draw2d.ui.render.awt.internal.graphics.Graphics2DToGraphicsAdaptor;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -44,6 +43,8 @@ import org.eclipse.swt.widgets.Display;
 import org.w3c.dom.Element;
 
 import de.berlios.svgcompost.freetransform.FreeTransformHelper;
+
+//import org.eclipse.gmf.runtime.draw2d.ui.render.awt.internal.graphics.Graphics2DToGraphicsAdaptor;
 
 
 /**

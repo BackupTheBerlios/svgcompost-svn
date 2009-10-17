@@ -22,6 +22,7 @@ import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.gvt.GraphicsNode;
 import org.eclipse.draw2d.ConnectionLayer;
 import org.eclipse.draw2d.FreeformLayout;
 import org.eclipse.draw2d.IFigure;
@@ -198,9 +199,9 @@ implements PropertyChangeListener, EventListener  {
 		try {
 			Dimension2D dim = ctx.getDocumentSize();
 			RenderInfo info = RenderedImageFactory.createInfo((int)dim.getWidth(), (int)dim.getHeight(), true, true, new RGB(255,255,255), new RGB(0,0,0));
-			image = Transcoders.getSVGImageConverter().renderSVGtoSWTImage(ctx.getDocument(), info);
-//			GraphicsNode gvtRoot = ctx.getGraphicsNode( ctx.getDocument().getDocumentElement() );
-//			image = Transcoders.getGVTRenderer().transcode(ctx, gvtRoot);
+//			image = Transcoders.getSVGImageConverter().renderSVGtoSWTImage(ctx.getDocument(), info);
+			GraphicsNode gvtRoot = ctx.getGraphicsNode( ctx.getDocument().getDocumentElement() );
+			image = Transcoders.getGVTRenderer().transcode(ctx, gvtRoot);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
