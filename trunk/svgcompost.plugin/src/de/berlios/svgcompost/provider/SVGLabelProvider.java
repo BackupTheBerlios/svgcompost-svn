@@ -16,12 +16,18 @@
 
 package de.berlios.svgcompost.provider;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.w3c.dom.Element;
+
+import de.berlios.svgcompost.plugin.SVGCompostPlugin;
 
 
 /**
@@ -31,10 +37,20 @@ import org.w3c.dom.Element;
  */
 public class SVGLabelProvider implements ILabelProvider {
 	
+	private static ImageDescriptor imageDesc;
+	private static Image image;
+	static {
+		URL url = null;
+		url = SVGCompostPlugin.getDefault().getBundle().getResource("icons/element_obj.gif");
+		imageDesc = ImageDescriptor.createFromURL(url);
+		image = imageDesc.createImage();
+	}
+
 	public Image getImage(Object arg0) {
-		if( arg0 instanceof Element )
-			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
-			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
+		if( arg0 instanceof Element ) {
+			return image;
+		}
+		return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
 	}
 
 	public String getText(Object arg0) {

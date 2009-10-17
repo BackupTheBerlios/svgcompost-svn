@@ -1,6 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
 <plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="de.berlios.svgcompost"
+            name="SVG Compost"/>
+      <view
+            allowMultiple="false"
+            class="org.eclipse.ui.navigator.CommonNavigator"
+            icon="icons/sample.gif"
+            id="de.berlios.svgcompost.navigator.view"
+            name="SVG Compost Navigator"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.navigator.viewer">
+      <viewer viewerId="de.berlios.svgcompost.navigator.view">
+      </viewer>
+      <viewerContentBinding viewerId="de.berlios.svgcompost.navigator.view">
+         <includes>
+            <contentExtension pattern="org.eclipse.ui.navigator.resourceContent"/>
+            <contentExtension pattern="org.eclipse.ui.navigator.resources.filters.*"/> 
+            <contentExtension pattern="org.eclipse.ui.examples.navigator.filters.*"/> 
+         </includes>
+      </viewerContentBinding>
+      <viewerActionBinding viewerId="de.berlios.svgcompost.navigator.view">
+         <includes>
+            <actionExtension pattern="org.eclipse.ui.navigator.resources.*"/>
+         </includes>
+      </viewerActionBinding>
+   </extension>
+  <extension
+         point="org.eclipse.ui.navigator.navigatorContent">
+         
+      <navigatorContent 
+            id="de.berlios.svgcompost.navigator.svgContent" 
+            name="Properties File Contents"
+            contentProvider="de.berlios.svgcompost.provider.SVGTreeContentProvider"
+            labelProvider="de.berlios.svgcompost.provider.SVGLabelProvider" 
+            activeByDefault="true"
+            icon="icons/sample.gif"
+            priority="normal" >
+         <triggerPoints>
+	            <and>
+	               <instanceof value="org.eclipse.core.resources.IFile"/>
+	               <test
+	                     forcePluginActivation="true"
+	                     property="org.eclipse.core.resources.extension"
+	                     value="svg"/>
+	            </and>
+         </triggerPoints>
+         <possibleChildren>
+            <or>
+               <instanceof value="org.w3c.dom.Document"/> 
+               <instanceof value="org.w3c.dom.Element"/> 
+            </or>
+         </possibleChildren>
+      </navigatorContent>
+   </extension>
+   <extension
+         point="org.eclipse.ui.navigator.viewer">
+      <viewerContentBinding viewerId="de.berlios.svgcompost.navigator.view">
+         <includes>
+            <contentExtension pattern="de.berlios.svgcompost.navigator.svgContent"/>
+         </includes>
+      </viewerContentBinding>
+   </extension>
+      
 	<extension point="org.eclipse.core.runtime.contentTypes">
 		<file-association content-type="org.eclipse.core.runtime.xml"
 			 file-extensions="svg">
@@ -9,7 +76,7 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            name="SvgCompost Editor"
+            name="SVG Compost Editor"
             extensions="svg"
             contributorClass="de.berlios.svgcompost.contributor.SVGEditorActionBarContributor"
             class="de.berlios.svgcompost.editor.SVGEditor"
@@ -31,7 +98,7 @@
             name="SVG">
       </category>
       <wizard
-            category="svgcompost.plugin"
+            category="de.berlios.svgcompost"
             class="de.berlios.svgcompost.wizard.NewSVGFileWizard"
             icon="icons/sample.gif"
             id="de.berlios.svgcompost.wizard.NewSVGFileWizard"
