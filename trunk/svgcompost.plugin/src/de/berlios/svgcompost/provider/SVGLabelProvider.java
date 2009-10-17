@@ -16,7 +16,6 @@
 
 package de.berlios.svgcompost.provider;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -56,9 +55,10 @@ public class SVGLabelProvider implements ILabelProvider {
 	public String getText(Object arg0) {
 		if( arg0 instanceof Element ) {
 			Element element = (Element) arg0;
+			String label = element.getLocalName();
 			if( element.hasAttribute("id") )
-				return element.getAttribute("id");
-			return element.getNodeName();
+				label += " \""+ element.getAttribute("id") +"\"";
+			return label;
 		}
 		return null;
 	}
@@ -73,9 +73,9 @@ public class SVGLabelProvider implements ILabelProvider {
 
 	}
 
-	public boolean isLabelProperty(Object arg0, String arg1) {
-		String arg0Name = arg0 == null ? "null" : arg0.getClass().getSimpleName();
-		System.out.println( "isLabelProperty: "+arg0Name+", "+arg1 );
+	public boolean isLabelProperty(Object element, String property) {
+		String elementName = element == null ? "null" : element.getClass().getSimpleName();
+		System.out.println( "isLabelProperty: "+elementName+", "+property );
 		// TODO Auto-generated method stub
 		return false;
 	}
