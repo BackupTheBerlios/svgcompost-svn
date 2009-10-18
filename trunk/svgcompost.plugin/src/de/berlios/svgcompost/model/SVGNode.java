@@ -201,7 +201,7 @@ public class SVGNode  implements IPropertySource {
 		IPropertyDescriptor[] propertyDescriptors = new IPropertyDescriptor[element.getAttributes().getLength()];
 		for (int i=0;i<element.getAttributes().getLength();i++) {				
 			Attr attribute = (Attr) element.getAttributes().item(i);
-			PropertyDescriptor descriptor = new TextPropertyDescriptor(attribute.getName(),attribute.getName());
+			PropertyDescriptor descriptor = new TextPropertyDescriptor(attribute,attribute.getName());
 			int delimIndex = attribute.getName().indexOf(':');
 			descriptor.setCategory( delimIndex == -1 ? "no namespace" :  attribute.getName().substring(0, delimIndex));
 			propertyDescriptors[i] = descriptor;
@@ -209,18 +209,24 @@ public class SVGNode  implements IPropertySource {
 		return propertyDescriptors;
 
 	}
-	public Object getPropertyValue(Object name) {
-		return element.getAttribute((String) name);
+	public Object getPropertyValue(Object object) {
+		Attr attribute = (Attr) object;
+		return attribute.getValue();
 	}
-	public boolean isPropertySet(Object id) {
-		return element.hasAttribute((String)id);
+	public boolean isPropertySet(Object object) {
+		Attr attribute = (Attr) object;
+		if( attribute.getNamespaceURI() == null )
+			return element.hasAttribute(attribute.getName());
+		else
+			return element.hasAttributeNS(attribute.getNamespaceURI(),attribute.getName());
 	}
 	public void resetPropertyValue(Object id) {
 	}
-	public void setPropertyValue(Object name, Object value) {
-		String oldValue = element.getAttribute((String) name);
-		element.setAttribute((String) name, (String) value);
-		String newValue = element.getAttribute((String) name);
+	public void setPropertyValue(Object object, Object value) {
+		Attr attribute = (Attr) object;
+		String oldValue = attribute.getValue();
+		attribute.setValue( (String) value);
+		String newValue = attribute.getValue();
 		if( ! oldValue.equals(newValue) )
 			firePropertyChange(XML_ATTRIBUTE, oldValue, newValue);
 	}
