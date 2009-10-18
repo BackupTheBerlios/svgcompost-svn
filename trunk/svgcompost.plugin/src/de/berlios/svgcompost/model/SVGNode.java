@@ -105,14 +105,14 @@ public class SVGNode  implements IPropertySource {
 				GraphicsNode gNode = ctx.getGraphicsNode(childElement);
 				// We don't want to edit empty elements, they cause lots of crashes.
 				if( gNode != null && gNode.getBounds() != null ) {
-					editableElements.add( new SVGNode( childElement, ctx, this ) );
+					editableElements.add( new SVGNode( childElement, this ) );
 				}
 			}
 		}
 	}
 		
-	public SVGNode(Element element, BridgeContext ctx, SVGNode parent) {
-		this(element, ctx);
+	public SVGNode(Element element, SVGNode parent) {
+		this(element, parent.getBridgeContext());
 		setParent(parent);
 	}
 	
@@ -159,9 +159,12 @@ public class SVGNode  implements IPropertySource {
 	}
 
 	public void addChild(SVGNode child) {
-		editableElements.add(child);
-		element.appendChild(child.getElement());
-		child.setParent(this);
+		if( editableElements.indexOf(child) == -1 )
+			editableElements.add(child);
+		if( ! child.getElement().getParentNode().equals( element ) )
+			element.appendChild(child.getElement());
+		if( ! child.getParent().equals( this )  )
+			child.setParent(this);
 		firePropertyChange(INSERT, null, child);
 	}
 

@@ -93,6 +93,7 @@ import de.berlios.svgcompost.model.SVGNode;
 import de.berlios.svgcompost.part.BackgroundPart;
 import de.berlios.svgcompost.part.EditablePart;
 import de.berlios.svgcompost.part.SingleLevelFactory;
+import de.berlios.svgcompost.provider.SVGDropTargetListener;
 import de.berlios.svgcompost.provider.SVGEditorContextMenuProvider;
 import de.berlios.svgcompost.provider.SVGEditorPaletteFactory;
 import de.berlios.svgcompost.provider.SVGTreeOutlinePage;
@@ -150,6 +151,7 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette implements IDoub
 		viewer.setContextMenu(cmProvider);
 		getSite().registerContextMenu(cmProvider, viewer);
 
+		viewer.addDropTargetListener(new SVGDropTargetListener(getGraphicalViewer()));
 	}
 
 

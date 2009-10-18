@@ -30,6 +30,10 @@
             <actionExtension pattern="org.eclipse.ui.navigator.resources.*"/>
          </includes>
       </viewerActionBinding>
+      <dragAssistant
+            class="de.berlios.svgcompost.provider.SVGDragAdapterAssistant"
+            viewerId="de.berlios.svgcompost.navigator.view">
+      </dragAssistant>
    </extension>
   <extension
          point="org.eclipse.ui.navigator.navigatorContent">

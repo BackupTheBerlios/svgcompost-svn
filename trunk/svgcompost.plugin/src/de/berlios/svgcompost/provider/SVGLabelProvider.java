@@ -55,7 +55,7 @@ public class SVGLabelProvider implements ILabelProvider {
 	public String getText(Object arg0) {
 		if( arg0 instanceof Element ) {
 			Element element = (Element) arg0;
-			String label = element.getLocalName();
+			String label = element.getTagName();
 			if( element.hasAttribute("id") )
 				label += " \""+ element.getAttribute("id") +"\"";
 			return label;
