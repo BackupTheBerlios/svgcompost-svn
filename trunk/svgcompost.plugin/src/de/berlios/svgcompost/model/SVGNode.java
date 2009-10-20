@@ -161,9 +161,9 @@ public class SVGNode  implements IPropertySource {
 	public void addChild(SVGNode child) {
 		if( editableElements.indexOf(child) == -1 )
 			editableElements.add(child);
-		if( ! child.getElement().getParentNode().equals( element ) )
+		if( ! element.equals( child.getElement().getParentNode() ) )
 			element.appendChild(child.getElement());
-		if( ! child.getParent().equals( this )  )
+		if( ! this.equals( child.getParent() ) )
 			child.setParent(this);
 		firePropertyChange(INSERT, null, child);
 	}

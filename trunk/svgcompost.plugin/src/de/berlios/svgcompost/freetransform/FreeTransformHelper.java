@@ -17,6 +17,7 @@
 package de.berlios.svgcompost.freetransform;
 
 import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Point2D.Double;
@@ -343,6 +344,19 @@ public class FreeTransformHelper {
 			return null;
 		}
 	}
+	
+	public static void setGlobalTransform( GraphicsNode gNode, AffineTransform transform ) {
+		if( gNode.getParent() != null ) {
+			transform = (AffineTransform) transform.clone();
+			try {
+				transform.preConcatenate( gNode.getParent().getGlobalTransform().createInverse() );
+			} catch (NoninvertibleTransformException e) {
+				e.printStackTrace();
+			}
+		}
+		gNode.setTransform( transform );
+	}
+
 	
 	public static Rectangle2D getGlobalBounds(GraphicsNode gNode) {
 		Rectangle2D bounds = null;
