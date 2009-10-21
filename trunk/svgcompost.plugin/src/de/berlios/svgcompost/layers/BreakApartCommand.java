@@ -2,6 +2,8 @@ package de.berlios.svgcompost.layers;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.gef.commands.Command;
 
@@ -9,14 +11,23 @@ import de.berlios.svgcompost.model.SVGNode;
 
 public class BreakApartCommand extends Command {
 
-	SVGNode node;
-	SVGNode parentNode;
-	AffineTransform transform;
+	private SVGNode node;
+	private int index;
+//	private SVGNode refSibling;
+	private SVGNode parentNode;
+	private AffineTransform transform;
 	
+	private List<SVGNode> children = new ArrayList<SVGNode>();
+	private List<AffineTransform> transforms = new ArrayList<AffineTransform>();
+
 	public BreakApartCommand(SVGNode node) {
 		this.node = node;
 		this.parentNode = node.getParent();
-		this.transform = node.getTransform();
+		this.transform = node.getTransform(); // not necessary?
+		if( parentNode != null ) {
+			index = parentNode.getChildElements().indexOf( node );
+//			refSibling = parentNode.getChildElements().get(index+1);
+		}
 	}
 
 	@Override
@@ -41,6 +52,8 @@ public class BreakApartCommand extends Command {
 		}
 		while( node.getChildElements().size() > 0 ) {
 			SVGNode childNode = node.getChildElements().get(0);
+			children.add(childNode);
+			transforms.add(childNode.getTransform());
 			AffineTransform transform = childNode.getGraphicsNode().getGlobalTransform();
 			node.removeChild(childNode);
 			parentNode.addChild(childNode);
@@ -56,6 +69,19 @@ public class BreakApartCommand extends Command {
 	
 	@Override
 	public void undo() {
-		//TODO: undo
+		for( SVGNode child : children ) {
+			child.getParent().removeChild(child);
+		}
+		parentNode.addChild(index,node);
+		node.setTransform(transform);
+		for (int i = 0; i < children.size(); i++) {
+			SVGNode child = children.get(i);
+			AffineTransform childTransform = transforms.get(i);
+			node.addChild(child);
+			child.setTransform(childTransform);
+		}
+		// FIXME: Has to be removed and added again to make the change visible
+		parentNode.removeChild(node);
+		parentNode.addChild(index,node);
 	}
 }

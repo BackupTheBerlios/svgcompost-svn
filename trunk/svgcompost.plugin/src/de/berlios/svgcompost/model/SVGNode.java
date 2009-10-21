@@ -168,6 +168,22 @@ public class SVGNode  implements IPropertySource {
 		firePropertyChange(INSERT, null, child);
 	}
 
+	public void insertBefore(SVGNode child, SVGNode refChild) {
+		int refIndex = editableElements.indexOf(refChild);
+		if( refIndex == -1 ) {
+			addChild(child);
+			return;
+		}
+		if( editableElements.indexOf(child) == -1 ) {
+			editableElements.add(refIndex,child);
+		}
+		if( ! element.equals( child.getElement().getParentNode() ) )
+			element.insertBefore(child.getElement(), refChild.getElement());
+		if( ! this.equals( child.getParent() ) )
+			child.setParent(this);
+		firePropertyChange(INSERT, null, child);
+	}
+
 	public int removeChild(SVGNode child) {
 		int index = editableElements.indexOf(child);
 		if(index != -1) {
