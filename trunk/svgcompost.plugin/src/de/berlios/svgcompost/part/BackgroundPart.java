@@ -171,8 +171,8 @@ implements PropertyChangeListener, EventListener  {
 			SVGNode.CHANGE_ORDER.equals(prop) ||
 			SVGNode.XML_ATTRIBUTE.equals(prop)
 		) {
-			refreshVisuals();
 			refreshChildren();
+			refreshVisuals();
 		}
 		else if( SVGNode.TRANSFORM.equals(prop) ) {
 			refreshVisuals();

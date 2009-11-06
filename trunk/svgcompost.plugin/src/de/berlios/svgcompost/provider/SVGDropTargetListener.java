@@ -1,7 +1,10 @@
 package de.berlios.svgcompost.provider;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
+import org.apache.batik.dom.svg.SVGOMDocument;
 import org.apache.batik.dom.util.XLinkSupport;
 import org.apache.batik.util.SVGConstants;
 import org.eclipse.gef.EditPart;
@@ -15,6 +18,7 @@ import org.w3c.dom.Element;
 
 import de.berlios.svgcompost.model.SVGNode;
 import de.berlios.svgcompost.part.BackgroundPart;
+import de.berlios.svgcompost.util.LinkHelper;
 
 
 public class SVGDropTargetListener implements TransferDropTargetListener {
@@ -69,9 +73,22 @@ public class SVGDropTargetListener implements TransferDropTargetListener {
 			SVGNode editRoot = bg.getEditRoot();
 			Document doc = editRoot.getElement().getOwnerDocument();
 			Element newUseElement = doc.createElementNS(SVGConstants.SVG_NAMESPACE_URI, "use");
-			newUseElement.setAttributeNS(XLinkSupport.XLINK_NAMESPACE_URI, "href", (String)event.data);
-			SVGNode newUseNode = new SVGNode( newUseElement, editRoot );
-			editRoot.addChild(newUseNode);
+			URI referencedUri;
+			try {
+				referencedUri = new URI( (String)event.data );
+//				URI referencingUri = new URI( ((Document)editRoot.getElement().getOwnerDocument()).getBaseURI() );
+				URI referencingUri = new URI( "file://"+((SVGOMDocument)editRoot.getElement().getOwnerDocument()).getURLObject().getPath() );
+//				URI relativeUri = referencedUri.relativize(referencingUri);
+				String relativeUri = LinkHelper.createRelativePath( referencingUri.toString(), referencedUri.toString() );
+				System.out.println("referencedUri = "+referencedUri);
+				System.out.println("referencingUri = "+referencingUri);
+				System.out.println("relativeUri = "+relativeUri);
+				newUseElement.setAttributeNS(XLinkSupport.XLINK_NAMESPACE_URI, "href", relativeUri.toString());
+				SVGNode newUseNode = new SVGNode( newUseElement, editRoot );
+				editRoot.addChild(newUseNode);
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

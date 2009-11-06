@@ -102,11 +102,11 @@ public class SVGNode  implements IPropertySource {
 				if( ! wasDisplayed ) {
 					VisibilityHelper.setVisibility(childElement, false);
 				}
-				GraphicsNode gNode = ctx.getGraphicsNode(childElement);
+//				GraphicsNode gNode = ctx.getGraphicsNode(childElement);
 				// We don't want to edit empty elements, they cause lots of crashes.
-				if( gNode != null && gNode.getBounds() != null ) {
+//				if( gNode != null && gNode.getBounds() != null ) {
 					editableElements.add( new SVGNode( childElement, this ) );
-				}
+//				}
 			}
 		}
 	}

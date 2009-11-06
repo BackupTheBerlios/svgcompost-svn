@@ -138,7 +138,7 @@ public class EditablePart extends AbstractGraphicalEditPart implements PropertyC
 			((GraphicalEditPart) getParent()).setLayoutConstraint(this, getFigure(), draw2dBounds );
  		figure.setBounds(new Rectangle((int)awtBounds.getX(),(int)awtBounds.getY(),(int)awtBounds.getWidth(),(int)awtBounds.getHeight()));
  		
- 		AffineTransform globTrafo = gNode.getGlobalTransform();
+ 		AffineTransform globTrafo = gNode != null ? gNode.getGlobalTransform() : new AffineTransform();
  		imageFigure.setAwtOrigin( new Point2D.Double( globTrafo.getTranslateX(), globTrafo.getTranslateY() ) );
     }
     

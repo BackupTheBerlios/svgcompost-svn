@@ -5,6 +5,7 @@ import java.util.List;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.ui.actions.SelectionAction;
 import org.eclipse.ui.IWorkbenchPart;
+import org.w3c.dom.Element;
 
 import de.berlios.svgcompost.model.SVGNode;
 import de.berlios.svgcompost.part.EditablePart;
@@ -33,8 +34,13 @@ public class BreakApartAction extends SelectionAction {
 		if( ! (selectedObjects.get(0) instanceof EditablePart ) ) {
 			return null;
 		}
-		BreakApartCommand cmd = new BreakApartCommand( (SVGNode) ((EditablePart)selectedObjects.get(0)).getModel() );
-		return cmd;
+		SVGNode node = (SVGNode) ((EditablePart)selectedObjects.get(0)).getModel();
+		Element element = node.getElement();
+		if( element.getNodeName().equals("g") )
+			return new BreakApartGElementCommand( node );
+		if( element.getNodeName().equals("use") )
+			return new BreakApartUseElementCommand( node );
+		return null;
 	}
 	
 	@Override
