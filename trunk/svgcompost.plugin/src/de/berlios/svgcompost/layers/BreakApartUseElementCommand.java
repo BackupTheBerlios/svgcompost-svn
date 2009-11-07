@@ -1,9 +1,5 @@
 package de.berlios.svgcompost.layers;
 
-import java.awt.geom.AffineTransform;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.dom.svg.SVGOMDocument;
 import org.apache.batik.dom.util.XLinkSupport;
@@ -21,20 +17,12 @@ import de.berlios.svgcompost.util.LinkHelper;
 public class BreakApartUseElementCommand extends Command {
 
 	private SVGNode node;
-	private int index;
 	private SVGNode parentNode;
-	private AffineTransform transform;
+	private SVGNode gNode;
 	
-	private List<SVGNode> children = new ArrayList<SVGNode>();
-	private List<AffineTransform> transforms = new ArrayList<AffineTransform>();
-
 	public BreakApartUseElementCommand(SVGNode node) {
 		this.node = node;
 		this.parentNode = node.getParent();
-		this.transform = node.getTransform(); // not necessary?
-		if( parentNode != null ) {
-			index = parentNode.getChildElements().indexOf( node );
-		}
 	}
 
 	@Override
@@ -50,11 +38,9 @@ public class BreakApartUseElementCommand extends Command {
 	}
 
 	public void breakApartUseElement(SVGNode useNode) {
-		System.out
-				.println("BreakApartUseElementCommand.breakApartUseElement()");
-		SVGNode parentNode = useNode.getParent();
 		SVGUseElement useElement = (SVGUseElement) useNode.getElement();
 //		Element parentElement = (Element) useElement.getParentNode();
+		
 		BridgeContext ctx = useNode.getBridgeContext();
 		Element refElement = ctx.getReferencedElement(useElement, useElement.getAttributeNS(XLinkSupport.XLINK_NAMESPACE_URI, "href"));
 
@@ -73,7 +59,7 @@ public class BreakApartUseElementCommand extends Command {
 			gElement.appendChild(clone);
 		}
 		
-		SVGNode gNode = new SVGNode( gElement, parentNode.getBridgeContext() );
+		gNode = new SVGNode( gElement, parentNode.getBridgeContext() );
 //		parentElement.insertBefore(gElement, useElement);
 		parentNode.insertBefore( gNode, useNode );
 //		parentElement.removeChild(useElement);
@@ -81,10 +67,12 @@ public class BreakApartUseElementCommand extends Command {
 	}
 	
 	@Override public boolean canUndo() {
-		return false;
+		return true;
 	}
 	
 	@Override
 	public void undo() {
+		parentNode.insertBefore( node, gNode );
+		parentNode.removeChild(gNode);
 	}
 }
