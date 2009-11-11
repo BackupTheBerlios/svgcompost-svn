@@ -4,6 +4,7 @@ import org.apache.batik.dom.util.XLinkSupport;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -79,6 +80,32 @@ public abstract class LinkHelper {
 			relPath = new Path(up).append(relPath);
 		}
 		return relPath;
+	}
+
+	public static void changeIds(Element element, Document document) {
+		if( element.hasAttribute("id") ) {
+			String id = element.getAttribute("id");
+			if( document.getElementById(id) != null ) {
+				// Change id
+				int index = id.length() - 1;
+				while( index >= 0 && Character.isDigit( id.charAt(index) ) )
+					index--;
+				index++;
+				int count = Integer.parseInt(id.substring(index));
+				String body = id.substring(0, index);
+				do {
+					count++;
+					id = body + count;
+				} while( document.getElementById(id) != null );
+				element.setAttribute("id", id);
+			}
+		}
+		NodeList list = element.getChildNodes();
+		for (int i = 0; i < list.getLength(); i++) {
+			if( list.item(i) instanceof Element )
+				changeIds((Element)list.item(i), document);
+		}
+		
 	}
 
 }

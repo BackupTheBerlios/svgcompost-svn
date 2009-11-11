@@ -119,6 +119,38 @@
 		sequence="F8">
 		</key>
 	</extension>
+	<!-- New Keyframe -->
+	<extension point="org.eclipse.ui.commands">
+		<command
+		id="svgcompost.animation.newkeyframe"
+		name="New keyframes">
+		</command>
+	</extension>
+	<extension point="org.eclipse.ui.menus">
+		<menuContribution locationURI="menu:org.eclipse.ui.main.menu">
+			<menu id="edit" label="Edit">
+				<command commandId="svgcompost.animation.newkeyframe" style="push"/>
+			</menu>
+		</menuContribution>
+	</extension>
+	<extension point="org.eclipse.ui.handlers">
+		<handler
+		class="de.berlios.svgcompost.animation.plugin.command.NewKeyframeHandler"
+		commandId="svgcompost.animation.newkeyframe">
+			<activeWhen>
+				<with variable="activePartId">
+					<equals value="svgcompost.editors.SVGEditor"/>
+				</with>
+			</activeWhen>
+		</handler>
+	</extension>
+	<extension point="org.eclipse.ui.bindings">
+		<key
+		commandId="svgcompost.animation.newkeyframe"
+		schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+		sequence="F9">
+		</key>
+	</extension>
 
 
 
