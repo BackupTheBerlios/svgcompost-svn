@@ -2,12 +2,12 @@ package de.berlios.svgcompost.layers;
 
 import java.util.List;
 
+import org.apache.batik.bridge.BridgeContext;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.ui.actions.SelectionAction;
 import org.eclipse.ui.IWorkbenchPart;
 import org.w3c.dom.Element;
 
-import de.berlios.svgcompost.model.SVGNode;
 import de.berlios.svgcompost.part.EditablePart;
 
 public class BreakApartAction extends SelectionAction {
@@ -34,12 +34,12 @@ public class BreakApartAction extends SelectionAction {
 		if( ! (selectedObjects.get(0) instanceof EditablePart ) ) {
 			return null;
 		}
-		SVGNode node = (SVGNode) ((EditablePart)selectedObjects.get(0)).getModel();
-		Element element = node.getElement();
+		Element element = (Element) ((EditablePart)selectedObjects.get(0)).getModel();
+		BridgeContext ctx = (BridgeContext) ((EditablePart)selectedObjects.get(0)).getBridgeContext();
 		if( element.getNodeName().equals("g") )
-			return new BreakApartGElementCommand( node );
+			return new BreakApartGElementCommand( element, ctx );
 		if( element.getNodeName().equals("use") )
-			return new BreakApartUseElementCommand( node );
+			return new BreakApartUseElementCommand( element, ctx );
 		return null;
 	}
 	

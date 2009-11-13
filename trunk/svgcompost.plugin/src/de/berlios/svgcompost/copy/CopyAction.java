@@ -9,8 +9,8 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
+import org.w3c.dom.Element;
 
-import de.berlios.svgcompost.model.SVGNode;
 import de.berlios.svgcompost.part.EditablePart;
 
 public class CopyAction extends SelectionAction {
@@ -45,7 +45,7 @@ public class CopyAction extends SelectionAction {
 			EditablePart ep = (EditablePart) nextSelected;
 			if( !cmd.isCopyable(ep.getModel()) )
 				return null;
-			cmd.addElement((SVGNode)ep.getModel());
+			cmd.addElement((Element)ep.getModel());
 		}
 		return cmd;
 	}

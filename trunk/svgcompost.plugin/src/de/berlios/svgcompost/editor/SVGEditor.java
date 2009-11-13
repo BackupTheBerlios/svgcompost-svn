@@ -32,6 +32,7 @@ import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.UserAgentAdapter;
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
+import org.apache.batik.dom.svg.SVGOMElement;
 import org.apache.batik.util.XMLResourceDescriptor;
 import org.apache.xml.serializer.DOMSerializer;
 import org.apache.xml.serializer.OutputPropertiesFactory;
@@ -90,7 +91,6 @@ import de.berlios.svgcompost.layers.FlipForwardAction;
 import de.berlios.svgcompost.layers.HideShowLayersAction;
 import de.berlios.svgcompost.layers.LowerNodeAction;
 import de.berlios.svgcompost.layers.RaiseNodeAction;
-import de.berlios.svgcompost.model.SVGNode;
 import de.berlios.svgcompost.part.BackgroundPart;
 import de.berlios.svgcompost.part.EditablePart;
 import de.berlios.svgcompost.part.SingleLevelFactory;
@@ -336,7 +336,7 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette implements IDoub
 			outline.setInput(doc);
 
 		Element root = doc.getRootElement();
-		viewer.setContents( new SVGNode( doc.getRootElement(), ctx ) );
+		viewer.setContents( root );
 		
 	}
 
@@ -354,7 +354,7 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette implements IDoub
 			if( selected instanceof Element )
 				element = (Element) selected;
 			else if( selected instanceof EditPart )
-				element = ( (SVGNode) ( (EditPart)selected ).getModel() ).getElement();
+				element = (Element) ( (EditPart)selected ).getModel();
 			return element;
 		}
 		return null;
@@ -369,7 +369,7 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette implements IDoub
 			EditPart part = (EditPart) viewer.getEditPartRegistry().get(element);
 			List<EditPart> children = viewer.getRootEditPart().getChildren();
 			if( children.size() > 0 && children.get(0) instanceof BackgroundPart )
-				((BackgroundPart)children.get(0)).setEditRoot( (SVGNode) ((EditablePart)viewer.getEditPartRegistry().get(element)).getModel() );
+				((BackgroundPart)children.get(0)).setEditRoot( (SVGOMElement) ((EditablePart)viewer.getEditPartRegistry().get(element)).getModel() );
 			viewer.setSelection( new StructuredSelection(part) );
 		}
 		else

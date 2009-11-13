@@ -19,10 +19,10 @@ package de.berlios.svgcompost.part;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.dom.svg.SVGGraphicsElement;
+import org.apache.batik.dom.svg.SVGOMElement;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.transcoder.TranscoderException;
 import org.eclipse.draw2d.Border;
@@ -39,10 +39,13 @@ import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gef.requests.ChangeBoundsRequest;
 import org.eclipse.gef.tools.DragEditPartsTracker;
 import org.eclipse.swt.graphics.Image;
+import org.w3c.dom.Element;
+import org.w3c.dom.events.Event;
+import org.w3c.dom.events.EventListener;
+import org.w3c.dom.svg.SVGRect;
 
 import de.berlios.svgcompost.figure.MapModeImageFigure;
 import de.berlios.svgcompost.freetransform.FreeTransformHelper;
-import de.berlios.svgcompost.model.SVGNode;
 import de.berlios.svgcompost.render.Transcoders;
 
 
@@ -52,15 +55,15 @@ import de.berlios.svgcompost.render.Transcoders;
  * @author Gerrit Karius
  *
  */
-public class EditablePart extends AbstractGraphicalEditPart implements PropertyChangeListener { //EventListener {
+public class EditablePart extends AbstractGraphicalEditPart implements /*PropertyChangeListener,*/ EventListener {
 	
 	public static final String EVENT_TYPE = "DOMAttrModified";
 
-	private SVGNode editableElement;
+	private Element editableElement;
 
 	private BridgeContext ctx;
 	
-	public EditablePart(SVGNode element, BridgeContext ctx) {
+	public EditablePart(Element element, BridgeContext ctx) {
 		super();
 		this.editableElement = element;
 		this.ctx = ctx;
@@ -70,7 +73,13 @@ public class EditablePart extends AbstractGraphicalEditPart implements PropertyC
 	public void activate() {
 		if (!isActive()) {
 			super.activate();
-			editableElement.addPropertyChangeListener(this);
+//			editableElement.addPropertyChangeListener(this);
+			if( editableElement instanceof SVGOMElement ) {
+				SVGOMElement svgom = (SVGOMElement) editableElement;
+				svgom.addEventListener("DOMAttrModified", this, false);
+				svgom.addEventListener("DOMNodeInserted", this, false);
+				svgom.addEventListener("DOMNodeRemoved", this, false);
+			}
 		}
 	}
 
@@ -83,7 +92,7 @@ public class EditablePart extends AbstractGraphicalEditPart implements PropertyC
 	@Override
 	protected void registerModel() {
 		super.registerModel();
-		getViewer().getEditPartRegistry().put(editableElement.getElement(), this);	
+		getViewer().getEditPartRegistry().put(editableElement, this);	
 	}
 
 	@Override
@@ -107,7 +116,16 @@ public class EditablePart extends AbstractGraphicalEditPart implements PropertyC
     @Override
 	protected IFigure createFigure() {
     	    	
- 		Dimension size = editableElement.getSize();
+ 		Dimension size = null;
+ 		
+		if( editableElement instanceof SVGGraphicsElement ) {
+			SVGRect bounds = ((SVGGraphicsElement)editableElement).getBBox();
+			if( bounds != null )
+				size = new Dimension( (int)bounds.getWidth(), (int)bounds.getHeight() );
+		}
+		if( size == null )
+			size = new Dimension();
+
     	
     	Image image = null;//transcodeImage(gvtRoot);
     	IFigure figure;
@@ -125,7 +143,7 @@ public class EditablePart extends AbstractGraphicalEditPart implements PropertyC
 	}
 
     protected void copyDataToFigure() {
-    	GraphicsNode gNode = ctx.getGraphicsNode(editableElement.getElement());
+    	GraphicsNode gNode = ctx.getGraphicsNode(editableElement);
 		Image image = null;//transcodeImage(gNode);
  		MapModeImageFigure imageFigure = (MapModeImageFigure) getFigure();
  		imageFigure.setImage(image);
@@ -175,11 +193,24 @@ public class EditablePart extends AbstractGraphicalEditPart implements PropertyC
     protected void createEditPolicies() {
     }
 
-	public void propertyChange(PropertyChangeEvent evt) {
-		String prop = evt.getPropertyName();
-		if( SVGNode.TRANSFORM.equals(prop) ||
-			SVGNode.XML_ATTRIBUTE.equals(prop)
-		) {
+//	public void propertyChange(PropertyChangeEvent evt) {
+//		String prop = evt.getPropertyName();
+//		if( SVGNode.TRANSFORM.equals(prop) ||
+//			SVGNode.XML_ATTRIBUTE.equals(prop)
+//		) {
+//			refreshVisuals();
+//		}
+//	}
+
+	public BridgeContext getBridgeContext() {
+		return ctx;
+	}
+
+	@Override
+	public void handleEvent(Event evt) {
+		String type = evt.getType();
+		System.out.println("EditablePart.handleEvent("+type+")");
+		if( "DOMAttrModified".equals(type) ) {
 			refreshVisuals();
 		}
 	}

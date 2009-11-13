@@ -2,15 +2,18 @@ package de.berlios.svgcompost.layers;
 
 import java.util.List;
 
+import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.gvt.GraphicsNode;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.ui.actions.SelectionAction;
 import org.eclipse.ui.IWorkbenchPart;
+import org.w3c.dom.Element;
 
 import de.berlios.svgcompost.editor.SVGEditor;
-import de.berlios.svgcompost.model.SVGNode;
 import de.berlios.svgcompost.part.BackgroundPart;
 import de.berlios.svgcompost.plugin.SVGCompostConstants;
 import de.berlios.svgcompost.plugin.SVGCompostPlugin;
+import de.berlios.svgcompost.util.ElementTraversalHelper;
 
 public class HideShowLayersAction extends SelectionAction {
 	
@@ -39,27 +42,28 @@ public class HideShowLayersAction extends SelectionAction {
 		BackgroundPart part = getBackground(getWorkbenchPart());
 		if( part == null )
 			return;
-		SVGNode layer = part.getEditRoot();
-		SVGNode parent = layer.getParent();
+		Element layer = part.getEditRoot();
+		Element parent = (Element) layer.getParentNode();
 		if( parent == null )
 			return;
-		changeSiblingVisibility(layer, parent);
+		changeSiblingVisibility(layer, parent, part.getBridgeContext());
 		part.refresh();
 	}
 
-	public static void changeSiblingVisibility(SVGNode layer, SVGNode parent) {
+	public static void changeSiblingVisibility(Element layer, Element parent, BridgeContext ctx) {
 		boolean visible = false;
-		List<SVGNode> siblings = parent.getChildElements();
-		for (SVGNode sibling : siblings) {
+		List<Element> siblings = ElementTraversalHelper.getChildElements(parent);
+		for (Element sibling : siblings) {
 			if( sibling != layer ) {
-				visible = sibling.getGraphicsNode() == null ? false : sibling.getGraphicsNode().isVisible();
+				GraphicsNode gNode = ctx.getGraphicsNode(sibling);
+				visible = gNode == null ? false : gNode.isVisible();
 				break;
 			}
 		}
 		visible = ! visible;
-		for (SVGNode sibling : siblings) {
+		for (Element sibling : siblings) {
 			if( sibling != layer ) {
-				sibling.getElement().setAttribute("display", visible ? "inline" : "none");
+				sibling.setAttribute("display", visible ? "inline" : "none");
 			}
 		}
 	}

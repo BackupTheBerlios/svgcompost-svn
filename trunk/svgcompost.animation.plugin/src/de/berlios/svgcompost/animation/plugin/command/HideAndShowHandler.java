@@ -2,13 +2,15 @@ package de.berlios.svgcompost.animation.plugin.command;
 
 import java.util.List;
 
+import org.apache.batik.bridge.BridgeContext;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.w3c.dom.Element;
 
 import de.berlios.svgcompost.editor.SVGEditor;
-import de.berlios.svgcompost.model.SVGNode;
 import de.berlios.svgcompost.part.BackgroundPart;
+import de.berlios.svgcompost.util.ElementTraversalHelper;
 import de.berlios.svgcompost.util.VisibilityHelper;
 
 public class HideAndShowHandler extends AbstractHandler {
@@ -20,29 +22,29 @@ public class HideAndShowHandler extends AbstractHandler {
 		BackgroundPart part = FlipForwardHandler.getBackground(editor);
 		if( part == null )
 			return null;
-		SVGNode layer = part.getEditRoot();
-		SVGNode parent = layer.getParent();
+		Element layer = part.getEditRoot();
+		Element parent = (Element) layer.getParentNode();
 		if( parent == null )
 			return null;
-		changeSiblingVisibility(layer, parent);
+		changeSiblingVisibility(layer, parent, part.getBridgeContext());
 		part.refresh();
 		return null;
 	}
 
-	public static void changeSiblingVisibility(SVGNode layer, SVGNode parent) {
+	public static void changeSiblingVisibility(Element layer, Element parent, BridgeContext ctx) {
 		boolean visible = false;
-		List<SVGNode> siblings = parent.getChildElements();
-		for (SVGNode sibling : siblings) {
+		List<Element> siblings = ElementTraversalHelper.getChildElements(parent);
+		for (Element sibling : siblings) {
 			if( sibling != layer ) {
-				visible = sibling.getGraphicsNode() == null ? false : sibling.getGraphicsNode().isVisible();
+				visible = ctx.getGraphicsNode(sibling) == null ? false : ctx.getGraphicsNode(sibling).isVisible();
 				break;
 			}
 		}
 		visible = ! visible;
-		for (SVGNode sibling : siblings) {
+		for (Element sibling : siblings) {
 			if( sibling != layer ) {
 //				FreeTransformHelper.setDisplayValue( sibling.getElement(), visible );
-				VisibilityHelper.setVisibility( sibling.getElement(), visible );
+				VisibilityHelper.setVisibility( sibling, visible );
 			}
 		}
 	}

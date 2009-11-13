@@ -9,25 +9,25 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.svg.SVGGElement;
-import org.w3c.dom.svg.SVGUseElement;
 
-import de.berlios.svgcompost.model.SVGNode;
 import de.berlios.svgcompost.util.LinkHelper;
 
 public class BreakApartUseElementCommand extends Command {
 
-	private SVGNode node;
-	private SVGNode parentNode;
-	private SVGNode gNode;
+	private Element node;
+	private Element parentNode;
+	private Element gElement;
+	private BridgeContext ctx;
 	
-	public BreakApartUseElementCommand(SVGNode node) {
+	public BreakApartUseElementCommand(Element node, BridgeContext ctx) {
 		this.node = node;
-		this.parentNode = node.getParent();
+		this.ctx = ctx;
+		this.parentNode = (Element) node.getParentNode();
 	}
 
 	@Override
 	public boolean canExecute() {
-		return node.getElement().getNodeName().equals("use");
+		return node.getNodeName().equals("use");
 	}
 
 	@Override
@@ -37,17 +37,16 @@ public class BreakApartUseElementCommand extends Command {
 		}
 	}
 
-	public void breakApartUseElement(SVGNode useNode) {
-		SVGUseElement useElement = (SVGUseElement) useNode.getElement();
+	public void breakApartUseElement(Element useElement) {
+//		SVGUseElement useElement = (SVGUseElement) useNode.getElement();
 //		Element parentElement = (Element) useElement.getParentNode();
 		
-		BridgeContext ctx = useNode.getBridgeContext();
 		Element refElement = ctx.getReferencedElement(useElement, useElement.getAttributeNS(XLinkSupport.XLINK_NAMESPACE_URI, "href"));
 
 		SVGOMDocument document = (SVGOMDocument)useElement.getOwnerDocument();
 		SVGOMDocument refDocument = (SVGOMDocument)refElement.getOwnerDocument();
 		
-		SVGGElement gElement = (SVGGElement) document.createElementNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_G_TAG);
+		gElement = (SVGGElement) document.createElementNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_G_TAG);
 		if( useElement.hasAttribute("transform") )
 			gElement.setAttribute("transform", useElement.getAttribute("transform"));
 		
@@ -59,11 +58,11 @@ public class BreakApartUseElementCommand extends Command {
 			gElement.appendChild(clone);
 		}
 		
-		gNode = new SVGNode( gElement, parentNode.getBridgeContext() );
+//		gNode = new Element( gElement, parentNode.getBridgeContext() );
 //		parentElement.insertBefore(gElement, useElement);
-		parentNode.insertBefore( gNode, useNode );
+		parentNode.insertBefore( gElement, useElement );
 //		parentElement.removeChild(useElement);
-		parentNode.removeChild(useNode);
+		parentNode.removeChild(useElement);
 	}
 	
 	@Override public boolean canUndo() {
@@ -72,7 +71,7 @@ public class BreakApartUseElementCommand extends Command {
 	
 	@Override
 	public void undo() {
-		parentNode.insertBefore( node, gNode );
-		parentNode.removeChild(gNode);
+		parentNode.insertBefore( node, gElement );
+		parentNode.removeChild(gElement);
 	}
 }

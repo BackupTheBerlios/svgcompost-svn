@@ -9,8 +9,8 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
+import org.w3c.dom.Element;
 
-import de.berlios.svgcompost.model.SVGNode;
 import de.berlios.svgcompost.part.BackgroundPart;
 
 public class PasteAction extends SelectionAction {
@@ -44,7 +44,7 @@ public class PasteAction extends SelectionAction {
 			BackgroundPart be = (BackgroundPart) nextSelected;
 			if( !cmd.canBePastedInto(be.getEditRoot()) )
 				return null;
-			cmd.setParentElement((SVGNode)be.getEditRoot());
+			cmd.setParentElement((Element)be.getEditRoot());
 		}
 
 		return cmd;

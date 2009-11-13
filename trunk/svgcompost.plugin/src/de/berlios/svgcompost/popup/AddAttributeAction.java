@@ -11,7 +11,6 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.w3c.dom.Element;
 
-import de.berlios.svgcompost.model.SVGNode;
 import de.berlios.svgcompost.part.EditablePart;
 
 public class AddAttributeAction implements IObjectActionDelegate {
@@ -52,7 +51,7 @@ public class AddAttributeAction implements IObjectActionDelegate {
 		);
 		if(dialog.open() == Window.OK) {
 			String newName = dialog.getValue();
-			Element element = ((SVGNode)part.getModel()).getElement();
+			Element element = (Element)part.getModel();
 			if( ! element.hasAttribute(newName) )
 				element.setAttribute(newName, "");
 		}

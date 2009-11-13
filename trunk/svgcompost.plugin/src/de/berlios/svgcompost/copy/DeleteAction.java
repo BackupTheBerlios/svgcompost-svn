@@ -9,8 +9,8 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
+import org.w3c.dom.Element;
 
-import de.berlios.svgcompost.model.SVGNode;
 import de.berlios.svgcompost.part.EditablePart;
 
 public class DeleteAction extends SelectionAction {
@@ -41,7 +41,7 @@ public class DeleteAction extends SelectionAction {
 			Object nextSelected = it.next();
 			if( nextSelected instanceof EditablePart ) {
 				EditablePart part = (EditablePart) nextSelected;
-				SVGNode node = (SVGNode) part.getModel();
+				Element node = (Element) part.getModel();
 				cmd.addNode( node );
 			}
 		}

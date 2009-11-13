@@ -17,11 +17,10 @@
 package de.berlios.svgcompost.part;
 
 import java.awt.geom.Dimension2D;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.dom.svg.SVGOMElement;
 import org.apache.batik.gvt.GraphicsNode;
 import org.eclipse.draw2d.ConnectionLayer;
 import org.eclipse.draw2d.FreeformLayout;
@@ -43,14 +42,15 @@ import org.eclipse.gmf.runtime.draw2d.ui.render.RenderInfo;
 import org.eclipse.gmf.runtime.draw2d.ui.render.factory.RenderedImageFactory;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
+import org.w3c.dom.Element;
 import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
 
 import de.berlios.svgcompost.figure.BackgroundImageFigure;
 import de.berlios.svgcompost.freetransform.FreeTransformEditPolicy;
 import de.berlios.svgcompost.freetransform.TransformSVGElementCommand;
-import de.berlios.svgcompost.model.SVGNode;
 import de.berlios.svgcompost.render.Transcoders;
+import de.berlios.svgcompost.util.ElementTraversalHelper;
 
 
 
@@ -60,10 +60,10 @@ import de.berlios.svgcompost.render.Transcoders;
  *
  */
 public class BackgroundPart extends AbstractGraphicalEditPart 
-implements PropertyChangeListener, EventListener  {
+implements /*PropertyChangeListener,*/ EventListener  {
 	// TODO: make this class extend RootEditPart
 	
-	private SVGNode editRoot;
+	private Element editRoot;
 
 	private GraphicalViewer viewer;
 
@@ -77,7 +77,7 @@ implements PropertyChangeListener, EventListener  {
 		return viewer;
 	}
 
-	public BackgroundPart(SVGNode backgroundElement, BridgeContext ctx) {
+	public BackgroundPart(Element backgroundElement, BridgeContext ctx) {
 		this.editRoot = backgroundElement;
 		this.ctx = ctx;
 	}
@@ -86,7 +86,12 @@ implements PropertyChangeListener, EventListener  {
 	public void activate() {
 		if (!isActive()) {
 			super.activate();
-			editRoot.addPropertyChangeListener(this);
+			if( editRoot instanceof SVGOMElement ) {
+				SVGOMElement svgom = (SVGOMElement) editRoot;
+				svgom.addEventListener("DOMAttrModified", this, false);
+				svgom.addEventListener("DOMNodeInserted", this, false);
+				svgom.addEventListener("DOMNodeRemoved", this, false);
+			}
 		}
 	}
 	
@@ -99,8 +104,19 @@ implements PropertyChangeListener, EventListener  {
 //	}
 
 	public void handleEvent(Event evt) {
-		String prop = evt.getType();
-		refreshChildren();
+		String type = evt.getType();
+		System.out.println("BackgroundPart.handleEvent("+type+")");
+		if( "DOMAttrModified".equals(type) ) {
+			refreshVisuals();
+		}
+		else if( "DOMNodeInserted".equals(type) ) {
+			refreshChildren();
+			refreshVisuals();
+		}
+		else if( "DOMNodeRemoved".equals(type) ) {
+			refreshChildren();
+			refreshVisuals();
+		}
 	}
 	
 	@Override
@@ -113,7 +129,7 @@ implements PropertyChangeListener, EventListener  {
 					EditPart child, Object constraint) {
 				if ((child instanceof EditablePart) && constraint instanceof Rectangle) {
 					return new TransformSVGElementCommand(
-							(SVGNode) child.getModel(), request, (Rectangle) constraint, getBridgeContext());
+							(Element) child.getModel(), request, (Rectangle) constraint, getBridgeContext());
 				}
 				return super.createChangeConstraintCommand(request, child, constraint);
 			}
@@ -160,24 +176,24 @@ implements PropertyChangeListener, EventListener  {
 		}
 	}
 
-	protected List<SVGNode> getModelChildren() {
-		return editRoot.getChildElements();
+	protected List<Element> getModelChildren() {
+		return ElementTraversalHelper.getChildElements(editRoot);
 	}
 	
-	public void propertyChange(PropertyChangeEvent evt) {
-		String prop = evt.getPropertyName();
-		if( SVGNode.INSERT.equals(prop) ||
-			SVGNode.REMOVE.equals(prop) ||
-			SVGNode.CHANGE_ORDER.equals(prop) ||
-			SVGNode.XML_ATTRIBUTE.equals(prop)
-		) {
-			refreshChildren();
-			refreshVisuals();
-		}
-		else if( SVGNode.TRANSFORM.equals(prop) ) {
-			refreshVisuals();
-		}
-	}
+//	public void propertyChange(PropertyChangeEvent evt) {
+//		String prop = evt.getPropertyName();
+//		if( Element.INSERT.equals(prop) ||
+//			Element.REMOVE.equals(prop) ||
+//			Element.CHANGE_ORDER.equals(prop) ||
+//			Element.XML_ATTRIBUTE.equals(prop)
+//		) {
+//			refreshChildren();
+//			refreshVisuals();
+//		}
+//		else if( Element.TRANSFORM.equals(prop) ) {
+//			refreshVisuals();
+//		}
+//	}
 	
 	
 
@@ -214,11 +230,11 @@ implements PropertyChangeListener, EventListener  {
 		return ctx;
 	}
 
-	public SVGNode getEditRoot() {
+	public Element getEditRoot() {
 		return editRoot;
 	}
 
-	public void setEditRoot(SVGNode root) {
+	public void setEditRoot(SVGOMElement root) {
 		editRoot = root;
 		refreshChildren();
 	}

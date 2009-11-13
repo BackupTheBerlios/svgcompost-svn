@@ -7,8 +7,8 @@ import org.eclipse.gef.ui.actions.SelectionAction;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
+import org.w3c.dom.Element;
 
-import de.berlios.svgcompost.model.SVGNode;
 import de.berlios.svgcompost.part.EditablePart;
 
 public class RaiseNodeAction extends SelectionAction {
@@ -43,7 +43,7 @@ public class RaiseNodeAction extends SelectionAction {
 		if( ! (selectedObjects.get(0) instanceof EditablePart ) ) {
 			return null;
 		}
-		ChangeNodeOrderCommand cmd = new ChangeNodeOrderCommand( (SVGNode) ((EditablePart)selectedObjects.get(0)).getModel(), getDirection() );
+		ChangeNodeOrderCommand cmd = new ChangeNodeOrderCommand( (Element) ((EditablePart)selectedObjects.get(0)).getModel(), getDirection() );
 		return cmd;
 	}
 	

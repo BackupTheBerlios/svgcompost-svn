@@ -31,10 +31,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
-import org.w3c.dom.svg.SVGSVGElement;
 
 import de.berlios.svgcompost.editor.SVGEditor;
-import de.berlios.svgcompost.model.SVGNode;
 import de.berlios.svgcompost.part.BackgroundPart;
 import de.berlios.svgcompost.part.EditablePart;
 
@@ -113,9 +111,9 @@ public class SVGTreeOutlinePage extends ContentOutlinePage implements ISelection
 			Object selected = structured.getFirstElement();
 			Element element = null;
 			if( selected instanceof EditablePart )
-				element = ((SVGNode)((EditablePart)selected).getModel()).getElement();
+				element = (Element)((EditablePart)selected).getModel();
 			else if( selected instanceof BackgroundPart )
-				element = ((SVGNode)((BackgroundPart)selected).getEditRoot()).getElement();
+				element = (Element)((BackgroundPart)selected).getEditRoot();
 			if( element != null )
 				setSelection( new StructuredSelection(element) );
 			else

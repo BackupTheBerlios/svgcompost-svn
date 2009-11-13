@@ -21,8 +21,7 @@ import org.apache.batik.bridge.BridgeContext;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPartFactory;
 import org.eclipse.gef.GraphicalViewer;
-
-import de.berlios.svgcompost.model.SVGNode;
+import org.w3c.dom.Element;
 
 
 
@@ -50,9 +49,11 @@ public class SingleLevelFactory implements EditPartFactory {
 	
 	public EditPart createEditPart(EditPart context, Object modelElement) {
 		EditPart part = null;
-		if( ! (modelElement instanceof SVGNode) )
+		if( ! (modelElement instanceof Element) ) {
+			System.out.println( "modelElement = "+modelElement );
 			return null;
-		SVGNode node = (SVGNode) modelElement;
+		}
+		Element node = (Element) modelElement;
 		if( context == null ) {
 			background = new BackgroundPart(node,ctx);
 			background.setViewer(viewer);
@@ -61,7 +62,7 @@ public class SingleLevelFactory implements EditPartFactory {
 		else {
 			part = new EditablePart(node,ctx);
 			part.setParent(context);
-			node.addPropertyChangeListener(background);
+//			node.addPropertyChangeListener(background);
 		}
 			
 		part.setModel(modelElement);

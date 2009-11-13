@@ -1,27 +1,25 @@
 package de.berlios.svgcompost.copy;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.gef.commands.Command;
-import org.eclipse.gef.ui.actions.Clipboard;
 import org.w3c.dom.Element;
 
-import de.berlios.svgcompost.model.SVGNode;
+import de.berlios.svgcompost.util.ElementTraversalHelper;
 
 public class DeleteCommand extends Command {
 
-	private List<SVGNode> list = new ArrayList<SVGNode>();
+	private List<Element> list = new ArrayList<Element>();
 	private List<Integer> indices = new ArrayList<Integer>();
-	private List<SVGNode> parents = new ArrayList<SVGNode>();
+	private List<Element> parents = new ArrayList<Element>();
 	
-	public void addNode( SVGNode node ) {
-		SVGNode parent = node.getParent();
+	public void addNode( Element node ) {
+		Element parent = (Element) node.getParentNode();
 		if( parent == null )
 			return;
 		list.add(node);
-		indices.add( parent.getChildElements().indexOf(node) );
+		indices.add( ElementTraversalHelper.indexOf(parent,node) );
 		parents.add(parent);
 	}
 
@@ -48,7 +46,7 @@ public class DeleteCommand extends Command {
 	@Override
 	public void undo() {
 		for (int i = 0; i < list.size(); i++) {
-			parents.get(i).addChild(indices.get(i), list.get(i));
+			ElementTraversalHelper.insertAt( parents.get(i), list.get(i), indices.get(i) );
 		}
 	}
 }

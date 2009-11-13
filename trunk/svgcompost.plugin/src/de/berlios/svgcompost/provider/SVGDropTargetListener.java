@@ -16,7 +16,6 @@ import org.eclipse.swt.dnd.Transfer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import de.berlios.svgcompost.model.SVGNode;
 import de.berlios.svgcompost.part.BackgroundPart;
 import de.berlios.svgcompost.util.LinkHelper;
 
@@ -70,22 +69,21 @@ public class SVGDropTargetListener implements TransferDropTargetListener {
 		List<EditPart> children = viewer.getRootEditPart().getChildren();
 		if( children.size() > 0 && children.get(0) instanceof BackgroundPart ) {
 			BackgroundPart bg = (BackgroundPart) children.get(0);
-			SVGNode editRoot = bg.getEditRoot();
-			Document doc = editRoot.getElement().getOwnerDocument();
+			Element editRoot = bg.getEditRoot();
+			Document doc = editRoot.getOwnerDocument();
 			Element newUseElement = doc.createElementNS(SVGConstants.SVG_NAMESPACE_URI, "use");
 			URI referencedUri;
 			try {
 				referencedUri = new URI( (String)event.data );
 //				URI referencingUri = new URI( ((Document)editRoot.getElement().getOwnerDocument()).getBaseURI() );
-				URI referencingUri = new URI( "file://"+((SVGOMDocument)editRoot.getElement().getOwnerDocument()).getURLObject().getPath() );
+				URI referencingUri = new URI( "file://"+((SVGOMDocument)editRoot.getOwnerDocument()).getURLObject().getPath() );
 //				URI relativeUri = referencedUri.relativize(referencingUri);
 				String relativeUri = LinkHelper.createRelativePath( referencingUri.toString(), referencedUri.toString() );
 				System.out.println("referencedUri = "+referencedUri);
 				System.out.println("referencingUri = "+referencingUri);
 				System.out.println("relativeUri = "+relativeUri);
 				newUseElement.setAttributeNS(XLinkSupport.XLINK_NAMESPACE_URI, "href", relativeUri.toString());
-				SVGNode newUseNode = new SVGNode( newUseElement, editRoot );
-				editRoot.addChild(newUseNode);
+				editRoot.appendChild(newUseElement);
 			} catch (URISyntaxException e) {
 				e.printStackTrace();
 			}

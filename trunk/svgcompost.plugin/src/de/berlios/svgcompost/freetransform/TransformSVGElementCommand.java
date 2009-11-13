@@ -26,8 +26,9 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.RequestConstants;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.requests.ChangeBoundsRequest;
+import org.w3c.dom.Element;
 
-import de.berlios.svgcompost.model.SVGNode;
+import de.berlios.svgcompost.util.ElementTraversalHelper;
 
 
 
@@ -47,19 +48,21 @@ public class TransformSVGElementCommand extends Command {
 	private final ChangeBoundsRequest request;
 
 	/** SVGElement to manipulate. */
-	private final SVGNode element;
+	private final Element element;
+	private BridgeContext ctx;
 	
-	public TransformSVGElementCommand(SVGNode element, ChangeBoundsRequest req, 
+	public TransformSVGElementCommand(Element element, ChangeBoundsRequest req, 
 			Rectangle newBounds, BridgeContext ctx) {
 		if (element == null || req == null || newBounds == null) {
 			throw new IllegalArgumentException();
 		}
 		this.element = element;
 		this.request = req;
+		this.ctx = ctx;
 		setLabel("move / resize");
 	}
 
-//	public TransformSVGElementCommand(SVGNode model,
+//	public TransformSVGElementCommand(Element model,
 //			ChangeBoundsRequest request2, Rectangle constraint,
 //			BridgeContext bridgeContext) {
 //		// TODO Auto-generated constructor stub
@@ -95,7 +98,7 @@ public class TransformSVGElementCommand extends Command {
 		// or save it externally for the document?
 		
 		calcNewTransform();
-		element.setTransform( newTransform );
+		ElementTraversalHelper.setTransform( element, newTransform, ctx );
 	}
 	
 	protected void correctNewTransform() {
@@ -141,7 +144,7 @@ public class TransformSVGElementCommand extends Command {
 	}
 	
 	protected void calcNewTransform() {
-		GraphicsNode gNode = element.getGraphicsNode();
+		GraphicsNode gNode = ctx.getGraphicsNode(element);
 		oldTransform = gNode.getTransform();
 		if( oldTransform == null )
 			oldTransform = new AffineTransform();
@@ -191,13 +194,13 @@ public class TransformSVGElementCommand extends Command {
 	 * @see org.eclipse.gef.commands.Command#redo()
 	 */
 	public void redo() {
-		element.setTransform( newTransform );
+		ElementTraversalHelper.setTransform( element, newTransform, ctx );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.gef.commands.Command#undo()
 	 */
 	public void undo() {
-		element.setTransform(oldTransform);
+		ElementTraversalHelper.setTransform( element, oldTransform, ctx );
 	}
 }

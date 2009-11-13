@@ -1,24 +1,25 @@
 package de.berlios.svgcompost.layers;
 
 import org.eclipse.gef.commands.Command;
+import org.w3c.dom.Element;
 
-import de.berlios.svgcompost.model.SVGNode;
+import de.berlios.svgcompost.util.ElementTraversalHelper;
 
 public class ChangeNodeOrderCommand extends Command {
 
-	private SVGNode node;
+	private Element node;
 	private int oldPosition;
 	private int newPosition;
 	
-	public ChangeNodeOrderCommand(SVGNode node, int direction) {
+	public ChangeNodeOrderCommand(Element node, int direction) {
 		this.node = node;
-		oldPosition = node.getParent().getChildElements().indexOf(node);
+		oldPosition = ElementTraversalHelper.indexOf( node.getParentNode(), node );
 		newPosition = oldPosition + direction;
 	}
 	
 	@Override
 	public boolean canExecute() {
-		if( newPosition >= 0 && newPosition < node.getParent().getChildElements().size() )
+		if( newPosition >= 0 && newPosition < node.getParentNode().getChildNodes().getLength() )
 			return true;
 		return false;
 	}
@@ -26,7 +27,7 @@ public class ChangeNodeOrderCommand extends Command {
 	@Override
 	public void execute() {
 		if( canExecute() ) {
-			node.getParent().moveChild( node, oldPosition, newPosition );
+			ElementTraversalHelper.moveChild( node, newPosition );
 		}
 	}
 
@@ -36,7 +37,7 @@ public class ChangeNodeOrderCommand extends Command {
 	
 	@Override
 	public void undo() {
-		node.getParent().moveChild( node, newPosition, oldPosition );
+		ElementTraversalHelper.moveChild( node, oldPosition );
 	}
 
 }

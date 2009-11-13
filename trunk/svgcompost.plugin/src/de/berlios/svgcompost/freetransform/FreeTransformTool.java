@@ -16,6 +16,7 @@
 
 package de.berlios.svgcompost.freetransform;
 
+import org.apache.batik.dom.svg.SVGOMElement;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalViewer;
@@ -23,7 +24,6 @@ import org.eclipse.gef.Handle;
 import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
 import org.eclipse.gef.tools.PanningSelectionTool;
 
-import de.berlios.svgcompost.model.SVGNode;
 import de.berlios.svgcompost.part.BackgroundPart;
 
 
@@ -100,15 +100,16 @@ public class FreeTransformTool extends PanningSelectionTool {
 			// up one level
 			ScalableFreeformRootEditPart root = (ScalableFreeformRootEditPart) editPart;
 			BackgroundPart parentPart = (BackgroundPart) root.getChildren().get(0);
-			if( parentPart.getEditRoot().getParent() != null )
-				parentPart.setEditRoot( parentPart.getEditRoot().getParent() );
+			if( parentPart.getEditRoot().getParentNode() != null
+					&& parentPart.getEditRoot().getParentNode() instanceof SVGOMElement)
+				parentPart.setEditRoot( (SVGOMElement) parentPart.getEditRoot().getParentNode() );
 
 		}
 		else {
 			// open part for editing of inner components
 			BackgroundPart parentPart = (BackgroundPart) editPart.getParent();
-			if( editPart.getModel() instanceof SVGNode )
-				parentPart.setEditRoot( (SVGNode) editPart.getModel() );
+			if( editPart.getModel() instanceof SVGOMElement )
+				parentPart.setEditRoot( (SVGOMElement) editPart.getModel() );
 
 		}
 		return super.handleDoubleClick(button);

@@ -3,34 +3,41 @@ package de.berlios.svgcompost.layers;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.batik.bridge.BridgeContext;
 import org.eclipse.gef.commands.Command;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
-import de.berlios.svgcompost.model.SVGNode;
+import de.berlios.svgcompost.util.ElementTraversalHelper;
 
 public class BreakApartGElementCommand extends Command {
 
-	private SVGNode node;
+	private Element node;
 	private int index;
-	private SVGNode parentNode;
+	private Element parentNode;
 	private AffineTransform transform;
 	
-	private List<SVGNode> children = new ArrayList<SVGNode>();
-	private List<AffineTransform> transforms = new ArrayList<AffineTransform>();
+	private List<Node> children = new ArrayList<Node>();
+	private Map<Node,AffineTransform> transforms = new HashMap<Node,AffineTransform>();
+	private BridgeContext ctx;
 
-	public BreakApartGElementCommand(SVGNode node) {
+	public BreakApartGElementCommand(Element node, BridgeContext ctx) {
 		this.node = node;
-		this.parentNode = node.getParent();
-		this.transform = node.getTransform(); // not necessary?
+		this.parentNode = (Element) node.getParentNode();
+		this.ctx = ctx;
+		this.transform = ElementTraversalHelper.getTransform(node); // not necessary?
 		if( parentNode != null ) {
-			index = parentNode.getChildElements().indexOf( node );
+			index = ElementTraversalHelper.getChildElements(parentNode).indexOf( node );
 		}
 	}
 
 	@Override
 	public boolean canExecute() {
-		return node.getElement().getNodeName().equals("g");
+		return node.getNodeName().equals("g");
 	}
 
 	@Override
@@ -40,23 +47,30 @@ public class BreakApartGElementCommand extends Command {
 		}
 	}
 
-	public void breakApartGElement(SVGNode node) {
-		SVGNode parentNode = node.getParent();
+	public void breakApartGElement(Element node) {
 		AffineTransform parentTransformInverse = null;
 		try {
-			parentTransformInverse = parentNode.getGraphicsNode().getGlobalTransform().createInverse();
+			parentTransformInverse = ctx.getGraphicsNode(parentNode).getGlobalTransform().createInverse();
 		} catch (NoninvertibleTransformException e) {
 			e.printStackTrace();
 		}
-		while( node.getChildElements().size() > 0 ) {
-			SVGNode childNode = node.getChildElements().get(0);
+		int indexCount = index;
+		while( node.getChildNodes().getLength() > 0 ) {
+			Node childNode = node.getChildNodes().item(0);
 			children.add(childNode);
-			transforms.add(childNode.getTransform());
-			AffineTransform transform = childNode.getGraphicsNode().getGlobalTransform();
-			node.removeChild(childNode);
-			parentNode.addChild(childNode);
-			transform.preConcatenate( parentTransformInverse );
-			childNode.setTransform(transform);
+			if( childNode instanceof Element ) {
+				Element childElement = (Element) childNode;
+				transforms.put(childElement,ElementTraversalHelper.getTransform(childElement));
+				AffineTransform transform = ctx.getGraphicsNode(childElement).getGlobalTransform();
+				node.removeChild(childElement);
+				ElementTraversalHelper.insertAt(parentNode,childElement,indexCount++);
+				transform.preConcatenate( parentTransformInverse );
+				ElementTraversalHelper.setTransform(childElement,transform,ctx);
+			}
+			else {
+				node.removeChild(childNode);
+				ElementTraversalHelper.insertAt(parentNode,childNode,index++);
+			}
 		}
 		parentNode.removeChild(node);
 	}
@@ -67,19 +81,21 @@ public class BreakApartGElementCommand extends Command {
 	
 	@Override
 	public void undo() {
-		for( SVGNode child : children ) {
-			child.getParent().removeChild(child);
+		for( Node child : children ) {
+			child.getParentNode().removeChild(child);
 		}
-		parentNode.addChild(index,node);
-		node.setTransform(transform);
+		ElementTraversalHelper.insertAt(parentNode,node,index);
+		ElementTraversalHelper.setTransform(node,transform,ctx);
+		int indexCount = index;
 		for (int i = 0; i < children.size(); i++) {
-			SVGNode child = children.get(i);
+			Node child = children.get(i);
 			AffineTransform childTransform = transforms.get(i);
-			node.addChild(child);
-			child.setTransform(childTransform);
+			node.appendChild(child);
+			if( child instanceof Element )
+				ElementTraversalHelper.setTransform((Element)child,childTransform,ctx);
 		}
 		// FIXME: Has to be removed and added again to make the change visible
 		parentNode.removeChild(node);
-		parentNode.addChild(index,node);
+		ElementTraversalHelper.insertAt(parentNode,node,index);
 	}
 }
