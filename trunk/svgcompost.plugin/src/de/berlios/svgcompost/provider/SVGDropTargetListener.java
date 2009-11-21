@@ -4,6 +4,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
+import org.apache.batik.dom.AbstractElement;
 import org.apache.batik.dom.svg.SVGOMDocument;
 import org.apache.batik.dom.util.XLinkSupport;
 import org.apache.batik.util.SVGConstants;
@@ -17,6 +18,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import de.berlios.svgcompost.part.BackgroundPart;
+import de.berlios.svgcompost.part.EditEvent;
 import de.berlios.svgcompost.util.LinkHelper;
 
 
@@ -84,6 +86,8 @@ public class SVGDropTargetListener implements TransferDropTargetListener {
 				System.out.println("relativeUri = "+relativeUri);
 				newUseElement.setAttributeNS(XLinkSupport.XLINK_NAMESPACE_URI, "href", relativeUri.toString());
 				editRoot.appendChild(newUseElement);
+				// TODO: use a Command
+				((AbstractElement)editRoot).dispatchEvent(new EditEvent(this, EditEvent.CHANGE_ORDER, null, newUseElement));
 			} catch (URISyntaxException e) {
 				e.printStackTrace();
 			}

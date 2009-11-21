@@ -38,7 +38,10 @@ import org.eclipse.gef.Request;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gef.requests.ChangeBoundsRequest;
 import org.eclipse.gef.tools.DragEditPartsTracker;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+import org.eclipse.ui.views.properties.IPropertySource;
 import org.w3c.dom.Element;
 import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
@@ -46,6 +49,8 @@ import org.w3c.dom.svg.SVGRect;
 
 import de.berlios.svgcompost.figure.MapModeImageFigure;
 import de.berlios.svgcompost.freetransform.FreeTransformHelper;
+import de.berlios.svgcompost.provider.ElementPropertySource;
+import de.berlios.svgcompost.provider.SVGTreeOutlinePage;
 import de.berlios.svgcompost.render.Transcoders;
 
 
@@ -76,9 +81,14 @@ public class EditablePart extends AbstractGraphicalEditPart implements /*Propert
 //			editableElement.addPropertyChangeListener(this);
 			if( editableElement instanceof SVGOMElement ) {
 				SVGOMElement svgom = (SVGOMElement) editableElement;
-				svgom.addEventListener("DOMAttrModified", this, false);
-				svgom.addEventListener("DOMNodeInserted", this, false);
-				svgom.addEventListener("DOMNodeRemoved", this, false);
+//				svgom.addEventListener("DOMAttrModified", this, false);
+//				svgom.addEventListener("DOMNodeInserted", this, false);
+//				svgom.addEventListener("DOMNodeRemoved", this, false);
+				svgom.addEventListener(EditEvent.TRANSFORM, this, false);
+				svgom.addEventListener(EditEvent.INSERT, this, false);
+				svgom.addEventListener(EditEvent.REMOVE, this, false);
+				svgom.addEventListener(EditEvent.CHANGE_ORDER, this, false);
+				svgom.addEventListener(EditEvent.XML_ATTRIBUTE, this, false);
 			}
 		}
 	}
@@ -209,11 +219,29 @@ public class EditablePart extends AbstractGraphicalEditPart implements /*Propert
 	@Override
 	public void handleEvent(Event evt) {
 		String type = evt.getType();
-		System.out.println("EditablePart.handleEvent("+type+")");
-		if( "DOMAttrModified".equals(type) ) {
+		if( EditEvent.XML_ATTRIBUTE.equals(type) ) {
+			refreshVisuals();
+		}
+		else if( EditEvent.TRANSFORM.equals(type) ) {
+			refreshVisuals();
+		}
+		else if( EditEvent.INSERT.equals(type) ) {
+			refreshVisuals();
+		}
+		else if( EditEvent.REMOVE.equals(type) ) {
+			refreshVisuals();
+		}
+		else if( "DOMAttrModified".equals(type) ) {
 			refreshVisuals();
 		}
 	}
 
+	@Override
+	public Object getAdapter(Class type) {
+		if (type == IPropertySource.class) {
+			return new ElementPropertySource(editableElement);
+		}
+		return super.getAdapter(type);
+	}
 
 }

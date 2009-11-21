@@ -1,8 +1,15 @@
 package de.berlios.svgcompost.layers;
 
+import java.awt.geom.AffineTransform;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.dom.AbstractElement;
 import org.apache.batik.dom.svg.SVGOMDocument;
 import org.apache.batik.dom.util.XLinkSupport;
+import org.apache.batik.gvt.CompositeGraphicsNode;
+import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.util.SVGConstants;
 import org.eclipse.gef.commands.Command;
 import org.w3c.dom.Element;
@@ -10,6 +17,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.svg.SVGGElement;
 
+import de.berlios.svgcompost.part.EditEvent;
+import de.berlios.svgcompost.util.ElementTraversalHelper;
 import de.berlios.svgcompost.util.LinkHelper;
 
 public class BreakApartUseElementCommand extends Command {
@@ -41,14 +50,19 @@ public class BreakApartUseElementCommand extends Command {
 //		SVGUseElement useElement = (SVGUseElement) useNode.getElement();
 //		Element parentElement = (Element) useElement.getParentNode();
 		
+		GraphicsNode useNode = ctx.getGraphicsNode(useElement);
+		GraphicsNode useChild = (GraphicsNode) ((CompositeGraphicsNode)useNode).getChildren().get(0);
+		AffineTransform transform = useChild.getGlobalTransform();
+		
 		Element refElement = ctx.getReferencedElement(useElement, useElement.getAttributeNS(XLinkSupport.XLINK_NAMESPACE_URI, "href"));
 
 		SVGOMDocument document = (SVGOMDocument)useElement.getOwnerDocument();
 		SVGOMDocument refDocument = (SVGOMDocument)refElement.getOwnerDocument();
 		
 		gElement = (SVGGElement) document.createElementNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_G_TAG);
-		if( useElement.hasAttribute("transform") )
-			gElement.setAttribute("transform", useElement.getAttribute("transform"));
+//		if( useElement.hasAttribute("transform") )
+		ElementTraversalHelper.setTransform(gElement, transform, ctx);
+//		gElement.setAttribute("transform", useElement.getAttribute("transform"));
 		
 		NodeList list = refElement.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
@@ -63,6 +77,7 @@ public class BreakApartUseElementCommand extends Command {
 		parentNode.insertBefore( gElement, useElement );
 //		parentElement.removeChild(useElement);
 		parentNode.removeChild(useElement);
+		((AbstractElement)parentNode).dispatchEvent(new EditEvent(this, EditEvent.INSERT, parentNode, parentNode));
 	}
 	
 	@Override public boolean canUndo() {
@@ -73,5 +88,6 @@ public class BreakApartUseElementCommand extends Command {
 	public void undo() {
 		parentNode.insertBefore( node, gElement );
 		parentNode.removeChild(gElement);
+		((AbstractElement)parentNode).dispatchEvent(new EditEvent(this, EditEvent.REMOVE, parentNode, parentNode));
 	}
 }

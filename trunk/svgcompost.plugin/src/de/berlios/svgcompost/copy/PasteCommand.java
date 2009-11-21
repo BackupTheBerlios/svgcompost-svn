@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.apache.batik.dom.AbstractElement;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.ui.actions.Clipboard;
 import org.w3c.dom.Element;
+
+import de.berlios.svgcompost.part.EditEvent;
 
 public class PasteCommand extends Command {
 
@@ -56,6 +59,7 @@ public class PasteCommand extends Command {
 				parentElement.appendChild(node);
 			}
 		}
+		((AbstractElement)parentElement).dispatchEvent(new EditEvent(this, EditEvent.INSERT, parentElement, parentElement));
 	}
 	
 	@Override public boolean canUndo() {
@@ -71,6 +75,7 @@ public class PasteCommand extends Command {
 				node.getParentNode().removeChild(node);
 			}
 		}
+		((AbstractElement)parentElement).dispatchEvent(new EditEvent(this, EditEvent.REMOVE, parentElement, parentElement));
 	}
 	
 	public boolean isPastable(Object node) {

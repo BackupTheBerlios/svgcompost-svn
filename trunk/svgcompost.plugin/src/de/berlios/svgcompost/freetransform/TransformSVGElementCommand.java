@@ -20,6 +20,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
 import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.dom.AbstractElement;
 import org.apache.batik.gvt.GraphicsNode;
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.geometry.Rectangle;
@@ -28,6 +29,7 @@ import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.requests.ChangeBoundsRequest;
 import org.w3c.dom.Element;
 
+import de.berlios.svgcompost.part.EditEvent;
 import de.berlios.svgcompost.util.ElementTraversalHelper;
 
 
@@ -98,7 +100,8 @@ public class TransformSVGElementCommand extends Command {
 		// or save it externally for the document?
 		
 		calcNewTransform();
-		ElementTraversalHelper.setTransform( element, newTransform, ctx );
+		redo();
+//		ElementTraversalHelper.setTransform( element, newTransform, ctx );
 	}
 	
 	protected void correctNewTransform() {
@@ -195,6 +198,7 @@ public class TransformSVGElementCommand extends Command {
 	 */
 	public void redo() {
 		ElementTraversalHelper.setTransform( element, newTransform, ctx );
+		((AbstractElement)element).dispatchEvent(new EditEvent(this, EditEvent.TRANSFORM, oldTransform, newTransform));
 	}
 
 	/* (non-Javadoc)
@@ -202,5 +206,6 @@ public class TransformSVGElementCommand extends Command {
 	 */
 	public void undo() {
 		ElementTraversalHelper.setTransform( element, oldTransform, ctx );
+		((AbstractElement)element).dispatchEvent(new EditEvent(this, EditEvent.TRANSFORM, newTransform, oldTransform));
 	}
 }

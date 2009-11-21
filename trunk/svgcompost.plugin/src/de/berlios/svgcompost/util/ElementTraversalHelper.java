@@ -58,7 +58,11 @@ public class ElementTraversalHelper {
 //		AffineTransform oldTransform = getTransform(element);
 		SVGGeneratorContext genCtx = SVGGeneratorContext.createDefault(ctx.getDocument());
 		SVGTransform converter = new SVGTransform(genCtx);
-		String transformAttributeValue = converter.toSVGTransform(new TransformStackElement[]{TransformStackElement.createGeneralTransformElement(transform)});
+		String transformAttributeValue;
+		if( transform != null )
+			transformAttributeValue = converter.toSVGTransform(new TransformStackElement[]{TransformStackElement.createGeneralTransformElement(transform)});
+		else
+			transformAttributeValue = "";
 
 		element.setAttribute("transform", transformAttributeValue);
 		

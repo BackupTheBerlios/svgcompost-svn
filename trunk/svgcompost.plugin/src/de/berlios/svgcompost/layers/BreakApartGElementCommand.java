@@ -8,10 +8,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.dom.AbstractElement;
 import org.eclipse.gef.commands.Command;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import de.berlios.svgcompost.part.EditEvent;
 import de.berlios.svgcompost.util.ElementTraversalHelper;
 
 public class BreakApartGElementCommand extends Command {
@@ -73,6 +75,7 @@ public class BreakApartGElementCommand extends Command {
 			}
 		}
 		parentNode.removeChild(node);
+		((AbstractElement)parentNode).dispatchEvent(new EditEvent(this, EditEvent.INSERT, parentNode, parentNode));
 	}
 	
 	@Override public boolean canUndo() {
@@ -86,10 +89,9 @@ public class BreakApartGElementCommand extends Command {
 		}
 		ElementTraversalHelper.insertAt(parentNode,node,index);
 		ElementTraversalHelper.setTransform(node,transform,ctx);
-		int indexCount = index;
 		for (int i = 0; i < children.size(); i++) {
 			Node child = children.get(i);
-			AffineTransform childTransform = transforms.get(i);
+			AffineTransform childTransform = transforms.get(child);
 			node.appendChild(child);
 			if( child instanceof Element )
 				ElementTraversalHelper.setTransform((Element)child,childTransform,ctx);
@@ -97,5 +99,7 @@ public class BreakApartGElementCommand extends Command {
 		// FIXME: Has to be removed and added again to make the change visible
 		parentNode.removeChild(node);
 		ElementTraversalHelper.insertAt(parentNode,node,index);
+		ElementTraversalHelper.setTransform(node, transform, ctx);
+		((AbstractElement)parentNode).dispatchEvent(new EditEvent(this, EditEvent.REMOVE, parentNode, parentNode));
 	}
 }

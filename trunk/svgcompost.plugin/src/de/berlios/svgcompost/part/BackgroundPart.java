@@ -42,6 +42,7 @@ import org.eclipse.gmf.runtime.draw2d.ui.render.RenderInfo;
 import org.eclipse.gmf.runtime.draw2d.ui.render.factory.RenderedImageFactory;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.ui.views.properties.IPropertySource;
 import org.w3c.dom.Element;
 import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
@@ -49,6 +50,7 @@ import org.w3c.dom.events.EventListener;
 import de.berlios.svgcompost.figure.BackgroundImageFigure;
 import de.berlios.svgcompost.freetransform.FreeTransformEditPolicy;
 import de.berlios.svgcompost.freetransform.TransformSVGElementCommand;
+import de.berlios.svgcompost.provider.ElementPropertySource;
 import de.berlios.svgcompost.render.Transcoders;
 import de.berlios.svgcompost.util.ElementTraversalHelper;
 
@@ -88,9 +90,14 @@ implements /*PropertyChangeListener,*/ EventListener  {
 			super.activate();
 			if( editRoot instanceof SVGOMElement ) {
 				SVGOMElement svgom = (SVGOMElement) editRoot;
-				svgom.addEventListener("DOMAttrModified", this, false);
-				svgom.addEventListener("DOMNodeInserted", this, false);
-				svgom.addEventListener("DOMNodeRemoved", this, false);
+//				svgom.addEventListener("DOMAttrModified", this, false);
+//				svgom.addEventListener("DOMNodeInserted", this, false);
+//				svgom.addEventListener("DOMNodeRemoved", this, false);
+				svgom.addEventListener(EditEvent.TRANSFORM, this, false);
+				svgom.addEventListener(EditEvent.INSERT, this, false);
+				svgom.addEventListener(EditEvent.REMOVE, this, false);
+				svgom.addEventListener(EditEvent.CHANGE_ORDER, this, false);
+				svgom.addEventListener(EditEvent.XML_ATTRIBUTE, this, false);
 			}
 		}
 	}
@@ -105,16 +112,15 @@ implements /*PropertyChangeListener,*/ EventListener  {
 
 	public void handleEvent(Event evt) {
 		String type = evt.getType();
-		System.out.println("BackgroundPart.handleEvent("+type+")");
-		if( "DOMAttrModified".equals(type) ) {
-			refreshVisuals();
+		if( EditEvent.INSERT.equals(type) ||
+				EditEvent.REMOVE.equals(type) ||
+				EditEvent.CHANGE_ORDER.equals(type) ||
+				EditEvent.XML_ATTRIBUTE.equals(type)
+			) {
+				refreshChildren();
+				refreshVisuals();
 		}
-		else if( "DOMNodeInserted".equals(type) ) {
-			refreshChildren();
-			refreshVisuals();
-		}
-		else if( "DOMNodeRemoved".equals(type) ) {
-			refreshChildren();
+		else if( EditEvent.TRANSFORM.equals(type) ) {
 			refreshVisuals();
 		}
 	}
@@ -239,4 +245,11 @@ implements /*PropertyChangeListener,*/ EventListener  {
 		refreshChildren();
 	}
 	
+	@Override
+	public Object getAdapter(Class type) {
+		if (type == IPropertySource.class) {
+			return new ElementPropertySource(editRoot);
+		}
+		return super.getAdapter(type);
+	}
 }

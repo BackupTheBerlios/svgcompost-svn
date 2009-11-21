@@ -1,5 +1,6 @@
 package de.berlios.svgcompost.popup;
 
+import org.apache.batik.dom.AbstractElement;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -11,6 +12,7 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.w3c.dom.Element;
 
+import de.berlios.svgcompost.part.EditEvent;
 import de.berlios.svgcompost.part.EditablePart;
 
 public class AddAttributeAction implements IObjectActionDelegate {
@@ -52,8 +54,11 @@ public class AddAttributeAction implements IObjectActionDelegate {
 		if(dialog.open() == Window.OK) {
 			String newName = dialog.getValue();
 			Element element = (Element)part.getModel();
-			if( ! element.hasAttribute(newName) )
+			if( ! element.hasAttribute(newName) ) {
 				element.setAttribute(newName, "");
+				// TODO: use Command
+				((AbstractElement)element).dispatchEvent(new EditEvent(this, EditEvent.XML_ATTRIBUTE, null, newName));
+			}
 		}
 	}
 

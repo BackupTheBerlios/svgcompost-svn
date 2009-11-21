@@ -3,9 +3,11 @@ package de.berlios.svgcompost.copy;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.batik.dom.AbstractElement;
 import org.eclipse.gef.commands.Command;
 import org.w3c.dom.Element;
 
+import de.berlios.svgcompost.part.EditEvent;
 import de.berlios.svgcompost.util.ElementTraversalHelper;
 
 public class DeleteCommand extends Command {
@@ -35,7 +37,9 @@ public class DeleteCommand extends Command {
 		if( !canExecute() )
 			return;
 		for (int i = 0; i < list.size(); i++) {
-			parents.get(i).removeChild(list.get(i));
+			Element parent = parents.get(i);
+			parent.removeChild(list.get(i));
+			((AbstractElement)parent).dispatchEvent(new EditEvent(this, EditEvent.REMOVE, parent, parent));
 		}
 	}
 
@@ -46,7 +50,9 @@ public class DeleteCommand extends Command {
 	@Override
 	public void undo() {
 		for (int i = 0; i < list.size(); i++) {
-			ElementTraversalHelper.insertAt( parents.get(i), list.get(i), indices.get(i) );
+			Element parent = parents.get(i);
+			ElementTraversalHelper.insertAt( parent, list.get(i), indices.get(i) );
+			((AbstractElement)parent).dispatchEvent(new EditEvent(this, EditEvent.INSERT, parent, parent));
 		}
 	}
 }

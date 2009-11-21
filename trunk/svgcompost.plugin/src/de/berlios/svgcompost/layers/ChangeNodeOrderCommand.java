@@ -1,8 +1,10 @@
 package de.berlios.svgcompost.layers;
 
+import org.apache.batik.dom.AbstractElement;
 import org.eclipse.gef.commands.Command;
 import org.w3c.dom.Element;
 
+import de.berlios.svgcompost.part.EditEvent;
 import de.berlios.svgcompost.util.ElementTraversalHelper;
 
 public class ChangeNodeOrderCommand extends Command {
@@ -28,6 +30,7 @@ public class ChangeNodeOrderCommand extends Command {
 	public void execute() {
 		if( canExecute() ) {
 			ElementTraversalHelper.moveChild( node, newPosition );
+			((AbstractElement)node).dispatchEvent(new EditEvent(this, EditEvent.CHANGE_ORDER, node, node));
 		}
 	}
 
@@ -38,6 +41,7 @@ public class ChangeNodeOrderCommand extends Command {
 	@Override
 	public void undo() {
 		ElementTraversalHelper.moveChild( node, oldPosition );
+		((AbstractElement)node).dispatchEvent(new EditEvent(this, EditEvent.CHANGE_ORDER, node, node));
 	}
 
 }
