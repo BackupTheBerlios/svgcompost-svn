@@ -81,6 +81,7 @@ implements /*PropertyChangeListener,*/ EventListener  {
 
 	public BackgroundPart(Element backgroundElement, BridgeContext ctx) {
 		this.editRoot = backgroundElement;
+		setModel(backgroundElement);
 		this.ctx = ctx;
 	}
 

@@ -78,10 +78,10 @@ IResourceChangeListener, IResourceDeltaVisitor {
 			if( list.item(i) instanceof Element )
 				elementCount++;
 		Element[] childNodes = new Element[elementCount];
-		
+		elementCount = 0;
 		for (int i = 0; i < list.getLength(); i++)
 			if( list.item(i) instanceof Element )
-				childNodes[--elementCount] = (Element) list.item(i);
+				childNodes[elementCount++] = (Element) list.item(i);
 
 		return childNodes;
 	}

@@ -27,5 +27,6 @@ Require-Bundle: org.w3c.dom.svg,
 Bundle-Activator: de.berlios.svgcompost.plugin.SVGCompostPlugin
 Bundle-ActivationPolicy: lazy
 Export-Package: de.berlios.svgcompost.editor,
+ de.berlios.svgcompost.layers,
  de.berlios.svgcompost.part,
  de.berlios.svgcompost.util

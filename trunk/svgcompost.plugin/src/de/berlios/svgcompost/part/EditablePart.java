@@ -70,6 +70,7 @@ public class EditablePart extends AbstractGraphicalEditPart implements /*Propert
 	
 	public EditablePart(Element element, BridgeContext ctx) {
 		super();
+		setModel( element );
 		this.editableElement = element;
 		this.ctx = ctx;
 	}
@@ -99,11 +100,11 @@ public class EditablePart extends AbstractGraphicalEditPart implements /*Propert
 //		super.register();
 //	}
 
-	@Override
-	protected void registerModel() {
-		super.registerModel();
-		getViewer().getEditPartRegistry().put(editableElement, this);	
-	}
+//	@Override
+//	protected void registerModel() {
+//		super.registerModel();
+//		getViewer().getEditPartRegistry().put(editableElement, this);	
+//	}
 
 	@Override
 	protected void refreshVisuals() {

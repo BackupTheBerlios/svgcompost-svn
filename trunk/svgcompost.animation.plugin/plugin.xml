@@ -151,6 +151,20 @@
 		sequence="F9">
 		</key>
 	</extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="de.berlios.svgcompost"
+            name="SVG">
+      </category>
+      <wizard
+            category="de.berlios.svgcompost"
+            class="de.berlios.svgcompost.animation.plugin.wizard.NewMovieWizard"
+            icon="icons/sample.gif"
+            id="de.berlios.svgcompost.wizard.NewMovieFileWizard"
+            name="New SVGCompost Animation Movie File">
+      </wizard>
+   </extension>
 
 
 

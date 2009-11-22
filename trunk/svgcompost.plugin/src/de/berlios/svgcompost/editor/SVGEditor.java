@@ -122,6 +122,9 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette implements IDoub
 	public SVGEditor() {
 		setEditDomain(new DefaultEditDomain(this));
 	}
+	public DefaultEditDomain getEditDomain() {
+		return super.getEditDomain();
+	}
 
 	protected void configureGraphicalViewer() {
 		super.configureGraphicalViewer();
@@ -366,11 +369,13 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette implements IDoub
 		Element element = getFirstSelectedElement(selection);
 		GraphicalViewer viewer = getGraphicalViewer();
 		if( element != null ) {
-			EditPart part = (EditPart) viewer.getEditPartRegistry().get(element);
+//			EditPart part = (EditPart) viewer.getEditPartRegistry().get(element);
 			List<EditPart> children = viewer.getRootEditPart().getChildren();
-			if( children.size() > 0 && children.get(0) instanceof BackgroundPart )
-				((BackgroundPart)children.get(0)).setEditRoot( (SVGOMElement) ((EditablePart)viewer.getEditPartRegistry().get(element)).getModel() );
-			viewer.setSelection( new StructuredSelection(part) );
+			if( children.size() > 0 && children.get(0) instanceof BackgroundPart ) {
+				BackgroundPart bgPart = (BackgroundPart) children.get(0);
+				bgPart.setEditRoot( (SVGOMElement) element );
+				viewer.setSelection( new StructuredSelection(bgPart) );
+			}
 		}
 		else
 			viewer.setSelection( new StructuredSelection() );
