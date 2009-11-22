@@ -1,6 +1,7 @@
 package de.berlios.svgcompost.util;
 
 import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,6 +72,19 @@ public class ElementTraversalHelper {
 
 //		firePropertyChange(TRANSFORM, oldTransform, transform);
 	}
+	
+	public static void setGlobalTransform( Element element, AffineTransform transform, BridgeContext ctx ) {
+		if( element.getParentNode() != null ) {
+			transform = (AffineTransform) transform.clone();
+			try {
+				transform.preConcatenate( ctx.getGraphicsNode((Element) element.getParentNode() ).getGlobalTransform().createInverse() );
+			} catch (NoninvertibleTransformException e) {
+				e.printStackTrace();
+			}
+		}
+		setTransform( element, transform, ctx );
+	}
+
 	
 	private static TransformListParser parser = new TransformListParser();
 	private static AWTTransformProducer tp = new AWTTransformProducer();

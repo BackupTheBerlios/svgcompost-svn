@@ -34,6 +34,7 @@ import org.w3c.dom.events.EventTarget;
 
 import de.berlios.svgcompost.editor.SVGEditor;
 import de.berlios.svgcompost.part.BackgroundPart;
+import de.berlios.svgcompost.part.EditEvent;
 import de.berlios.svgcompost.part.EditablePart;
 
 
@@ -68,10 +69,15 @@ public class SVGTreeOutlinePage extends ContentOutlinePage implements ISelection
 		root = doc.getDocumentElement();
 		if( root instanceof EventTarget ) {
 			EventTarget target = (EventTarget) root;
-			target.addEventListener(DOMAttrModified, this, false);
-			target.addEventListener(DOMNodeInserted, this, false);
-			target.addEventListener(DOMNodeRemoved, this, false);
-			target.addEventListener(DOMCharacterDataModified, this, false);
+//			target.addEventListener(DOMAttrModified, this, false);
+//			target.addEventListener(DOMNodeInserted, this, false);
+//			target.addEventListener(DOMNodeRemoved, this, false);
+//			target.addEventListener(DOMCharacterDataModified, this, false);
+			target.addEventListener(EditEvent.TRANSFORM, this, false);
+			target.addEventListener(EditEvent.INSERT, this, false);
+			target.addEventListener(EditEvent.REMOVE, this, false);
+			target.addEventListener(EditEvent.CHANGE_ORDER, this, false);
+			target.addEventListener(EditEvent.XML_ATTRIBUTE, this, false);
 		}
 		initTreeViewer();
 	}
@@ -126,13 +132,13 @@ public class SVGTreeOutlinePage extends ContentOutlinePage implements ISelection
 		if( evt.getTarget() == null || ! (evt.getTarget() instanceof Element) )
 			return;
 		Element eventElement = (Element) evt.getTarget();
-		if( evt.getType().equals( DOMNodeRemoved ) )
-			getTreeViewer().remove(eventElement);
-		else if( evt.getType().equals( DOMNodeInserted ) ) {
-			getTreeViewer().add(eventElement.getParentNode(), eventElement);
+//		if( evt.getType().equals( DOMNodeRemoved ) )
+//			getTreeViewer().remove(eventElement);
+//		else if( evt.getType().equals( DOMNodeInserted ) ) {
+//			getTreeViewer().add(eventElement.getParentNode(), eventElement);
 			getTreeViewer().refresh();
 			setSelection( new StructuredSelection(eventElement) );
-		}
+//		}
 	}
 	
 	

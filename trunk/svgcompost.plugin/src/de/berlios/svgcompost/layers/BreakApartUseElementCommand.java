@@ -25,7 +25,7 @@ public class BreakApartUseElementCommand extends Command {
 
 	private Element node;
 	private Element parentNode;
-	private Element gElement;
+	private Element newElement;
 	private BridgeContext ctx;
 	
 	public BreakApartUseElementCommand(Element node, BridgeContext ctx) {
@@ -59,22 +59,26 @@ public class BreakApartUseElementCommand extends Command {
 		SVGOMDocument document = (SVGOMDocument)useElement.getOwnerDocument();
 		SVGOMDocument refDocument = (SVGOMDocument)refElement.getOwnerDocument();
 		
-		gElement = (SVGGElement) document.createElementNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_G_TAG);
+//		newElement = (SVGGElement) document.createElementNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_G_TAG);
+		
+		newElement = (Element) document.importNode(refElement, true, true);
+		LinkHelper.refactorLinks( newElement, refDocument.getURL(), document.getURL() );
+		
 //		if( useElement.hasAttribute("transform") )
-		ElementTraversalHelper.setTransform(gElement, transform, ctx);
-//		gElement.setAttribute("transform", useElement.getAttribute("transform"));
+		ElementTraversalHelper.setGlobalTransform(newElement, transform, ctx);
+//		newElement.setAttribute("transform", useElement.getAttribute("transform"));
 		
-		NodeList list = refElement.getChildNodes();
-		for (int i = 0; i < list.getLength(); i++) {
-			Node w3cNode = list.item(i);
-			Node clone = document.importNode(w3cNode, true, true);
-			LinkHelper.refactorLinks( clone, refDocument.getURL(), document.getURL() );
-			gElement.appendChild(clone);
-		}
+//		NodeList list = refElement.getChildNodes();
+//		for (int i = 0; i < list.getLength(); i++) {
+//			Node w3cNode = list.item(i);
+//			Node clone = document.importNode(w3cNode, true, true);
+//			LinkHelper.refactorLinks( clone, refDocument.getURL(), document.getURL() );
+//			newElement.appendChild(clone);
+//		}
 		
-//		gNode = new Element( gElement, parentNode.getBridgeContext() );
-//		parentElement.insertBefore(gElement, useElement);
-		parentNode.insertBefore( gElement, useElement );
+//		gNode = new Element( newElement, parentNode.getBridgeContext() );
+//		parentElement.insertBefore(newElement, useElement);
+		parentNode.insertBefore( newElement, useElement );
 //		parentElement.removeChild(useElement);
 		parentNode.removeChild(useElement);
 		((AbstractElement)parentNode).dispatchEvent(new EditEvent(this, EditEvent.INSERT, parentNode, parentNode));
@@ -86,8 +90,8 @@ public class BreakApartUseElementCommand extends Command {
 	
 	@Override
 	public void undo() {
-		parentNode.insertBefore( node, gElement );
-		parentNode.removeChild(gElement);
+		parentNode.insertBefore( node, newElement );
+		parentNode.removeChild(newElement);
 		((AbstractElement)parentNode).dispatchEvent(new EditEvent(this, EditEvent.REMOVE, parentNode, parentNode));
 	}
 }
