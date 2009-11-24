@@ -101,8 +101,7 @@ public class GVTRenderer {
 		
 
 		//compute the transformation matrix
-		AffineTransform Px = AffineTransform.getTranslateInstance(-gvtBounds.getX(), -gvtBounds.getY());
-//		AffineTransform Px = AffineTransform.getTranslateInstance(0, 0);
+		AffineTransform Px = AffineTransform.getTranslateInstance(0, 0);
 		
 //		Element el = ctx.getElement(gvtRoot);
 //		String id = el.getAttribute("id");
