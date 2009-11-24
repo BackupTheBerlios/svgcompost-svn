@@ -22,16 +22,14 @@ import java.util.List;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.dom.svg.SVGOMElement;
 import org.apache.batik.gvt.GraphicsNode;
-import org.eclipse.draw2d.ConnectionLayer;
+import org.eclipse.draw2d.Figure;
+import org.eclipse.draw2d.FreeformLayer;
 import org.eclipse.draw2d.FreeformLayout;
 import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.MarginBorder;
-import org.eclipse.draw2d.ShortestPathConnectionRouter;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalViewer;
-import org.eclipse.gef.LayerConstants;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gef.editpolicies.RootComponentEditPolicy;
@@ -70,6 +68,8 @@ implements /*PropertyChangeListener,*/ EventListener  {
 	private GraphicalViewer viewer;
 
 	private BridgeContext ctx;
+	
+	private BackgroundImageFigure bgFigure;
 	
 	public void setViewer(GraphicalViewer viewer) {
 		this.viewer = viewer;
@@ -165,14 +165,17 @@ implements /*PropertyChangeListener,*/ EventListener  {
 
 	@Override
 	protected IFigure createFigure() {
-		BackgroundImageFigure f = new BackgroundImageFigure();
-		f.setBorder(new MarginBorder(3));
-		f.setLayoutManager(new FreeformLayout());
-		f.setImage( transcodeImage() );
+		// Background image
+    	bgFigure = new BackgroundImageFigure();
+    	bgFigure.setOpaque(true);
+    	bgFigure.setImage( transcodeImage() );
+    	FreeformLayer layer = (FreeformLayer) getLayer(SVGScalableFreeformRootEditPart.BACKGROUND_LAYER);
+		layer.add(bgFigure);
 
-		ConnectionLayer connLayer = (ConnectionLayer)getLayer(LayerConstants.CONNECTION_LAYER);
-		connLayer.setConnectionRouter(new ShortestPathConnectionRouter(f));
-		
+		// Layer to hold the edited parts
+		Figure f = new FreeformLayer();
+		f.setLayoutManager(new FreeformLayout());
+		f.setOpaque(false);
 		return f;
 	}
 	
@@ -207,7 +210,8 @@ implements /*PropertyChangeListener,*/ EventListener  {
     @Override
 	public void refreshVisuals() {
 		// TODO Auto-generated method stub
-    	((BackgroundImageFigure)getFigure()).setImage(transcodeImage());
+//    	((BackgroundImageFigure)getFigure()).setImage(transcodeImage());
+    	bgFigure.setImage(transcodeImage());
 		super.refreshVisuals();
 	}
 

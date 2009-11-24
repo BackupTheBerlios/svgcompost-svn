@@ -93,6 +93,7 @@ import de.berlios.svgcompost.layers.LowerNodeAction;
 import de.berlios.svgcompost.layers.RaiseNodeAction;
 import de.berlios.svgcompost.part.BackgroundPart;
 import de.berlios.svgcompost.part.EditablePart;
+import de.berlios.svgcompost.part.SVGScalableFreeformRootEditPart;
 import de.berlios.svgcompost.part.SingleLevelFactory;
 import de.berlios.svgcompost.provider.SVGDropTargetListener;
 import de.berlios.svgcompost.provider.SVGEditorContextMenuProvider;
@@ -131,7 +132,7 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette implements IDoub
 
 		GraphicalViewer viewer = getGraphicalViewer();
 
-		viewer.setRootEditPart(new ScalableFreeformRootEditPart());
+		viewer.setRootEditPart(new SVGScalableFreeformRootEditPart());
 
 		factory = new SingleLevelFactory();
 		viewer.setEditPartFactory(factory);
