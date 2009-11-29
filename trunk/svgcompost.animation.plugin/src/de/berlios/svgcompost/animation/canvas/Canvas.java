@@ -224,7 +224,7 @@ public class Canvas {
 					String href = ((Element)childNode).getAttributeNS( xlinkNs, "href" );//.replaceAll( "#", "" );
 					childNode = resolve(href); //sourceDoc.getElementById( href );
 					type = childNode.getNodeName();
-					symbolId = href;
+					symbolId = ((Element)childNode).getAttribute("id");
 					gNode = cutUseNode( gNode );
 				}
 				isGraphicalSvgElement = (type.endsWith("g") || type.endsWith("path") || type.endsWith("rect") || type.endsWith("symbol"));
