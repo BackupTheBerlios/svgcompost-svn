@@ -31,7 +31,7 @@ public class GraphicsBuilder {
 //			sourceRoot = (RootGraphicsNode) builder.build( ctx, doc );
 		}
 		catch( IOException exc ) {
-//			exc.printStackTrace();
+			exc.printStackTrace();
 		}
 
 		return ctx;

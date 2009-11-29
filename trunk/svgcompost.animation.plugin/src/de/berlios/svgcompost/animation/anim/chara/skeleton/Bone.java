@@ -88,6 +88,8 @@ public class Bone {
 			return;
 		
 		BoneKey boneKey = skeletonKey.getBoneKey(this);
+		if( boneKey == null )
+			throw new NullPointerException("Bone "+getSkeleton().getName()+"."+name+" is not present in keyframe "+skeletonKey.getKeyframeNode().getName());
 		BoneKey nextBoneKey = boneKey.nextKey();
 		
 		if( boneKey.getKeyMatrix() == null )

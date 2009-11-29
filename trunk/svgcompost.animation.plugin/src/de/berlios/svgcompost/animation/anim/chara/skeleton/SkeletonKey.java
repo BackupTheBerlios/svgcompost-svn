@@ -56,6 +56,10 @@ public class SkeletonKey {
 		return limbKeys.get( limb );
 	}
 	
+	public CanvasNode getKeyframeNode() {
+		return keyFrame;
+	}
+	
 	protected void searchForBones( CanvasNode node ) {
 		String nodeName = node.getName();
 

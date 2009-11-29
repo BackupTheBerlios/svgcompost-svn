@@ -262,11 +262,13 @@ public class Library {
 	 * with the specified id.
 	 * @param modelName The id of the SVG element representing the model.
 	 */
-	public Skeleton getModel( String modelName ) {
+	public Skeleton getModel( String modelReference ) {
+		int index = modelReference.indexOf("#"); 
+		String modelName = index == -1 ? modelReference : modelReference.substring(index+1);
 		Skeleton model = models.get( modelName );
 		if( model != null )
 			return model;
-		CanvasNode modelNode = libraryCanvas.getRoot().addSymbolInstance( modelName, modelName );
+		CanvasNode modelNode = libraryCanvas.getRoot().addSymbolInstance( modelReference, modelName );
 		model = SkeletonFactory.createSkeleton( modelNode );
 		
 		modelNode.removeNode();
@@ -303,15 +305,15 @@ public class Library {
 	private HashMap<String,Skeleton> extractModelsFromDeclaration( CanvasNode referencingFrame ) {
 		HashMap<String,Skeleton> modelsByName = new HashMap<String,Skeleton>();
 		SVGElement frameElement = (SVGElement) referencingFrame.getCanvas().getSourceDoc().getElementById( referencingFrame.getSymbolId() );
-		String modelReference = frameElement.getAttribute("model");
-		if( modelReference == null || "".equals( modelReference ) ) {
+		String modelReferences = frameElement.getAttribute("model");
+		if( modelReferences == null || "".equals( modelReferences ) ) {
 			return modelsByName;
 		}
-		String[] skeletons = modelReference.split(" ");
+		String[] skeletons = modelReferences.split(" ");
 		
 		for (int i = 0; i < skeletons.length; i++) {
-			String modelName = skeletons[i];
-			Skeleton model = getModel(modelName);
+			String skeletonReference = skeletons[i];
+			Skeleton model = getModel(skeletonReference);
 			modelsByName.put( model.getName(), model );
 		}
 		return modelsByName;

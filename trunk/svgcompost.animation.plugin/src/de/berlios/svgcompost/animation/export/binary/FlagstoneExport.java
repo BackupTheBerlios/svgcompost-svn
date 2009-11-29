@@ -1,6 +1,7 @@
 package de.berlios.svgcompost.animation.export.binary;
 
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,6 +50,7 @@ public class FlagstoneExport implements Export {
 	protected boolean shapesAreCaptured = false;
 	
 	protected int framesPerSecond = 12;
+	Rectangle2D screenSize = new Rectangle2D.Float( 0, 0, 400,400 );
 	
 	protected boolean initialFrame = true;
 
@@ -62,7 +64,7 @@ public class FlagstoneExport implements Export {
 
 	    movie.setVersion(7);
 	    movie.setFrameRate(framesPerSecond);
-	    movie.setFrameSize(new FSBounds(0, 0, 8000, 8000));
+	    movie.setFrameSize(new FSBounds(0, 0, (int)(screenSize.getWidth()*20), (int)(screenSize.getHeight()*20)));
 
 	    movie.add(new FSSetBackgroundColor(FSColorTable.white()));
 
@@ -148,6 +150,17 @@ public class FlagstoneExport implements Export {
 	
 	public void captureFrame() {
 		
+		Rectangle2D bounds = canvas.getRoot().getGraphicsNode().getBounds();
+		if( bounds.getWidth() == 0 || bounds.getHeight() == 0 ) {
+			System.out.println( "Warning: frame "+(frameDefs.size()+1)+" is empty." );
+		}
+		else {
+			Rectangle2D intersection = bounds.createIntersection(screenSize);
+			if( intersection.getWidth() == 0 || intersection.getHeight() == 0 ) {
+				System.out.println( "Warning: bounds of frame "+(frameDefs.size()+1)+" are off screen:"+bounds );
+			}
+		}
+		
 		int highestDepth = captureNode( canvas.getRoot().getGraphicsNode(), 1 );
 	
 		for( int i=highestDepth; i<lastHighestDepth; i++ ) {
@@ -213,7 +226,10 @@ public class FlagstoneExport implements Export {
 	public void writeOutput(String fileName) {
 		try
 		{
+			System.out.println( "SWF shape count is "+shapeIdCount );
+			System.out.println( "SWF frame count is "+frameDefs.size() );
 		    movie.encodeToFile(fileName);
+		    System.out.println( "SWF movie written to file "+fileName );
 		}
 		catch (FSCoderException e) {
 		    e.printStackTrace();

@@ -3,11 +3,14 @@ package de.berlios.svgcompost.animation.canvas;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
+import org.apache.batik.bridge.URIResolver;
 import org.apache.batik.bridge.UnitProcessor;
 import org.apache.batik.dom.svg.SVGOMElement;
 import org.apache.batik.gvt.CanvasGraphicsNode;
@@ -46,6 +49,8 @@ public class Canvas {
 	private SVGDocument sourceDoc;
 	private BridgeContext sourceCtx;
 	private GVTBuilder sourceBld;
+	
+	private URIResolver uriResolver;
 
 	RootGraphicsNode rootNode;
 	CanvasGraphicsNode canvasNode;
@@ -62,6 +67,8 @@ public class Canvas {
 			sourceDoc = (SVGDocument) sourceCtx.getDocument();
 			sourceBld = sourceCtx.getGVTBuilder();
 			
+			uriResolver = new URIResolver(sourceDoc, sourceCtx.getDocumentLoader());
+			
 			Element svgEl = sourceDoc.getRootElement();
 			UnitProcessor.Context upCtx = UnitProcessor.createContext( sourceCtx, svgEl );
 			width = (int) UnitProcessor.svgHorizontalCoordinateToObjectBoundingBox( svgEl.getAttribute( "width" ), "width", upCtx );
@@ -71,7 +78,6 @@ public class Canvas {
 		canvasNode = new CanvasGraphicsNode(); // (CanvasGraphicsNode) rootNode.get( 0 );
 		canvasNode.setRenderingHint( KEY_LABEL, "canvas" );
 
-		SVGOMElement rootEl = (SVGOMElement) sourceDoc.getRootElement();
 		SVGRect bounds = sourceDoc.getRootElement().getBBox();
 		width = (int) bounds.getWidth();
 		height = (int) bounds.getWidth();
@@ -161,7 +167,7 @@ public class Canvas {
 	}
 	
 	public CanvasNode insertSymbolNode( CanvasNode cNode, String symbolId, String name ) {
-		Element element = sourceDoc.getElementById( symbolId );
+		Element element = resolve(symbolId);
 		if( element == null ) {
 			return null;
 		}
@@ -215,8 +221,8 @@ public class Canvas {
 					symbolId = ((Element)childNode).getAttribute( "id" );
 				}
 				if( type.endsWith("use")  ) {
-					String href = ((Element)childNode).getAttributeNS( xlinkNs, "href" ).replaceAll( "#", "" );
-					childNode = sourceDoc.getElementById( href );
+					String href = ((Element)childNode).getAttributeNS( xlinkNs, "href" );//.replaceAll( "#", "" );
+					childNode = resolve(href); //sourceDoc.getElementById( href );
 					type = childNode.getNodeName();
 					symbolId = href;
 					gNode = cutUseNode( gNode );
@@ -259,5 +265,19 @@ public class Canvas {
 		return (AffineTransform) node.getTransform().clone();
 	}
 	
+	public Element resolve( String reference ) {
+		int index = reference.indexOf("#");
+		if( index == -1 )
+			return sourceDoc.getElementById(reference);
+		if( index == 0 )
+	    	return sourceDoc.getElementById(reference.substring(1));
+		Element element = null;
+		try {
+			element = uriResolver.getElement(reference, sourceDoc.getRootElement()); // sourceDoc.getElementById( symbolId );
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return element;
+	}
 
 }
