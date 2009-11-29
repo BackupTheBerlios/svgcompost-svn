@@ -29,7 +29,6 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
-import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gef.editpolicies.RootComponentEditPolicy;
@@ -60,28 +59,31 @@ import de.berlios.svgcompost.util.ElementTraversalHelper;
  *
  */
 public class BackgroundPart extends AbstractGraphicalEditPart 
-implements /*PropertyChangeListener,*/ EventListener  {
+implements EventListener  {
 	// TODO: make this class extend RootEditPart
 	
 	private Element editRoot;
-
-	private GraphicalViewer viewer;
 
 	private BridgeContext ctx;
 	
 	private BackgroundImageFigure bgFigure;
 	
-	public void setViewer(GraphicalViewer viewer) {
-		this.viewer = viewer;
+	public BridgeContext getBridgeContext() {
+		return ctx;
 	}
 
-	public GraphicalViewer getViewer() {
-		return viewer;
+	public Element getEditRoot() {
+		return editRoot;
+	}
+
+	public void setEditRoot(SVGOMElement root) {
+		editRoot = root;
+		refreshChildren();
 	}
 
 	public BackgroundPart(Element backgroundElement, BridgeContext ctx) {
+		super();
 		this.editRoot = backgroundElement;
-		setModel(backgroundElement);
 		this.ctx = ctx;
 	}
 
@@ -91,9 +93,6 @@ implements /*PropertyChangeListener,*/ EventListener  {
 			super.activate();
 			if( editRoot instanceof SVGOMElement ) {
 				SVGOMElement svgom = (SVGOMElement) editRoot;
-//				svgom.addEventListener("DOMAttrModified", this, false);
-//				svgom.addEventListener("DOMNodeInserted", this, false);
-//				svgom.addEventListener("DOMNodeRemoved", this, false);
 				svgom.addEventListener(EditEvent.TRANSFORM, this, false);
 				svgom.addEventListener(EditEvent.INSERT, this, false);
 				svgom.addEventListener(EditEvent.REMOVE, this, false);
@@ -102,14 +101,6 @@ implements /*PropertyChangeListener,*/ EventListener  {
 			}
 		}
 	}
-	
-	
-
-//	@Override
-//	protected void addChild(EditPart child, int index) {
-//		if(child != null)
-//			super.addChild(child, index);
-//	}
 
 	public void handleEvent(Event evt) {
 		String type = evt.getType();
@@ -160,7 +151,6 @@ implements /*PropertyChangeListener,*/ EventListener  {
 			}
 
 			});
-		
 	}
 
 	@Override
@@ -180,46 +170,10 @@ implements /*PropertyChangeListener,*/ EventListener  {
 	}
 	
 	@Override
-	public void deactivate() {
-		if (isActive()) {
-			super.deactivate();
-		}
-	}
-
-	protected List<Element> getModelChildren() {
-		return ElementTraversalHelper.getChildElements(editRoot);
-	}
-	
-//	public void propertyChange(PropertyChangeEvent evt) {
-//		String prop = evt.getPropertyName();
-//		if( Element.INSERT.equals(prop) ||
-//			Element.REMOVE.equals(prop) ||
-//			Element.CHANGE_ORDER.equals(prop) ||
-//			Element.XML_ATTRIBUTE.equals(prop)
-//		) {
-//			refreshChildren();
-//			refreshVisuals();
-//		}
-//		else if( Element.TRANSFORM.equals(prop) ) {
-//			refreshVisuals();
-//		}
-//	}
-	
-	
-
-    @Override
 	public void refreshVisuals() {
-		// TODO Auto-generated method stub
-//    	((BackgroundImageFigure)getFigure()).setImage(transcodeImage());
-    	bgFigure.setImage(transcodeImage());
+		bgFigure.setImage(transcodeImage());
 		super.refreshVisuals();
 	}
-
-//	@Override
-//	protected void registerVisuals() {
-//		// TODO Auto-generated method stub
-//		super.registerVisuals();
-//	}
 
 	protected Image transcodeImage() {
     	Image image = null;
@@ -230,27 +184,23 @@ implements /*PropertyChangeListener,*/ EventListener  {
 			GraphicsNode gvtRoot = ctx.getGraphicsNode( ctx.getDocument().getDocumentElement() );
 			image = Transcoders.getGVTRenderer().transcode(ctx, gvtRoot);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return image;
     }
-
-
-	public BridgeContext getBridgeContext() {
-		return ctx;
+		
+	@Override
+	public void deactivate() {
+		if (isActive()) {
+			super.deactivate();
+		}
 	}
 
-	public Element getEditRoot() {
-		return editRoot;
-	}
-
-	public void setEditRoot(SVGOMElement root) {
-		editRoot = root;
-		refreshChildren();
+	protected List<Element> getModelChildren() {
+		return ElementTraversalHelper.getChildElements(editRoot);
 	}
 	
-	@Override
+ 	@Override
 	public Object getAdapter(Class type) {
 		if (type == IPropertySource.class) {
 			return new ElementPropertySource(editRoot);

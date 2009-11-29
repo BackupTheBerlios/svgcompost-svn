@@ -20,7 +20,6 @@ package de.berlios.svgcompost.part;
 import org.apache.batik.bridge.BridgeContext;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPartFactory;
-import org.eclipse.gef.GraphicalViewer;
 import org.w3c.dom.Element;
 
 
@@ -35,14 +34,8 @@ public class SingleLevelFactory implements EditPartFactory {
 
 	private BridgeContext ctx;
 	
-	private GraphicalViewer viewer;
-	
 	private BackgroundPart background;
 	
-	public void setViewer(GraphicalViewer viewer) {
-		this.viewer = viewer;
-	}
-
 	public void setBridgeContext( BridgeContext ctx ) {
 		this.ctx = ctx;
 	}
@@ -56,7 +49,6 @@ public class SingleLevelFactory implements EditPartFactory {
 		Element node = (Element) modelElement;
 		if( context == null ) {
 			background = new BackgroundPart(node,ctx);
-			background.setViewer(viewer);
 			part = background;
 		}
 		else {

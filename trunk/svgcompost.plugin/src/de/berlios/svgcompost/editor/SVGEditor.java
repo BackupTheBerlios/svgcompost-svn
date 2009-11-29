@@ -51,7 +51,6 @@ import org.eclipse.gef.KeyHandler;
 import org.eclipse.gef.KeyStroke;
 import org.eclipse.gef.dnd.TemplateTransferDragSourceListener;
 import org.eclipse.gef.dnd.TemplateTransferDropTargetListener;
-import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
 import org.eclipse.gef.palette.PaletteRoot;
 import org.eclipse.gef.requests.CreationFactory;
 import org.eclipse.gef.requests.SimpleFactory;
@@ -92,7 +91,6 @@ import de.berlios.svgcompost.layers.HideShowLayersAction;
 import de.berlios.svgcompost.layers.LowerNodeAction;
 import de.berlios.svgcompost.layers.RaiseNodeAction;
 import de.berlios.svgcompost.part.BackgroundPart;
-import de.berlios.svgcompost.part.EditablePart;
 import de.berlios.svgcompost.part.SVGScalableFreeformRootEditPart;
 import de.berlios.svgcompost.part.SingleLevelFactory;
 import de.berlios.svgcompost.provider.SVGDropTargetListener;
@@ -136,7 +134,6 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette implements IDoub
 
 		factory = new SingleLevelFactory();
 		viewer.setEditPartFactory(factory);
-		factory.setViewer(viewer);
 		
 		ActionRegistry registry = getActionRegistry();
 		KeyHandler keyHandler = new GraphicalViewerKeyHandler(viewer);

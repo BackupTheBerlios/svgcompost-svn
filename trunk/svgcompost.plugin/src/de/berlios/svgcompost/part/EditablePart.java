@@ -38,9 +38,7 @@ import org.eclipse.gef.Request;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gef.requests.ChangeBoundsRequest;
 import org.eclipse.gef.tools.DragEditPartsTracker;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.w3c.dom.Element;
 import org.w3c.dom.events.Event;
@@ -50,7 +48,6 @@ import org.w3c.dom.svg.SVGRect;
 import de.berlios.svgcompost.figure.MapModeImageFigure;
 import de.berlios.svgcompost.freetransform.FreeTransformHelper;
 import de.berlios.svgcompost.provider.ElementPropertySource;
-import de.berlios.svgcompost.provider.SVGTreeOutlinePage;
 import de.berlios.svgcompost.render.Transcoders;
 
 
@@ -60,7 +57,7 @@ import de.berlios.svgcompost.render.Transcoders;
  * @author Gerrit Karius
  *
  */
-public class EditablePart extends AbstractGraphicalEditPart implements /*PropertyChangeListener,*/ EventListener {
+public class EditablePart extends AbstractGraphicalEditPart implements EventListener {
 	
 	public static final String EVENT_TYPE = "DOMAttrModified";
 
@@ -79,12 +76,8 @@ public class EditablePart extends AbstractGraphicalEditPart implements /*Propert
 	public void activate() {
 		if (!isActive()) {
 			super.activate();
-//			editableElement.addPropertyChangeListener(this);
 			if( editableElement instanceof SVGOMElement ) {
 				SVGOMElement svgom = (SVGOMElement) editableElement;
-//				svgom.addEventListener("DOMAttrModified", this, false);
-//				svgom.addEventListener("DOMNodeInserted", this, false);
-//				svgom.addEventListener("DOMNodeRemoved", this, false);
 				svgom.addEventListener(EditEvent.TRANSFORM, this, false);
 				svgom.addEventListener(EditEvent.INSERT, this, false);
 				svgom.addEventListener(EditEvent.REMOVE, this, false);
@@ -94,36 +87,11 @@ public class EditablePart extends AbstractGraphicalEditPart implements /*Propert
 		}
 	}
 
-//	@Override
-//	protected void register() {
-//		// TODO Auto-generated method stub
-//		super.register();
-//	}
-
-//	@Override
-//	protected void registerModel() {
-//		super.registerModel();
-//		getViewer().getEditPartRegistry().put(editableElement, this);	
-//	}
-
 	@Override
 	protected void refreshVisuals() {
 		copyDataToFigure();
 	}
 	
-//	protected BackgroundPart getBackground() {
-//		EditPart root = this;
-//		while( ! (root instanceof BackgroundPart) && root.getParent() != null )
-//			root = root.getParent();
-//		return (BackgroundPart) root;
-//	}
-
-//	private static final List<Object> emptyList = new ArrayList<Object>();
-//	@Override
-//	protected List<Object> getModelChildren() {
-//		return emptyList;
-//	}
-
     @Override
 	protected IFigure createFigure() {
     	    	
@@ -203,15 +171,6 @@ public class EditablePart extends AbstractGraphicalEditPart implements /*Propert
     @Override
     protected void createEditPolicies() {
     }
-
-//	public void propertyChange(PropertyChangeEvent evt) {
-//		String prop = evt.getPropertyName();
-//		if( SVGNode.TRANSFORM.equals(prop) ||
-//			SVGNode.XML_ATTRIBUTE.equals(prop)
-//		) {
-//			refreshVisuals();
-//		}
-//	}
 
 	public BridgeContext getBridgeContext() {
 		return ctx;
