@@ -3,8 +3,6 @@ package de.berlios.svgcompost.animation.canvas;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -12,7 +10,7 @@ import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.URIResolver;
 import org.apache.batik.bridge.UnitProcessor;
-import org.apache.batik.dom.svg.SVGOMElement;
+import org.apache.batik.dom.svg.SVGOMDocument;
 import org.apache.batik.gvt.CanvasGraphicsNode;
 import org.apache.batik.gvt.CompositeGraphicsNode;
 import org.apache.batik.gvt.GraphicsNode;
@@ -41,6 +39,8 @@ public class Canvas {
 	
 	public static final LabelKey KEY_SYMBOL_ID = new LabelKey(1024);
 	public static final LabelKey KEY_LABEL = new LabelKey(1025);
+	public static final LabelKey KEY_WRAPPER = new LabelKey(1026);
+	public static final LabelKey KEY_SRC_ELEMENT = new LabelKey(1027);
 	
 	public static String inkscapeNs = "http://www.inkscape.org/namespaces/inkscape";
 	public static String xlinkNs = "http://www.w3.org/1999/xlink";
@@ -167,7 +167,7 @@ public class Canvas {
 	}
 	
 	public CanvasNode insertSymbolNode( CanvasNode cNode, String symbolId, String name ) {
-		Element element = resolve(symbolId);
+		Element element = resolve(symbolId, cNode.getSourceElement());
 		if( element == null ) {
 			return null;
 		}
@@ -190,6 +190,7 @@ public class Canvas {
 				return insertGroupNode(cNode, name);
 			}
 			group.add( gNode );
+			gNode.setRenderingHint( KEY_SRC_ELEMENT, element );
 			gNode.setRenderingHint( KEY_SYMBOL_ID, symbolId );
 			gNode.setRenderingHint( KEY_LABEL, name );
 			setChildLabels( gNode, element );
@@ -221,11 +222,17 @@ public class Canvas {
 					symbolId = ((Element)childNode).getAttribute( "id" );
 				}
 				if( type.endsWith("use")  ) {
+					Element fromElement = (Element) childNode;
 					String href = ((Element)childNode).getAttributeNS( xlinkNs, "href" );//.replaceAll( "#", "" );
-					childNode = resolve(href); //sourceDoc.getElementById( href );
+					childNode = resolve(href, (Element)childNode); //sourceDoc.getElementById( href );
+					if( childNode == null )
+						System.out.println("\nCanvas.setChildLabels(): could not resolve "+href+" from "+((SVGOMDocument)fromElement.getOwnerDocument()).getURL());
+					else
+						System.out.println("Canvas.setChildLabels(): resolved "+href);
 					type = childNode.getNodeName();
 					symbolId = ((Element)childNode).getAttribute("id");
 					gNode = cutUseNode( gNode );
+					gNode.setRenderingHint(KEY_SRC_ELEMENT, childNode);
 				}
 				isGraphicalSvgElement = (type.endsWith("g") || type.endsWith("path") || type.endsWith("rect") || type.endsWith("symbol"));
 			}
@@ -265,15 +272,17 @@ public class Canvas {
 		return (AffineTransform) node.getTransform().clone();
 	}
 	
-	public Element resolve( String reference ) {
+	public Element resolve( String reference, Element fromElement ) {
 		int index = reference.indexOf("#");
+		if( fromElement == null )
+			fromElement = sourceDoc.getDocumentElement();
 		if( index == -1 )
-			return sourceDoc.getElementById(reference);
+			return fromElement.getOwnerDocument().getElementById(reference);
 		if( index == 0 )
-	    	return sourceDoc.getElementById(reference.substring(1));
+	    	return fromElement.getOwnerDocument().getElementById(reference.substring(1));
 		Element element = null;
 		try {
-			element = uriResolver.getElement(reference, sourceDoc.getRootElement()); // sourceDoc.getElementById( symbolId );
+			element = uriResolver.getElement(reference, fromElement); // sourceDoc.getElementById( symbolId );
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

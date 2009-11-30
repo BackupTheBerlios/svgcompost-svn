@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.apache.batik.gvt.CompositeGraphicsNode;
 import org.apache.batik.gvt.GraphicsNode;
+import org.w3c.dom.Element;
 
 
 public class CanvasNode {
@@ -16,8 +17,6 @@ public class CanvasNode {
 	protected static final double[] matrixDummy = new double[6];
 	protected static final Point2D.Float pointDummy = new Point2D.Float();
 	protected static final List<GraphicsNode> emptyList = new ArrayList<GraphicsNode>();
-	
-	public static final LabelKey KEY_WRAPPER = new LabelKey(1026);
 	
 	public static final String inkscapeNs = "http://www.inkscape.org/namespaces/inkscape";
 	public static final String xlinkNs = "http://www.w3.org/1999/xlink";
@@ -38,10 +37,10 @@ public class CanvasNode {
 		RenderingHints hints =  gNode.getRenderingHints();
 		CanvasNode cNode = null;
 		if( hints != null )
-			cNode = (CanvasNode) hints.get( KEY_WRAPPER );
+			cNode = (CanvasNode) hints.get( Canvas.KEY_WRAPPER );
 		if( cNode == null ) {
 			cNode = new CanvasNode( gNode, canvas );
-			gNode.setRenderingHint( KEY_WRAPPER, cNode );
+			gNode.setRenderingHint( Canvas.KEY_WRAPPER, cNode );
 		}
 		return cNode;
 	}
@@ -300,6 +299,16 @@ public class CanvasNode {
 
 	public GraphicsNode getGraphicsNode() {
 		return gNode;
+	}
+	
+	public Element getSourceElement() {
+		Element element = (Element) gNode.getRenderingHints().get(Canvas.KEY_SRC_ELEMENT);
+		if( element == null ) {
+			CanvasNode parent = getParent();
+			if( parent != null )
+				return parent.getSourceElement();
+		}
+		return element;
 	}
 	
 	public Canvas getCanvas() {
