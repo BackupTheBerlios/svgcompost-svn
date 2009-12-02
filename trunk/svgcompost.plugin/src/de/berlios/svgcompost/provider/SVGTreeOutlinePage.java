@@ -136,8 +136,9 @@ public class SVGTreeOutlinePage extends ContentOutlinePage implements ISelection
 //			getTreeViewer().remove(eventElement);
 //		else if( evt.getType().equals( DOMNodeInserted ) ) {
 //			getTreeViewer().add(eventElement.getParentNode(), eventElement);
+		if( getTreeViewer() != null )
 			getTreeViewer().refresh();
-			setSelection( new StructuredSelection(eventElement) );
+		setSelection( new StructuredSelection(eventElement) );
 //		}
 	}
 	

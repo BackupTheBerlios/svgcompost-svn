@@ -91,11 +91,22 @@ public abstract class LinkHelper {
 				while( index >= 0 && Character.isDigit( id.charAt(index) ) )
 					index--;
 				index++;
-				int count = Integer.parseInt(id.substring(index));
+				String numberString = id.substring(index);
+				int count = numberString.length() > 0 ? Integer.parseInt(numberString) : 0;
 				String body = id.substring(0, index);
 				do {
 					count++;
-					id = body + count;
+					String countString = Integer.toString(count);
+					int diff = numberString.length() - countString.length(); 
+					if( diff > 0 ) {
+						StringBuilder builder = new StringBuilder();
+						for (int i = 0; i < diff; i++) {
+							builder.append('0');
+						}
+						builder.append(countString);
+						countString = builder.toString();
+					}
+					id = body + countString;
 				} while( document.getElementById(id) != null );
 				element.setAttribute("id", id);
 			}

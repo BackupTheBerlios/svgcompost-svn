@@ -10,6 +10,7 @@ import org.eclipse.gef.ui.actions.Clipboard;
 import org.w3c.dom.Element;
 
 import de.berlios.svgcompost.part.EditEvent;
+import de.berlios.svgcompost.util.LinkHelper;
 
 public class PasteCommand extends Command {
 
@@ -44,7 +45,7 @@ public class PasteCommand extends Command {
 		while( it.hasNext() ) {
 			Element el = it.next();
 			Element clone = (Element) el.cloneNode(true);
-			clone.setAttribute("id", el.getAttribute("id")+"_clone");
+			LinkHelper.changeIds( clone, parentElement.getOwnerDocument() );
 			list.put(el, clone);
 		}
 		redo();
