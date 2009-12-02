@@ -99,7 +99,7 @@ public abstract class LinkHelper {
 					String countString = Integer.toString(count);
 					int diff = numberString.length() - countString.length(); 
 					if( diff > 0 ) {
-						StringBuilder builder = new StringBuilder();
+						StringBuilder builder = new StringBuilder(numberString.length());
 						for (int i = 0; i < diff; i++) {
 							builder.append('0');
 						}
