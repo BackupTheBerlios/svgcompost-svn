@@ -23,7 +23,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.views;bundle-version="3.3.0",
  org.eclipse.ui.ide;bundle-version="3.4.1"
 Bundle-ActivationPolicy: lazy
-Bundle-Version: 1.0.0
+Bundle-Version: 0.0.1
 Bundle-Name: AnimPlugin
 Bundle-Activator: de.berlios.svgcompost.animation.plugin.AnimPlugin
 Bundle-ManifestVersion: 2
