@@ -237,6 +237,7 @@ public class Canvas {
 				isGraphicalSvgElement = (type.endsWith("g") || type.endsWith("path") || type.endsWith("rect") || type.endsWith("symbol"));
 			}
 			if( isGraphicalSvgElement ) {
+				gNode.setRenderingHint( KEY_SRC_ELEMENT, (Element) childNode );
 				if( label != null )
 					gNode.setRenderingHint( KEY_LABEL, label );
 				if( symbolId != null ) 

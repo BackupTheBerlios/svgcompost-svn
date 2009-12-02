@@ -13,7 +13,6 @@ import org.apache.batik.gvt.CompositeGraphicsNode;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.gvt.ShapeNode;
 import org.w3c.dom.Element;
-import org.w3c.dom.svg.SVGDocument;
 
 import com.flagstone.transform.FSBounds;
 import com.flagstone.transform.FSCoderException;
@@ -31,7 +30,6 @@ import com.flagstone.transform.FSTransformObject;
 import com.flagstone.transform.util.FSShapeConstructor;
 
 import de.berlios.svgcompost.animation.canvas.Canvas;
-import de.berlios.svgcompost.animation.canvas.CanvasNode;
 import de.berlios.svgcompost.animation.canvas.PathConverter;
 import de.berlios.svgcompost.animation.export.Export;
 
@@ -41,8 +39,8 @@ public class FlagstoneExport implements Export {
 	
 	protected FSMovie movie;
 
-	protected HashMap<String, Integer> swfIds = new HashMap<String, Integer>();
-	protected ArrayList<String> elementIds = new ArrayList<String>();
+	protected HashMap<Element, Integer> swfIds = new HashMap<Element, Integer>();
+	protected ArrayList<Element> elements = new ArrayList<Element>();
 	protected ArrayList<FSTransformObject> shapeDefs = new ArrayList<FSTransformObject>();
 	protected ArrayList<FSTransformObject> frameDefs = new ArrayList<FSTransformObject>();
 	protected int lastHighestDepth = 0;
@@ -71,12 +69,13 @@ public class FlagstoneExport implements Export {
 	}
 
 	protected void captureShapes() {
-		SVGDocument sourceDoc = canvas.getSourceDoc();
-		for( Iterator<String> shapeIdIterator = swfIds.keySet().iterator(); shapeIdIterator.hasNext(); ) {
-			String shapeId = shapeIdIterator.next();
-			Element element = sourceDoc.getElementById( shapeId );
-			if( element == null )
+//		SVGDocument sourceDoc = canvas.getSourceDoc();
+		for( Iterator<Element> shapeElementIterator = swfIds.keySet().iterator(); shapeElementIterator.hasNext(); ) {
+			Element element = shapeElementIterator.next();
+			if( element == null ) {
+				System.out.println( "Warning: element not found." );
 				continue;
+			}
 			captureShape( element );
 		}
 		shapesAreCaptured = true;
@@ -84,9 +83,9 @@ public class FlagstoneExport implements Export {
 
 	protected void captureShape( Element shapeElement ) {
 			
-		String shapeId = shapeElement.getAttribute("id");
+//		String shapeId = shapeElement.getAttribute("id");
 		
-		int swfId = swfIds.get( shapeId );
+		Integer swfId = swfIds.get( shapeElement );
 		ShapeNode shapeNode = (ShapeNode) canvas.getSourceBld().build( canvas.getSourceCtx(), shapeElement );
 		ExtendedGeneralPath path = PathConverter.convertPath( new ExtendedGeneralPath( shapeNode.getShape() ) );
 //		ShapePainter painter = shapeNode.getShapePainter();
@@ -183,10 +182,10 @@ public class FlagstoneExport implements Export {
 		}
 		else if( gNode instanceof ShapeNode ) {
 			ShapeNode shapeNode = (ShapeNode) gNode;
-			String shapeId = CanvasNode.getCanvasNode( shapeNode, canvas ).getSymbolId();
+			Element element = (Element) shapeNode.getRenderingHints().get(Canvas.KEY_SRC_ELEMENT);
 			
 			int swfId;
-			swfId = getSwfId( shapeId );
+			swfId = getSwfId( element );
 	
 //			boolean replace = currentDepth < lastHighestDepth;
 			AffineTransform globTrafo = shapeNode.getGlobalTransform();
@@ -204,13 +203,13 @@ public class FlagstoneExport implements Export {
 		return currentDepth;
 	}
 	
-	public int getSwfId( String symbolId ) {
+	public int getSwfId( Element symbolId ) {
 		Integer swfId = swfIds.get( symbolId );
 		if( swfId == null ) {
 			shapeIdCount++;
 			swfId = shapeIdCount;
 			swfIds.put( symbolId, swfId );
-			elementIds.add( symbolId );
+			elements.add( symbolId );
 		}
 		return swfId;
 	}
