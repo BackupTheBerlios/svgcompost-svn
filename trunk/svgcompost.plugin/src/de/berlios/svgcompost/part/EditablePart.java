@@ -115,7 +115,7 @@ public class EditablePart extends AbstractGraphicalEditPart implements EventList
 		figure.setBackgroundColor(ColorConstants.white);
 		figure.setForegroundColor(ColorConstants.blue);
 		
-		Border border = new LineBorder(3);
+		Border border = new LineBorder(1);
 		figure.setBorder(border);
 		figure.setSize(size.width, size.height);
 		return figure;

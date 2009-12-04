@@ -6,13 +6,13 @@
          point="org.eclipse.ui.views">
       <category
             id="de.berlios.svgcompost"
-            name="SVG Compost"/>
+            name="SVGCompost"/>
       <view
             allowMultiple="false"
             class="org.eclipse.ui.navigator.CommonNavigator"
-            icon="icons/sample.gif"
+            icon="icons/svg.gif"
             id="de.berlios.svgcompost.navigator.view"
-            name="SVG Compost Navigator"/>
+            name="SVGCompost Navigator"/>
    </extension>
    <extension
          point="org.eclipse.ui.navigator.viewer">
@@ -44,7 +44,7 @@
             contentProvider="de.berlios.svgcompost.provider.SVGTreeContentProvider"
             labelProvider="de.berlios.svgcompost.provider.SVGLabelProvider" 
             activeByDefault="true"
-            icon="icons/sample.gif"
+            icon="icons/svg.gif"
             priority="normal" >
          <triggerPoints>
 	            <and>
@@ -80,11 +80,12 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            name="SVG Compost Editor"
-            extensions="svg"
-            contributorClass="de.berlios.svgcompost.contributor.SVGEditorActionBarContributor"
             class="de.berlios.svgcompost.editor.SVGEditor"
-            id="svgcompost.editors.SVGEditor">
+            contributorClass="de.berlios.svgcompost.contributor.SVGEditorActionBarContributor"
+            extensions="svg"
+            icon="icons/svg.gif"
+            id="svgcompost.editors.SVGEditor"
+            name="SVGCompost Editor">
       </editor>
    </extension>
    <extension
@@ -92,7 +93,7 @@
       <page
             class="de.berlios.svgcompost.plugin.SVGCompostPreferencePage"
             id="svgcompost.plugin.preferences"
-            name="SVG Compost">
+            name="SVGCompost">
       </page>
    </extension>
    <extension
@@ -104,7 +105,7 @@
       <wizard
             category="de.berlios.svgcompost"
             class="de.berlios.svgcompost.wizard.NewSVGFileWizard"
-            icon="icons/sample.gif"
+            icon="icons/svg.gif"
             id="de.berlios.svgcompost.wizard.NewSVGFileWizard"
             name="New SVG File">
       </wizard>
@@ -130,5 +131,14 @@
                menubarPath="svgcompost.plugin.menu1/group1">
          </action>
       </objectContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="de.berlios.svgcompost.plugin.PerspectiveFactory"
+            icon="icons/svg.gif"
+            id="svgcompost.plugin.perspective"
+            name="SVGCompost">
+      </perspective>
    </extension>
 </plugin>
