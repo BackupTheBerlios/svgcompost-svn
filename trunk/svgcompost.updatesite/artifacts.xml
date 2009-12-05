@@ -3,14 +3,14 @@
 <repository name='file:/D:/workspaces/workspace-modeling/svgcompost.updatesite/ - artifacts' type='org.eclipse.equinox.p2.artifact.repository.simpleRepository' version='1.0.0'>
   <properties size='2'>
     <property name='p2.compressed' value='false'/>
-    <property name='p2.timestamp' value='1259793853265'/>
+    <property name='p2.timestamp' value='1260024775875'/>
   </properties>
   <mappings size='3'>
     <rule filter='(&amp; (classifier=osgi.bundle))' output='${repoUrl}/plugins/${id}_${version}.jar'/>
     <rule filter='(&amp; (classifier=binary))' output='${repoUrl}/binary/${id}_${version}'/>
     <rule filter='(&amp; (classifier=org.eclipse.update.feature))' output='${repoUrl}/features/${id}_${version}.jar'/>
   </mappings>
-  <artifacts size='4'>
+  <artifacts size='6'>
     <artifact classifier='osgi.bundle' id='svgcompost.plugin' version='0.0.1'>
       <properties size='3'>
         <property name='artifact.size' value='114637'/>
@@ -22,6 +22,20 @@
       <properties size='2'>
         <property name='artifact.size' value='4636'/>
         <property name='download.size' value='4636'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='svgcompost.plugin' version='0.0.1'>
+      <properties size='3'>
+        <property name='artifact.size' value='115332'/>
+        <property name='download.size' value='115332'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='svgcompost.animation.plugin' version='0.0.1'>
+      <properties size='3'>
+        <property name='artifact.size' value='105954'/>
+        <property name='download.size' value='105954'/>
+        <property name='download.contentType' value='application/zip'/>
       </properties>
     </artifact>
     <artifact classifier='osgi.bundle' id='com.flagstone.transform' version='0.0.1'>
