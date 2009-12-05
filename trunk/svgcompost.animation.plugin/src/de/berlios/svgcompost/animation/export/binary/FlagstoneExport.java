@@ -1,5 +1,9 @@
 package de.berlios.svgcompost.animation.export.binary;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Paint;
+import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
@@ -10,15 +14,22 @@ import java.util.Iterator;
 import org.apache.batik.ext.awt.geom.ExtendedGeneralPath;
 import org.apache.batik.ext.awt.geom.ExtendedPathIterator;
 import org.apache.batik.gvt.CompositeGraphicsNode;
+import org.apache.batik.gvt.CompositeShapePainter;
+import org.apache.batik.gvt.FillShapePainter;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.gvt.ShapeNode;
+import org.apache.batik.gvt.ShapePainter;
+import org.apache.batik.gvt.StrokeShapePainter;
 import org.w3c.dom.Element;
 
 import com.flagstone.transform.FSBounds;
 import com.flagstone.transform.FSCoderException;
+import com.flagstone.transform.FSColor;
 import com.flagstone.transform.FSColorTable;
 import com.flagstone.transform.FSCoordTransform;
 import com.flagstone.transform.FSDefineShape2;
+import com.flagstone.transform.FSFillStyle;
+import com.flagstone.transform.FSLineStyle;
 import com.flagstone.transform.FSMovie;
 import com.flagstone.transform.FSPlaceObject2;
 import com.flagstone.transform.FSRemoveObject2;
@@ -48,7 +59,7 @@ public class FlagstoneExport implements Export {
 	protected boolean shapesAreCaptured = false;
 	
 	protected int framesPerSecond = 12;
-	Rectangle2D screenSize = new Rectangle2D.Float( 0, 0, 400,400 );
+	Rectangle2D screenSize;
 	
 	protected boolean initialFrame = true;
 
@@ -62,6 +73,7 @@ public class FlagstoneExport implements Export {
 
 	    movie.setVersion(7);
 	    movie.setFrameRate(framesPerSecond);
+	    screenSize = new Rectangle2D.Float( 0, 0, canvas.getWidth(), canvas.getHeight() );
 	    movie.setFrameSize(new FSBounds(0, 0, (int)(screenSize.getWidth()*20), (int)(screenSize.getHeight()*20)));
 
 	    movie.add(new FSSetBackgroundColor(FSColorTable.white()));
@@ -80,22 +92,69 @@ public class FlagstoneExport implements Export {
 		}
 		shapesAreCaptured = true;
 	}
+	
+	protected void captureStyles( ShapeNode shapeNode, FSShapeConstructor constructor ) {
+		ShapePainter painter = shapeNode.getShapePainter();
+		FillShapePainter fillPainter = null;
+		StrokeShapePainter strokePainter = null;
+		if( painter instanceof CompositeShapePainter ) {
+			CompositeShapePainter compositePainter = (CompositeShapePainter) painter;
+			for (int i = 0; i < compositePainter.getShapePainterCount(); i++) {
+				ShapePainter childPainter = compositePainter.getShapePainter(i);
+				if( childPainter instanceof FillShapePainter )
+					fillPainter = (FillShapePainter) childPainter;
+				else if( childPainter instanceof StrokeShapePainter )
+					strokePainter = (StrokeShapePainter) childPainter;
+				else
+					System.out.println( "Unimplemented: "+childPainter );
+			}
+		}
+		else if(painter instanceof FillShapePainter) {
+			fillPainter = (FillShapePainter) painter;
+		}
+		else if(painter instanceof StrokeShapePainter) {
+			strokePainter = (StrokeShapePainter) painter;
+		}
+		
+		if( strokePainter != null ) {
+			Paint strokePaint = PainterAccess.getPaint( strokePainter );
+			Stroke stroke = PainterAccess.getStroke( strokePainter );
+			if( strokePaint instanceof Color && stroke instanceof BasicStroke ) {
+				Color color = (Color) strokePaint;
+				FSColor fsColor = new FSColor( color.getRed(), color.getGreen(), color.getBlue() );
+				int width = (int) (((BasicStroke)stroke).getLineWidth()*20);
+				constructor.add(new FSSolidLine( width, fsColor ));
+			}
+			else if( strokePaint != null || stroke != null ) {
+				System.out.println( "Unimplemented: "+stroke+" with "+strokePaint );
+				constructor.add(new FSSolidLine(20, FSColorTable.black()));
+			}
+		}
+		if( fillPainter != null ) {
+			Paint fillPaint = PainterAccess.getPaint( fillPainter );
+			if( fillPaint instanceof Color ) {
+				Color color = (Color) fillPaint;
+				FSColor fsColor = new FSColor( color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha() );
+				constructor.add(new FSSolidFill( fsColor ));
+			}
+			else if( fillPaint != null ) {
+				System.out.println( "Unimplemented: "+fillPaint.getClass() );
+				constructor.add(new FSSolidFill(FSColorTable.lightgrey()));
+			}
+		}
+		
+	}
 
 	protected void captureShape( Element shapeElement ) {
 			
-//		String shapeId = shapeElement.getAttribute("id");
-		
 		Integer swfId = swfIds.get( shapeElement );
 		ShapeNode shapeNode = (ShapeNode) canvas.getSourceBld().build( canvas.getSourceCtx(), shapeElement );
 		ExtendedGeneralPath path = PathConverter.convertPath( new ExtendedGeneralPath( shapeNode.getShape() ) );
-//		ShapePainter painter = shapeNode.getShapePainter();
-//		Paint paint = PainterAccess.getPaint( painter );
-//		Stroke stroke = PainterAccess.getStroke( painter );
 
 		FSShapeConstructor constructor = new FSShapeConstructor();
 		constructor.COORDINATES_ARE_PIXELS = false;
-		constructor.add(new FSSolidLine(20, FSColorTable.black()));
-		constructor.add(new FSSolidFill(FSColorTable.lightgrey()));
+		
+		captureStyles(shapeNode, constructor);
 
 		capturePath(path, constructor);
 		FSDefineShape2 shapeDef = constructor.defineShape(swfId);
@@ -109,7 +168,15 @@ public class FlagstoneExport implements Export {
         double[] current = new double[] { 0, 0 }; 
 
         constructor.newPath(); 
-        constructor.selectStyle(0,0); 
+        
+        if( constructor.getLineStyles().size() > 0 )
+        	constructor.selectLineStyle(0);
+        else
+        	constructor.setLineStyles(new ArrayList<FSLineStyle>());
+        if( constructor.getFillStyles().size() > 0 )
+        	constructor.selectFillStyle(0);
+        else
+        	constructor.setFillStyles(new ArrayList<FSFillStyle>());
 
         while(!iterator.isDone()) { 
                 switch(iterator.currentSegment(points)) { 
@@ -182,7 +249,11 @@ public class FlagstoneExport implements Export {
 		}
 		else if( gNode instanceof ShapeNode ) {
 			ShapeNode shapeNode = (ShapeNode) gNode;
-			Element element = (Element) shapeNode.getRenderingHints().get(Canvas.KEY_SRC_ELEMENT);
+			Element element;
+			if( shapeNode.getRenderingHints() != null )
+				element = (Element) shapeNode.getRenderingHints().get(Canvas.KEY_SRC_ELEMENT);
+			else
+				element = canvas.getSourceCtx().getElement(shapeNode);
 			
 			int swfId;
 			swfId = getSwfId( element );

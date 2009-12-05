@@ -24,6 +24,7 @@ import de.berlios.svgcompost.animation.anim.composite.Scene;
 import de.berlios.svgcompost.animation.canvas.Canvas;
 import de.berlios.svgcompost.animation.export.Export;
 import de.berlios.svgcompost.animation.export.binary.FlagstoneExport;
+import de.berlios.svgcompost.animation.timeline.Layer;
 import de.berlios.svgcompost.animation.timeline.Timeline;
 
 public class SWFBuildAction implements IWorkbenchWindowActionDelegate {
@@ -93,11 +94,23 @@ public class SWFBuildAction implements IWorkbenchWindowActionDelegate {
 		canvas.setLibrary( ctx );
 		Export capture = new FlagstoneExport( canvas );
 		Timeline timeline = canvas.getLibrary().createTimeline();
-		Scene scene = canvas.getLibrary().createAnimsForTimeline(timeline);
-		scene.setDurationInSeconds(10);
-		AnimControl ctrl = new AnimControl( scene );
-		ctrl.setCapture( capture );
-		while( ctrl.nextFrame() ) {
+		
+		int foundKeyframes = 0;
+		for( Layer layer : timeline.getLayers() )
+			foundKeyframes += layer.getKeyframes().size();
+		
+		if( foundKeyframes == 0 ) {
+			// no keyframes, export as static SWF
+			canvas.renderDocument(canvas.getSourceDoc());
+			capture.captureFrame();
+		}
+		else {
+			Scene scene = canvas.getLibrary().createAnimsForTimeline(timeline);
+			scene.setDurationInSeconds(10);
+			AnimControl ctrl = new AnimControl( scene );
+			ctrl.setCapture( capture );
+			while( ctrl.nextFrame() ) {
+			}
 		}
 		capture.end();
 		capture.writeOutput( swfPath );

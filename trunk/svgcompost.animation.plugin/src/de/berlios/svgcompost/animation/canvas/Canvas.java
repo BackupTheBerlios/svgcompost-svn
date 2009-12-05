@@ -103,6 +103,14 @@ public class Canvas {
 		return library;
 	}
 
+	public int getWidth() {
+		return width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
 	public void setLibrary( BridgeContext sourceCtx ) {
 		library = new Library( this, new Canvas( sourceCtx ) );
 	}
@@ -163,7 +171,9 @@ public class Canvas {
 	}
 	
 	public CanvasNode renderDocument( SVGDocument document ) {
-		return insertSymbolNode( getRoot(), document.getRootElement(), document.getRootElement().getAttribute("id") );
+		CanvasNode documentNode = insertSymbolNode( getRoot(), document.getRootElement(), document.getRootElement().getAttribute("id") );
+		setChildLabels(documentNode.getGraphicsNode(), document.getRootElement());
+		return documentNode;
 	}
 	
 	public CanvasNode insertSymbolNode( CanvasNode cNode, String symbolId, String name ) {
