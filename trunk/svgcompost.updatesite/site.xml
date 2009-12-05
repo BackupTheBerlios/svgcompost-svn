@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
    <description url="http://svn.berlios.de/svnroot/repos/svgcompost/trunk/svgcompost.updatesite">
-      Update site for SVG Compost.
+      Update site for SVGCompost.
    </description>
    <feature url="features/svgcompost.feature_0.0.1.jar" id="svgcompost.feature" version="0.0.1">
       <category name="svgcompost"/>
    </feature>
-   <category-def name="svgcompost" label="SVG Compost Project">
+   <category-def name="svgcompost" label="SVGCompost Project">
       <description>
-         SVG Compost is an SVG compositing editor for Eclipse, based on existing Eclipse GEF and GMF functionality and the Apache Batik framework.
+         SVGCompost is an SVG compositing editor for Eclipse, based on existing Eclipse GEF and GMF functionality and the Apache Batik framework.
       </description>
    </category-def>
 </site>

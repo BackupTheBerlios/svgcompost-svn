@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: SVG Compost Editor
+Bundle-Name: SVGCompost Editor
 Bundle-SymbolicName: svgcompost.plugin;singleton:=true
 Bundle-Version: 0.0.1
 Require-Bundle: org.w3c.dom.svg,

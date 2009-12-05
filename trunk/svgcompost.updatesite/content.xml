@@ -3,7 +3,7 @@
 <repository name='file:/D:/workspaces/workspace-modeling/svgcompost.updatesite/ - metadata' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1.0.0'>
   <properties size='2'>
     <property name='p2.compressed' value='false'/>
-    <property name='p2.timestamp' value='1260024775953'/>
+    <property name='p2.timestamp' value='1260025854890'/>
   </properties>
   <units size='10'>
     <unit id='tooling.source.default' version='1.0.0' singleton='false'>
@@ -35,7 +35,7 @@
     <unit id='svgcompost.feature.feature.jar' version='0.0.1'>
       <update id='svgcompost.feature.feature.jar' range='[0.0.0,0.0.1)' severity='0'/>
       <properties size='3'>
-        <property name='org.eclipse.equinox.p2.name' value='SVG Compost'/>
+        <property name='org.eclipse.equinox.p2.name' value='SVGCompost'/>
         <property name='org.eclipse.equinox.p2.description' value='SVGCompost is an SVG compositing editor for Eclipse, based on&#xA;existing Eclipse GEF and GMF functionality and the Apache Batik&#xA;framework.'/>
         <property name='org.eclipse.equinox.p2.description.url' value='http://svgcompost.berlios.de'/>
       </properties>
@@ -127,7 +127,7 @@
     <unit id='svgcompost.feature.feature.group' version='0.0.1' singleton='false'>
       <update id='svgcompost.feature.feature.group' range='[0.0.0,0.0.1)' severity='0'/>
       <properties size='4'>
-        <property name='org.eclipse.equinox.p2.name' value='SVG Compost'/>
+        <property name='org.eclipse.equinox.p2.name' value='SVGCompost'/>
         <property name='org.eclipse.equinox.p2.description' value='SVGCompost is an SVG compositing editor for Eclipse, based on&#xA;existing Eclipse GEF and GMF functionality and the Apache Batik&#xA;framework.'/>
         <property name='org.eclipse.equinox.p2.description.url' value='http://svgcompost.berlios.de'/>
         <property name='org.eclipse.equinox.p2.type.group' value='true'/>
@@ -158,7 +158,7 @@
     <unit id='svgcompost.plugin' version='0.0.1'>
       <update id='svgcompost.plugin' range='[0.0.0,0.0.1)' severity='0'/>
       <properties size='1'>
-        <property name='org.eclipse.equinox.p2.name' value='SVG Compost Editor'/>
+        <property name='org.eclipse.equinox.p2.name' value='SVGCompost Editor'/>
       </properties>
       <provides size='7'>
         <provided namespace='org.eclipse.equinox.p2.iu' name='svgcompost.plugin' version='0.0.1'/>
@@ -199,7 +199,7 @@
       <touchpointData size='1'>
         <instructions size='1'>
           <instruction key='manifest'>
-            Bundle-ManifestVersion: 2&#xA;Bundle-ActivationPolicy: lazy&#xA;Bundle-Name: SVG Compost Editor&#xA;Bundle-Version: 0.0.1&#xA;Require-Bundle: org.w3c.dom.svg,org.apache.batik.bridge,org.apache.batik.dom,org.apache.batik.dom.svg,org.apache.batik.util,org.eclipse.ui.ide,org.eclipse.gmf.runtime.draw2d.ui.render.awt,org.apache.batik.ext.awt,org.eclipse.gmf.runtime.diagram.ui.properties,org.apache.batik.svggen;bundle-version=&quot;1.6.0&quot;,org.apache.xml.serializer;bundle-version=&quot;2.7.1&quot;,org.eclipse.gmf.runtime.draw2d.ui.render;bundle-version=&quot;1.1.0&quot;,org.eclipse.wst.xml.ui;bundle-version=&quot;1.0.430&quot;,org.eclipse.wst.sse.core;bundle-version=&quot;1.1.303&quot;,org.eclipse.wst.sse.ui;bundle-version=&quot;1.1.4&quot;,org.apache.batik.parser;bundle-version=&quot;1.6.0&quot;,org.apache.batik.css;bundle-version=&quot;1.6.0&quot;,org.eclipse.core.resources,org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.ui.navigator;bundle-version=&quot;3.3.101&quot;&#xA;Export-Package: de.berlios.svgcompost.editor,de.berlios.svgcompost.layers,de.berlios.svgcompost.part,de.berlios.svgcompost.util&#xA;Bundle-SymbolicName: svgcompost.plugin;singleton:=true&#xA;Manifest-Version: 1.0&#xA;Bundle-Activator: de.berlios.svgcompost.plugin.SVGCompostPlugin
+            Bundle-ManifestVersion: 2&#xA;Bundle-ActivationPolicy: lazy&#xA;Bundle-Name: SVGCompost Editor&#xA;Bundle-Version: 0.0.1&#xA;Require-Bundle: org.w3c.dom.svg,org.apache.batik.bridge,org.apache.batik.dom,org.apache.batik.dom.svg,org.apache.batik.util,org.eclipse.ui.ide,org.eclipse.gmf.runtime.draw2d.ui.render.awt,org.apache.batik.ext.awt,org.eclipse.gmf.runtime.diagram.ui.properties,org.apache.batik.svggen;bundle-version=&quot;1.6.0&quot;,org.apache.xml.serializer;bundle-version=&quot;2.7.1&quot;,org.eclipse.gmf.runtime.draw2d.ui.render;bundle-version=&quot;1.1.0&quot;,org.eclipse.wst.xml.ui;bundle-version=&quot;1.0.430&quot;,org.eclipse.wst.sse.core;bundle-version=&quot;1.1.303&quot;,org.eclipse.wst.sse.ui;bundle-version=&quot;1.1.4&quot;,org.apache.batik.parser;bundle-version=&quot;1.6.0&quot;,org.apache.batik.css;bundle-version=&quot;1.6.0&quot;,org.eclipse.core.resources,org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.ui.navigator;bundle-version=&quot;3.3.101&quot;&#xA;Export-Package: de.berlios.svgcompost.editor,de.berlios.svgcompost.layers,de.berlios.svgcompost.part,de.berlios.svgcompost.util&#xA;Bundle-SymbolicName: svgcompost.plugin;singleton:=true&#xA;Manifest-Version: 1.0&#xA;Bundle-Activator: de.berlios.svgcompost.plugin.SVGCompostPlugin
           </instruction>
         </instructions>
       </touchpointData>

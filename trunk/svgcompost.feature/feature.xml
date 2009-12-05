@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="svgcompost.feature"
-      label="SVG Compost"
+      label="SVGCompost"
       version="0.0.1">
 
    <description url="http://svgcompost.berlios.de">
