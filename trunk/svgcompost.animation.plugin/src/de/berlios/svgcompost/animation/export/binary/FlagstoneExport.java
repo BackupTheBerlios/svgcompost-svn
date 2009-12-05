@@ -106,7 +106,7 @@ public class FlagstoneExport implements Export {
 				else if( childPainter instanceof StrokeShapePainter )
 					strokePainter = (StrokeShapePainter) childPainter;
 				else
-					System.out.println( "Unimplemented: "+childPainter );
+					System.out.println( "Not implemented: "+childPainter );
 			}
 		}
 		else if(painter instanceof FillShapePainter) {
@@ -126,7 +126,7 @@ public class FlagstoneExport implements Export {
 				constructor.add(new FSSolidLine( width, fsColor ));
 			}
 			else if( strokePaint != null || stroke != null ) {
-				System.out.println( "Unimplemented: "+stroke+" with "+strokePaint );
+				System.out.println( "Not implemented: "+stroke+" with "+strokePaint );
 				constructor.add(new FSSolidLine(20, FSColorTable.black()));
 			}
 		}
@@ -138,7 +138,7 @@ public class FlagstoneExport implements Export {
 				constructor.add(new FSSolidFill( fsColor ));
 			}
 			else if( fillPaint != null ) {
-				System.out.println( "Unimplemented: "+fillPaint.getClass() );
+				System.out.println( "Not implemented: "+fillPaint.getClass() );
 				constructor.add(new FSSolidFill(FSColorTable.lightgrey()));
 			}
 		}
@@ -270,6 +270,9 @@ public class FlagstoneExport implements Export {
 //			frameDefs.add( new FSPlaceObject2(currentDepth, new FSCoordTransform(matrix)) );
 			frameDefs.add( new FSPlaceObject2(initialFrame?FSPlaceObject2.New:FSPlaceObject2.Replace, swfId, currentDepth, new FSCoordTransform(matrix), null) );
 			currentDepth++;
+		}
+		else {
+			System.out.println( "Not implemented: "+gNode );
 		}
 		return currentDepth;
 	}

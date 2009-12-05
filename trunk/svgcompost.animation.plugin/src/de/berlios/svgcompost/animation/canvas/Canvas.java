@@ -3,7 +3,6 @@ package de.berlios.svgcompost.animation.canvas;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.batik.bridge.BridgeContext;
@@ -16,8 +15,6 @@ import org.apache.batik.gvt.CompositeGraphicsNode;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.gvt.RootGraphicsNode;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGRect;
 
@@ -115,21 +112,13 @@ public class Canvas {
 		library = new Library( this, new Canvas( sourceCtx ) );
 	}
 	
-	public static Iterator getChildIterator( GraphicsNode parent ) {
-		if( parent == null || ! (parent instanceof CompositeGraphicsNode) )
-			return null;
-		CompositeGraphicsNode group = (CompositeGraphicsNode) parent;
-		return group.iterator();
-	}
-	
 	public static GraphicsNode getChild( GraphicsNode parent, String name ) {
-		//TODO: use RenderingHints, try a custom hint with custom key.
 		if( parent == null || ! (parent instanceof CompositeGraphicsNode) )
 			return null;
 		CompositeGraphicsNode group = (CompositeGraphicsNode) parent;
-		List children = group.getChildren();
+		List<GraphicsNode> children = group.getChildren();
 		for (int i = 0; i < children.size(); i++) {
-			GraphicsNode child = (GraphicsNode) children.get(i);
+			GraphicsNode child = children.get(i);
 			RenderingHints hints = child.getRenderingHints();
 			if( hints == null || hints.get( KEY_LABEL ) == null )
 				continue;
@@ -213,47 +202,30 @@ public class Canvas {
 	protected void setChildLabels( GraphicsNode parent, Element element ) {
 		if( ! (parent instanceof CompositeGraphicsNode) )
 			return;
-		List childGNodes = ((CompositeGraphicsNode)parent).getChildren();
-		NodeList childNodes = element.getChildNodes();
-		int j = 0;
+		List<GraphicsNode> childGNodes = ((CompositeGraphicsNode)parent).getChildren();
 		for (int i = 0; i < childGNodes.size(); i++) {
-			GraphicsNode gNode = (GraphicsNode) childGNodes.get(i);
-			Node childNode = null;
-			boolean isGraphicalSvgElement = false;
-			String label = null;
-			String symbolId = null;
-			// Search for an element that matches the GraphicsNode.
-			while( ! isGraphicalSvgElement && j < childNodes.getLength() ) {
-				childNode = childNodes.item(j);
-				j++;
-				String type = childNode.getNodeName();
-				if( childNode instanceof Element ) {
-					label = ((Element)childNode).getAttributeNS( inkscapeNs, "label" );
-					symbolId = ((Element)childNode).getAttribute( "id" );
-				}
-				if( type.endsWith("use")  ) {
-					Element fromElement = (Element) childNode;
-					String href = ((Element)childNode).getAttributeNS( xlinkNs, "href" );//.replaceAll( "#", "" );
-					childNode = resolve(href, (Element)childNode); //sourceDoc.getElementById( href );
-					if( childNode == null )
-						System.out.println("\nCanvas.setChildLabels(): could not resolve "+href+" from "+((SVGOMDocument)fromElement.getOwnerDocument()).getURL());
-					else
-						System.out.println("Canvas.setChildLabels(): resolved "+href);
-					type = childNode.getNodeName();
-					symbolId = ((Element)childNode).getAttribute("id");
-					gNode = cutUseNode( gNode );
-					gNode.setRenderingHint(KEY_SRC_ELEMENT, childNode);
-				}
-				isGraphicalSvgElement = (type.endsWith("g") || type.endsWith("path") || type.endsWith("rect") || type.endsWith("symbol"));
+			GraphicsNode childNode = childGNodes.get(i);
+			Element childElement = sourceCtx.getElement(childNode);
+			String type = childElement.getNodeName();
+			// Label is taken from the original element.
+			String label = childElement.getAttributeNS( inkscapeNs, "label" );
+			if( type.endsWith("use")  ) {
+				Element fromElement = childElement;
+				String href = childElement.getAttributeNS( xlinkNs, "href" );
+				childElement = resolve(href, childElement);
+				if( childElement == null )
+					System.out.println("\nCanvas.setChildLabels(): could not resolve "+href+" from "+((SVGOMDocument)fromElement.getOwnerDocument()).getURL());
+				type = childElement.getNodeName();
+				childNode = cutUseNode( childNode );
 			}
-			if( isGraphicalSvgElement ) {
-				gNode.setRenderingHint( KEY_SRC_ELEMENT, (Element) childNode );
-				if( label != null )
-					gNode.setRenderingHint( KEY_LABEL, label );
-				if( symbolId != null ) 
-					gNode.setRenderingHint( KEY_SYMBOL_ID, symbolId );
-				setChildLabels( gNode, (Element) childNode );
-			}
+			// ID is taken from original element, or from referenced element for use elements.
+			String symbolId = childElement.getAttribute( "id" );
+			childNode.setRenderingHint( KEY_SRC_ELEMENT, childElement );
+			if( label != null )
+				childNode.setRenderingHint( KEY_LABEL, label );
+			if( symbolId != null ) 
+				childNode.setRenderingHint( KEY_SYMBOL_ID, symbolId );
+			setChildLabels( childNode, childElement );
 
 		}
 	}
