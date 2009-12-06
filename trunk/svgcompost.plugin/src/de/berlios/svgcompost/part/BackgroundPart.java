@@ -43,10 +43,13 @@ import org.eclipse.ui.views.properties.IPropertySource;
 import org.w3c.dom.Element;
 import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
+import org.w3c.dom.svg.SVGEllipseElement;
+import org.w3c.dom.svg.SVGRectElement;
 
 import de.berlios.svgcompost.figure.BackgroundImageFigure;
 import de.berlios.svgcompost.freetransform.FreeTransformEditPolicy;
 import de.berlios.svgcompost.freetransform.TransformSVGElementCommand;
+import de.berlios.svgcompost.layers.InsertElementCommand;
 import de.berlios.svgcompost.provider.ElementPropertySource;
 import de.berlios.svgcompost.render.Transcoders;
 import de.berlios.svgcompost.util.ElementTraversalHelper;
@@ -141,7 +144,10 @@ implements EventListener  {
 
 			@Override
 			protected Command getCreateCommand(CreateRequest request) {
-				// TODO Auto-generated method stub
+				Object childClass = request.getNewObjectType();
+				if ( childClass.equals( Element.class ) ) {
+					return new InsertElementCommand((Element)getHost().getModel(),(Element)request.getNewObject(),(Rectangle)getConstraintFor(request));
+				}
 				return null;
 			}
 			

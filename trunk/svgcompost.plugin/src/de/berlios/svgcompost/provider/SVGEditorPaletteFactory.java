@@ -16,6 +16,8 @@
 
 package de.berlios.svgcompost.provider;
 
+import org.apache.batik.util.SVGConstants;
+import org.eclipse.gef.palette.CombinedTemplateCreationEntry;
 import org.eclipse.gef.palette.MarqueeToolEntry;
 import org.eclipse.gef.palette.PaletteContainer;
 import org.eclipse.gef.palette.PaletteDrawer;
@@ -23,14 +25,36 @@ import org.eclipse.gef.palette.PaletteGroup;
 import org.eclipse.gef.palette.PaletteRoot;
 import org.eclipse.gef.palette.PanningSelectionToolEntry;
 import org.eclipse.gef.palette.ToolEntry;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.w3c.dom.svg.SVGEllipseElement;
+import org.w3c.dom.svg.SVGRectElement;
 
 import de.berlios.svgcompost.freetransform.FreeTransformTool;
+import de.berlios.svgcompost.plugin.SVGCompostPlugin;
 
 
 public class SVGEditorPaletteFactory {
 
 	private static PaletteContainer createElementsDrawer() {
 		PaletteDrawer componentsDrawer = new PaletteDrawer("SVG Elements");
+
+		CombinedTemplateCreationEntry component = new CombinedTemplateCreationEntry(
+				"Ellipse", 
+				"Create an ellipse", 
+				SVGEllipseElement.class,
+				new SVGElementCreationFactory( SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_ELLIPSE_TAG ), 
+				ImageDescriptor.createFromURL(SVGCompostPlugin.getDefault().getBundle().getResource("icons/ellipse16.gif")), 
+				ImageDescriptor.createFromURL(SVGCompostPlugin.getDefault().getBundle().getResource("icons/ellipse16.gif"))); 
+		componentsDrawer.add(component);
+		component = new CombinedTemplateCreationEntry(
+				"Rectangle", 
+				"Create a rectangle", 
+				SVGRectElement.class,
+				new SVGElementCreationFactory( SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_RECT_TAG ), 
+				ImageDescriptor.createFromURL(SVGCompostPlugin.getDefault().getBundle().getResource("icons/rectangle16.gif")), 
+				ImageDescriptor.createFromURL(SVGCompostPlugin.getDefault().getBundle().getResource("icons/rectangle16.gif"))); 
+		componentsDrawer.add(component);
+		
 		return componentsDrawer;
 	}
 

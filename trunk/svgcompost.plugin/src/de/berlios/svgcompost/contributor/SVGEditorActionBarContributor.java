@@ -38,6 +38,7 @@ public class SVGEditorActionBarContributor extends ActionBarContributor {
 		IWorkbenchWindow iww = getPage().getWorkbenchWindow();
 		addRetargetAction((RetargetAction)ActionFactory.COPY.create(iww));
 		addRetargetAction((RetargetAction)ActionFactory.PASTE.create(iww));
+		addRetargetAction((RetargetAction)ActionFactory.DELETE.create(iww));
 	}
 	
 	@Override
@@ -46,6 +47,7 @@ public class SVGEditorActionBarContributor extends ActionBarContributor {
 		toolBarManager.add(getAction(ActionFactory.REDO.getId()));
 		toolBarManager.add(getAction(ActionFactory.COPY.getId()));
 		toolBarManager.add(getAction(ActionFactory.PASTE.getId()));
+		toolBarManager.add(getAction(ActionFactory.DELETE.getId()));
 	}
 	
 	@Override
