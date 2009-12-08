@@ -44,16 +44,14 @@ public class FreeTransformEditPolicy extends ResizableEditPolicy {
 	@Override
 	protected IFigure createDragSourceFeedbackFigure() {
 		Rectangle bounds = getInitialFeedbackBounds();
-		int width = bounds.width / 2;
-		int height = bounds.height / 2;
 
 		TransformablePolygon p = new TransformablePolygon();
 
 		PointList points = new PointList();
-		points.addPoint(-width,-height);
-		points.addPoint(width,-height);
-		points.addPoint(width,height);
-		points.addPoint(-width,height);
+		points.addPoint(bounds.getTopLeft());
+		points.addPoint(bounds.getTopRight());
+		points.addPoint(bounds.getBottomRight());
+		points.addPoint(bounds.getBottomLeft());
 		p.setPoints(points);
 
 		FigureUtilities.makeGhostShape(p);

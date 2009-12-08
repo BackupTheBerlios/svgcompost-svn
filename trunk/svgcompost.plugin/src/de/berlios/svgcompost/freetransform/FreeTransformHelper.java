@@ -70,7 +70,7 @@ public class FreeTransformHelper {
 		
 		// Test for simple drag.
 		if( direction == PositionConstants.NONE ) {
-			transform = getDragTransform(request, bounds);
+			transform = getDragTransform(request);
 			return transform;
 		}
 		
@@ -114,7 +114,8 @@ public class FreeTransformHelper {
 		}
 
 		// Apply translation to transform.
-		Point2D.Double offset = new Point2D.Double( center.x-origin.x, center.y-origin.y );
+		Point delta = request.getMoveDelta();
+		Point2D.Double offset = new Point2D.Double( delta.x-origin.x, delta.y-origin.y );
 		
 		transform.concatenate( AffineTransform.getTranslateInstance(offset.x, offset.y) );
 		double[] m = new double[6];
@@ -143,7 +144,7 @@ public class FreeTransformHelper {
 		
 		// Test for simple drag.
 		if( direction == PositionConstants.NONE ) {
-			transform = getDragTransform(request, bounds);
+			transform = getDragTransform(request);
 			return transform;
 		}
 		
@@ -188,9 +189,10 @@ public class FreeTransformHelper {
 
 		// Apply translation to transform.
 		// (No need for matrix calculations, since rotate and skew translation is 0.)
+		Point delta = request.getMoveDelta();
 		double[] m = new double[4];
 		transform.getMatrix(m);
-		transform.setTransform(m[0], m[1], m[2], m[3], center.x, center.y);
+		transform.setTransform(m[0], m[1], m[2], m[3], delta.x, delta.y);
 		// Apply transform to figure.
 		return transform;
 	}
@@ -215,10 +217,9 @@ public class FreeTransformHelper {
 		return transformedRectangle;
 	}
 
-	protected static AffineTransform getDragTransform(ChangeBoundsRequest request, Rectangle2D bounds) {
-		Point2D.Double currentCenter = getCenter(getTransformedRectangle( request, bounds ));
-//		System.out.println( "currentCenter = "+currentCenter );
-		return AffineTransform.getTranslateInstance(currentCenter.x, currentCenter.y);
+	protected static AffineTransform getDragTransform(ChangeBoundsRequest request) {
+		Point delta = request.getMoveDelta();
+		return AffineTransform.getTranslateInstance(delta.x, delta.y);
 	}
 
 	protected static AffineTransform getResizeTransform(int direction, Rectangle2D startRectangle, Rectangle2D currentRectangle) {

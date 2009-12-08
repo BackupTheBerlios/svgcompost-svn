@@ -155,7 +155,8 @@ public class TransformSVGElementCommand extends Command {
 		// Node's global transform.
 		AffineTransform globTrafo = gNode.getGlobalTransform();
 		// Rotation only.
-		globTrafo.setTransform(globTrafo.getScaleX(), globTrafo.getShearY(), globTrafo.getShearX(), globTrafo.getScaleY(), 0, 0);
+		// Not any more.
+//		globTrafo.setTransform(globTrafo.getScaleX(), globTrafo.getShearY(), globTrafo.getShearX(), globTrafo.getScaleY(), 0, 0);
 		
 		// New translation and additional rotation.
 		AffineTransform newGlobTrafo = (AffineTransform) request.getExtendedData().get(FreeTransformHelper.FREE_TRANSFORM);
@@ -169,12 +170,12 @@ public class TransformSVGElementCommand extends Command {
 		newTransform = globTrafo;
 		
 		// Node is shifted to its center, because the drag tool works with the center.
-		Rectangle2D innerBounds = gNode.getBounds();
+//		Rectangle2D innerBounds = gNode.getBounds();
 
-		AffineTransform offset = AffineTransform.getTranslateInstance(
-				-innerBounds.getCenterX()*newTransform.getScaleX()-innerBounds.getCenterY()*newTransform.getShearX(),
-				-innerBounds.getCenterY()*newTransform.getScaleY()-innerBounds.getCenterX()*newTransform.getShearY());
-		newTransform.preConcatenate(offset); // Transform was created for the center.
+//		AffineTransform offset = AffineTransform.getTranslateInstance(
+//				-innerBounds.getCenterX()*newTransform.getScaleX()-innerBounds.getCenterY()*newTransform.getShearX(),
+//				-innerBounds.getCenterY()*newTransform.getScaleY()-innerBounds.getCenterX()*newTransform.getShearY());
+//		newTransform.preConcatenate(offset); // Transform was created for the center.
 
 	}
 
