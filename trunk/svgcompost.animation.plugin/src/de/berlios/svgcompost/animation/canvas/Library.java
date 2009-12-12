@@ -269,7 +269,7 @@ public class Library {
 		if( model != null )
 			return model;
 		CanvasNode modelNode = libraryCanvas.getRoot().addSymbolInstance( modelReference, modelName );
-		model = SkeletonFactory.createSkeleton( modelNode );
+		model = new SkeletonFactory().createSkeleton( modelNode );
 		
 		modelNode.removeNode();
 		models.put(modelName, model);

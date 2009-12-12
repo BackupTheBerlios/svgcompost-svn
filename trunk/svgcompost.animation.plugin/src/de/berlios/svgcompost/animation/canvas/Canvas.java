@@ -221,7 +221,8 @@ public class Canvas {
 			// ID is taken from original element, or from referenced element for use elements.
 			String symbolId = childElement.getAttribute( "id" );
 			childNode.setRenderingHint( KEY_SRC_ELEMENT, childElement );
-			if( label != null )
+			// FIXME: Sometimes, the label is already set. Need to improve setup.
+			if( label != null && childNode.getRenderingHints().get(KEY_LABEL) == null )
 				childNode.setRenderingHint( KEY_LABEL, label );
 			if( symbolId != null ) 
 				childNode.setRenderingHint( KEY_SYMBOL_ID, symbolId );

@@ -9,14 +9,14 @@ import de.berlios.svgcompost.animation.canvas.CanvasNode;
 
 public class SkeletonFactory {
 
-	private static HashMap<Bone,CanvasNode> bones2nodes = new HashMap<Bone,CanvasNode>();
+	private HashMap<Bone,CanvasNode> bones2nodes = new HashMap<Bone,CanvasNode>();
 	
 	/**
 	 * Creates child bones for a newly created parent bone.
 	 * @param node
 	 * @param parent
 	 */
-	protected static void createChildBones( CanvasNode node, Bone parent ) {
+	protected void createChildBones( CanvasNode node, Bone parent ) {
 		bones2nodes.put(parent, node);
 		String mcName = node.getName();
 		for (int i = 0; i < node.getSize(); i++) {
@@ -35,7 +35,7 @@ public class SkeletonFactory {
 	 * @param node
 	 * @param bone
 	 */
-	public static void processBone(CanvasNode node, Bone bone) {
+	public void processBone(CanvasNode node, Bone bone) {
 		BridgeContext ctx = node.getCanvas().getSourceCtx();
 		Element el = ctx.getElement( node.getGraphicsNode() );
 		if( el.hasAttribute("connectWith") && el.hasAttribute("connectTo") ) {
@@ -51,7 +51,7 @@ public class SkeletonFactory {
 	 * @param node The root node of the skeleton tree.
 	 * @return The newly created model root.
 	 */
-	public static Skeleton createSkeleton( CanvasNode node ) {
+	public Skeleton createSkeleton( CanvasNode node ) {
 		if( node == null ) {
 			return null;
 		}
