@@ -188,11 +188,10 @@ public class FreeTransformHelper {
 		}
 
 		// Apply translation to transform.
-		// (No need for matrix calculations, since rotate and skew translation is 0.)
-		Point delta = request.getMoveDelta();
 		double[] m = new double[4];
 		transform.getMatrix(m);
-		transform.setTransform(m[0], m[1], m[2], m[3], delta.x, delta.y);
+		transform.setTransform(m[0], m[1], m[2], m[3], center.x, center.y);
+		transform.concatenate( AffineTransform.getTranslateInstance(-center.x, -center.y) );
 		// Apply transform to figure.
 		return transform;
 	}
