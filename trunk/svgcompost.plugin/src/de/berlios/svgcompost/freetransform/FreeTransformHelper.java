@@ -114,10 +114,7 @@ public class FreeTransformHelper {
 		}
 
 		// Apply translation to transform.
-		Point delta = request.getMoveDelta();
-		Point2D.Double offset = new Point2D.Double( delta.x-origin.x, delta.y-origin.y );
-		
-		transform.concatenate( AffineTransform.getTranslateInstance(offset.x, offset.y) );
+		transform.concatenate( AffineTransform.getTranslateInstance(-origin.x, -origin.y) );
 		double[] m = new double[6];
 		transform.getMatrix(m);
 		transform.setTransform(m[0], m[1], m[2], m[3], m[4]+origin.x, m[5]+origin.y);
@@ -151,15 +148,15 @@ public class FreeTransformHelper {
 		// Calc delta from center of figure to current mouse location.
 		Rectangle2D startRectangle = bounds;
 		Point2D.Double center = getCenter(startRectangle);
+		Rectangle2D currentRectangle = getTransformedRectangle(request, bounds);
 
 		if( ! rotateSkewMode ) {
-			Rectangle2D currentRectangle = getTransformedRectangle(request, bounds);
 			
 			transform = getResizeTransform(direction, startRectangle, currentRectangle);
 		}
 		else {
-			Point2D.Double location = new Point2D.Double( request.getLocation().x, request.getLocation().y );
-			Point2D.Double toCurrent = getDifference(location, center);
+			Point2D.Double currentLocation = getPosition(currentRectangle, direction);
+			Point2D.Double toCurrent = getDifference(currentLocation, center);
 			switch (direction) {
 			
 			case PositionConstants.NORTH_EAST:
@@ -177,7 +174,9 @@ public class FreeTransformHelper {
 			case PositionConstants.SOUTH:
 			case PositionConstants.WEST:
 				// Calc skew transform.
-				transform = getSkewTransform(direction, toCurrent);
+				// FIXME: Something's wrong with getLocation(), it sometimes doesn't seem to return the mouse position,
+				// resulting in strange skews.
+				transform = getSkewTransform(direction, getDifference(new Point2D.Double( request.getLocation().x, request.getLocation().y ), center));
 				break;
 	
 			case PositionConstants.NONE:
