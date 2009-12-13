@@ -92,10 +92,19 @@ public class GVTRenderer {
 		// get the 'width' and 'height' attributes of the SVG document
 		float docWidth = (float)ctx.getDocumentSize().getWidth();
 		float docHeight = (float)ctx.getDocumentSize().getHeight();
-
-		Rectangle2D gvtBounds = FreeTransformHelper.getGlobalBounds( gvtRoot );
-		float gvtWidth = (float) gvtBounds.getWidth();
-		float gvtHeight = (float) gvtBounds.getHeight();
+		
+		float gvtWidth;
+		float gvtHeight;
+		
+		if( gvtRoot instanceof CanvasGraphicsNode ) {
+			gvtWidth = docWidth;
+			gvtHeight = docHeight;
+		}
+		else {
+			Rectangle2D gvtBounds = FreeTransformHelper.getGlobalBounds( gvtRoot );
+			gvtWidth = (float) gvtBounds.getWidth();
+			gvtHeight = (float) gvtBounds.getHeight();
+		}
 
 		setImageSize(docWidth, docHeight);
 		
