@@ -32,18 +32,16 @@ public class PainterAccess extends Graphics2D {
 	protected Paint paint;
 	protected Stroke stroke;
 	
-	protected static PainterAccess access = new PainterAccess();
-	
-	public static Paint getPaint(ShapePainter painter) {
-		access.paint = null;
-		painter.paint(access);
-		return access.paint;
+	public Paint getPaint(ShapePainter painter) {
+		paint = null;
+		painter.paint(this);
+		return paint;
 	}
 
-	public static Stroke getStroke(ShapePainter painter) {
-		access.stroke = null;
-		painter.paint(access);
-		return access.stroke;
+	public Stroke getStroke(ShapePainter painter) {
+		stroke = null;
+		painter.paint(this);
+		return stroke;
 	}
 
 	@Override

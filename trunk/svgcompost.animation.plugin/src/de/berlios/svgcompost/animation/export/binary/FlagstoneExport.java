@@ -41,7 +41,7 @@ import com.flagstone.transform.FSTransformObject;
 import com.flagstone.transform.util.FSShapeConstructor;
 
 import de.berlios.svgcompost.animation.canvas.Canvas;
-import de.berlios.svgcompost.animation.canvas.PathConverter;
+import de.berlios.svgcompost.animation.canvas.NonstaticPathConverter;
 import de.berlios.svgcompost.animation.export.Export;
 
 public class FlagstoneExport implements Export {
@@ -116,9 +116,10 @@ public class FlagstoneExport implements Export {
 			strokePainter = (StrokeShapePainter) painter;
 		}
 		
+		PainterAccess access = new PainterAccess();
 		if( strokePainter != null ) {
-			Paint strokePaint = PainterAccess.getPaint( strokePainter );
-			Stroke stroke = PainterAccess.getStroke( strokePainter );
+			Paint strokePaint = access.getPaint( strokePainter );
+			Stroke stroke = access.getStroke( strokePainter );
 			if( strokePaint instanceof Color && stroke instanceof BasicStroke ) {
 				Color color = (Color) strokePaint;
 				FSColor fsColor = new FSColor( color.getRed(), color.getGreen(), color.getBlue() );
@@ -131,7 +132,10 @@ public class FlagstoneExport implements Export {
 			}
 		}
 		if( fillPainter != null ) {
-			Paint fillPaint = PainterAccess.getPaint( fillPainter );
+			Paint fillPaint = access.getPaint( fillPainter );
+			if( fillPaint == null ) {
+				System.out.println( "No fill!" );
+			}
 			if( fillPaint instanceof Color ) {
 				Color color = (Color) fillPaint;
 				FSColor fsColor = new FSColor( color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha() );
@@ -149,14 +153,18 @@ public class FlagstoneExport implements Export {
 			
 		Integer swfId = swfIds.get( shapeElement );
 		ShapeNode shapeNode = (ShapeNode) canvas.getSourceBld().build( canvas.getSourceCtx(), shapeElement );
-		ExtendedGeneralPath path = PathConverter.convertPath( new ExtendedGeneralPath( shapeNode.getShape() ) );
+		ExtendedGeneralPath path = new NonstaticPathConverter().convertPath( new ExtendedGeneralPath( shapeNode.getShape() ) );
 
 		FSShapeConstructor constructor = new FSShapeConstructor();
 		constructor.COORDINATES_ARE_PIXELS = false;
 		
 		captureStyles(shapeNode, constructor);
 
+		try {
 		capturePath(path, constructor);
+		}catch (Throwable e) {
+			e.printStackTrace();
+		}
 		FSDefineShape2 shapeDef = constructor.defineShape(swfId);
 		shapeDefs.add(shapeDef);
 		
@@ -165,7 +173,8 @@ public class FlagstoneExport implements Export {
 	protected void capturePath(ExtendedGeneralPath path, FSShapeConstructor constructor) { 
         ExtendedPathIterator iterator = path.getExtendedPathIterator(); 
         double[] points = new double[6]; 
-        double[] current = new double[] { 0, 0 }; 
+        int[] twips = new int[6]; 
+        int[] current = new int[] { 0, 0 }; 
 
         constructor.newPath(); 
         
@@ -178,40 +187,45 @@ public class FlagstoneExport implements Export {
         else
         	constructor.setFillStyles(new ArrayList<FSFillStyle>());
 
-        while(!iterator.isDone()) { 
-                switch(iterator.currentSegment(points)) { 
-                case ExtendedPathIterator.SEG_MOVETO: 
-                        constructor.move((int)((points[0]-current[0])*20), (int)((points[1]-current[1])*20)); 
-                        current[0] = points[0]; 
-                        current[1] = points[1]; 
-                        break; 
-                case ExtendedPathIterator.SEG_LINETO: 
-                        constructor.rline((int)((points[0]-current[0])*20), (int)((points[1]-current[1])*20)); 
-                        current[0] = points[0]; 
-                        current[1] = points[1]; 
-                        break; 
-                case ExtendedPathIterator.SEG_QUADTO: 
+        while(!iterator.isDone()) {
+        		int type = iterator.currentSegment(points);
+        		for (int i = 0; i < 4; i++) {
+					twips[i] = (int) (points[i]*20);
+				}
+                switch(type) {
+                case ExtendedPathIterator.SEG_MOVETO:
+                		constructor.move(twips[0],twips[1]);
+                        current[0] = twips[0];
+                        current[1] = twips[1];
+                        break;
+                case ExtendedPathIterator.SEG_LINETO:
+                        constructor.rline(twips[0]-current[0], twips[1]-current[1]);
+                        current[0] = twips[0];
+                        current[1] = twips[1];
+                        break;
+                case ExtendedPathIterator.SEG_QUADTO:
                         constructor.rcurve(
-                        	(int)((points[0]-current[0])*20), (int)((points[1]-current[1])*20),
-                        	(int)((points[2]-points[0])*20), (int)((points[3]-points[1])*20));
+                        		twips[0]-current[0], twips[1]-current[1],
+                        		twips[2]-twips[0], twips[3]-twips[1]);
+                        current[0] = twips[2];
+                        current[1] = twips[3];
+                        break;
+                case ExtendedPathIterator.SEG_ARCTO:
+                        System.err.println("Arc in path!");
+                        break;
+                case ExtendedPathIterator.SEG_CUBICTO:
+                        System.err.println("Cubic curve in path!");
+                        break;
+                case ExtendedPathIterator.SEG_CLOSE:
+                    	System.err.println("Closure in path!");
+                    	break;
+                default:
+                        break;
+                }
+                iterator.next();
+        }
 
-                        current[0] = points[2]; 
-                        current[1] = points[3]; 
-                        break; 
-                case ExtendedPathIterator.SEG_ARCTO: 
-                        System.err.println("Arc in path!"); 
-                        break; 
-                case ExtendedPathIterator.SEG_CUBICTO: 
-                        System.err.println("Cubic curve in path!"); 
-                        break; 
-                case ExtendedPathIterator.SEG_CLOSE: 
-                default:   
-                        break; 
-                } 
-                iterator.next(); 
-        } 
-
-        constructor.closePath(); 
+        constructor.closePath();
 	}
 	
 	public void captureFrame() {
