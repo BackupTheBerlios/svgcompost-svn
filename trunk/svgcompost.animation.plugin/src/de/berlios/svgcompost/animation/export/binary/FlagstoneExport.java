@@ -71,7 +71,7 @@ public class FlagstoneExport implements Export {
 	public void init() {
 	    movie = new FSMovie();
 
-	    movie.setVersion(7);
+	    movie.setSignature("FWS");
 	    movie.setFrameRate(framesPerSecond);
 	    screenSize = new Rectangle2D.Float( 0, 0, canvas.getWidth(), canvas.getHeight() );
 	    movie.setFrameSize(new FSBounds(0, 0, (int)(screenSize.getWidth()*20), (int)(screenSize.getHeight()*20)));
