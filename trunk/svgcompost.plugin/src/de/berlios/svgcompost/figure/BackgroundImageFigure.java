@@ -15,6 +15,8 @@ public class BackgroundImageFigure extends FreeformLayer {
 	public void setImage(Image image) {
 		if (img == image)
 			return;
+		else if ( img != null )
+			img.dispose();
 		img = image;
 		if (img != null)
 			size = new Rectangle(image.getBounds()).getSize();
