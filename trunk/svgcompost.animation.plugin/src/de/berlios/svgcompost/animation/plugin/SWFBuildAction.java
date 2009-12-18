@@ -68,7 +68,8 @@ public class SWFBuildAction implements IWorkbenchWindowActionDelegate {
 									return Status.CANCEL_STATUS;
 								return Status.OK_STATUS;
 							} catch(Exception e) {
-								return new Status(Status.ERROR, AnimPlugin.getDefault().getBundle().getSymbolicName(), 0, "An error ocurred during the SWF build.", e);
+								return new Status(Status.ERROR, AnimPlugin.getDefault().getBundle().getSymbolicName(), 0,
+										"An error ocurred during the SWF build: "+(e.getMessage()==null?e.getClass():e.getMessage()), e);
 							}
 						}
 					};
@@ -92,12 +93,12 @@ public class SWFBuildAction implements IWorkbenchWindowActionDelegate {
 		BridgeContext ctx = GraphicsBuilder.readLibrary(svgPath);
 		Canvas canvas = new Canvas( ctx );
 		canvas.setLibrary( ctx );
-		Export capture = new FlagstoneExport( canvas );
-		Timeline timeline = canvas.getLibrary().createTimeline();
-		
 		int foundKeyframes = 0;
+		Timeline timeline = canvas.getLibrary().createTimeline();
 		for( Layer layer : timeline.getLayers() )
 			foundKeyframes += layer.getKeyframes().size();
+		Export capture = new FlagstoneExport( ctx );
+		
 		
 		if( foundKeyframes == 0 ) {
 			// no keyframes, export as static SWF

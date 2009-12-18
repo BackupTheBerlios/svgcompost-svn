@@ -34,7 +34,7 @@ public class Main {
 
 		Canvas canvas = new Canvas( ctx );
 		canvas.setLibrary( ctx );
-		Export capture = new FlagstoneExport( canvas );
+		Export capture = new FlagstoneExport( ctx );
 //		SwfmlBasicExport capture = new SwfmlBasicExport( canvas );
 //		SwfmlShapeImport shapeImport = new SwfmlShapeImport(importFile);
 //		capture.setShapeImport( shapeImport );

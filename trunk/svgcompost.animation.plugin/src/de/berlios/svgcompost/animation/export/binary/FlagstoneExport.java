@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.ext.awt.geom.ExtendedGeneralPath;
 import org.apache.batik.ext.awt.geom.ExtendedPathIterator;
 import org.apache.batik.gvt.CompositeGraphicsNode;
@@ -46,8 +47,6 @@ import de.berlios.svgcompost.animation.export.Export;
 
 public class FlagstoneExport implements Export {
 	
-	protected Canvas canvas;
-	
 	protected FSMovie movie;
 
 	protected HashMap<Element, Integer> swfIds = new HashMap<Element, Integer>();
@@ -56,6 +55,7 @@ public class FlagstoneExport implements Export {
 	protected ArrayList<FSTransformObject> frameDefs = new ArrayList<FSTransformObject>();
 	protected int lastHighestDepth = 0;
 	protected int shapeIdCount = 0;
+	protected int frameCount = 0;
 	protected boolean shapesAreCaptured = false;
 	
 	protected int framesPerSecond = 12;
@@ -63,8 +63,10 @@ public class FlagstoneExport implements Export {
 	
 	protected boolean initialFrame = true;
 
-	public FlagstoneExport( Canvas canvas ) {
-		this.canvas = canvas;
+	private BridgeContext ctx;
+
+	public FlagstoneExport( BridgeContext ctx ) {
+		this.ctx = ctx;
 		init();
 	}
 	
@@ -73,7 +75,7 @@ public class FlagstoneExport implements Export {
 
 	    movie.setSignature("FWS");
 	    movie.setFrameRate(framesPerSecond);
-	    screenSize = new Rectangle2D.Float( 0, 0, canvas.getWidth(), canvas.getHeight() );
+	    screenSize = new Rectangle2D.Float( 0, 0, (int)ctx.getDocumentSize().getWidth(), (int)ctx.getDocumentSize().getHeight() );
 	    movie.setFrameSize(new FSBounds(0, 0, (int)(screenSize.getWidth()*20), (int)(screenSize.getHeight()*20)));
 
 	    movie.add(new FSSetBackgroundColor(FSColorTable.white()));
@@ -81,7 +83,6 @@ public class FlagstoneExport implements Export {
 	}
 
 	protected void captureShapes() {
-//		SVGDocument sourceDoc = canvas.getSourceDoc();
 		for( Iterator<Element> shapeElementIterator = swfIds.keySet().iterator(); shapeElementIterator.hasNext(); ) {
 			Element element = shapeElementIterator.next();
 			if( element == null ) {
@@ -152,7 +153,7 @@ public class FlagstoneExport implements Export {
 	protected void captureShape( Element shapeElement ) {
 			
 		Integer swfId = swfIds.get( shapeElement );
-		ShapeNode shapeNode = (ShapeNode) canvas.getSourceBld().build( canvas.getSourceCtx(), shapeElement );
+		ShapeNode shapeNode = (ShapeNode) ctx.getGVTBuilder().build( ctx, shapeElement );
 		ExtendedGeneralPath path = new NonstaticPathConverter().convertPath( new ExtendedGeneralPath( shapeNode.getShape() ) );
 
 		FSShapeConstructor constructor = new FSShapeConstructor();
@@ -174,7 +175,8 @@ public class FlagstoneExport implements Export {
         ExtendedPathIterator iterator = path.getExtendedPathIterator(); 
         double[] points = new double[6]; 
         int[] twips = new int[6]; 
-        int[] current = new int[] { 0, 0 }; 
+        int[] current = new int[] { 0, 0 };
+        int[] subpath = new int[] { 0, 0 };
 
         constructor.newPath(); 
         
@@ -194,9 +196,15 @@ public class FlagstoneExport implements Export {
 				}
                 switch(type) {
                 case ExtendedPathIterator.SEG_MOVETO:
+                		if( current[0] != subpath[0] || current[1] != subpath[1] ) {
+                			System.out.println( "Subpath not closed." );
+                			constructor.rline(subpath[0]-current[0], subpath[1]-current[1]);
+                		}
                 		constructor.move(twips[0],twips[1]);
                         current[0] = twips[0];
                         current[1] = twips[1];
+                        subpath[0] = twips[0];
+                        subpath[1] = twips[1];
                         break;
                 case ExtendedPathIterator.SEG_LINETO:
                         constructor.rline(twips[0]-current[0], twips[1]-current[1]);
@@ -230,7 +238,7 @@ public class FlagstoneExport implements Export {
 	
 	public void captureFrame() {
 		
-		Rectangle2D bounds = canvas.getRoot().getGraphicsNode().getBounds();
+		Rectangle2D bounds = ctx.getGraphicsNode(ctx.getDocument().getDocumentElement()).getBounds();
 		if( bounds.getWidth() == 0 || bounds.getHeight() == 0 ) {
 			System.out.println( "Warning: frame "+(frameDefs.size()+1)+" is empty." );
 		}
@@ -241,12 +249,13 @@ public class FlagstoneExport implements Export {
 			}
 		}
 		
-		int highestDepth = captureNode( canvas.getRoot().getGraphicsNode(), 1 );
+		int highestDepth = captureNode( ctx.getGraphicsNode(ctx.getDocument().getDocumentElement()), 1 );
 	
 		for( int i=highestDepth; i<lastHighestDepth; i++ ) {
 			frameDefs.add( new FSRemoveObject2( i ) );
 		}
 		frameDefs.add(new FSShowFrame());
+		frameCount++;
 		lastHighestDepth = highestDepth;
 
 		initialFrame = false;
@@ -263,11 +272,11 @@ public class FlagstoneExport implements Export {
 		}
 		else if( gNode instanceof ShapeNode ) {
 			ShapeNode shapeNode = (ShapeNode) gNode;
-			Element element;
+			Element element = null;
 			if( shapeNode.getRenderingHints() != null )
 				element = (Element) shapeNode.getRenderingHints().get(Canvas.KEY_SRC_ELEMENT);
-			else
-				element = canvas.getSourceCtx().getElement(shapeNode);
+			if( element == null )
+				element = ctx.getElement(shapeNode);
 			
 			int swfId;
 			swfId = getSwfId( element );
@@ -307,6 +316,7 @@ public class FlagstoneExport implements Export {
 			captureShapes();
 		movie.add( shapeDefs );
 		movie.add( frameDefs );
+		movie.add(new FSShowFrame());
 	}
 
 
@@ -314,7 +324,7 @@ public class FlagstoneExport implements Export {
 		try
 		{
 			System.out.println( "SWF shape count is "+shapeIdCount );
-			System.out.println( "SWF frame count is "+frameDefs.size() );
+			System.out.println( "SWF frame count is "+frameCount );
 		    movie.encodeToFile(fileName);
 		    System.out.println( "SWF movie written to file "+fileName );
 		}
@@ -324,6 +334,18 @@ public class FlagstoneExport implements Export {
 		catch (IOException e) {
 		    e.printStackTrace();
 		}
+	}
+
+	public byte[] encode() {
+		movie.add(new FSShowFrame());
+		System.out.println( "SWF shape count is "+shapeIdCount );
+		System.out.println( "SWF frame count is "+frameCount );
+	    try {
+			return movie.encode();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }
