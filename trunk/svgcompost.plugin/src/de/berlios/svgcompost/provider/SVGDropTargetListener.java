@@ -84,7 +84,7 @@ public class SVGDropTargetListener implements TransferDropTargetListener {
 				System.out.println("referencedUri = "+referencedUri);
 				System.out.println("referencingUri = "+referencingUri);
 				System.out.println("relativeUri = "+relativeUri);
-				newUseElement.setAttributeNS(XLinkSupport.XLINK_NAMESPACE_URI, "href", relativeUri.toString());
+				newUseElement.setAttributeNS(XLinkSupport.XLINK_NAMESPACE_URI, "xlink:href", relativeUri.toString());
 				editRoot.appendChild(newUseElement);
 				// TODO: use a Command
 				((AbstractElement)editRoot).dispatchEvent(new EditEvent(this, EditEvent.CHANGE_ORDER, null, newUseElement));
