@@ -266,10 +266,12 @@ public class Canvas {
 	    	return fromElement.getOwnerDocument().getElementById(reference.substring(1));
 		Element element = null;
 		try {
-			element = uriResolver.getElement(reference, fromElement); // sourceDoc.getElementById( symbolId );
+			element = sourceCtx.getReferencedElement(fromElement, reference);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		if( element == null )
+			System.out.println( "Could not resolve ID "+reference );
 		return element;
 	}
 
