@@ -26,6 +26,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.w3c.dom.Element;
 
+import de.berlios.svgcompost.plugin.SVGCompostConstants;
 import de.berlios.svgcompost.plugin.SVGCompostPlugin;
 
 
@@ -56,8 +57,10 @@ public class SVGLabelProvider implements ILabelProvider {
 		if( arg0 instanceof Element ) {
 			Element element = (Element) arg0;
 			String label = element.getTagName();
-			if( element.hasAttribute("id") )
-				label += " \""+ element.getAttribute("id") +"\"";
+			if( element.hasAttributeNS(SVGCompostConstants.INKSCAPE_NAMESPACE_URI,"label") )
+				label += " label="+ element.getAttributeNS(SVGCompostConstants.INKSCAPE_NAMESPACE_URI,"label");
+			else if( element.hasAttribute("id") )
+				label += " id="+ element.getAttribute("id");
 			return label;
 		}
 		return null;
