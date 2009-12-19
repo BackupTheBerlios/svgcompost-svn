@@ -4,6 +4,7 @@ import org.eclipse.draw2d.FreeformLayer;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 
 public class BackgroundImageFigure extends FreeformLayer {
@@ -11,6 +12,8 @@ public class BackgroundImageFigure extends FreeformLayer {
 	protected Image img;
 	protected Dimension size = new Dimension();
 	protected int alignment;
+	private int[] origin = new int[2];
+	private static final int crosshairSize = 5;
 
 	public void setImage(Image image) {
 		if (img == image)
@@ -63,8 +66,16 @@ public class BackgroundImageFigure extends FreeformLayer {
 //				break;
 //		}
 		graphics.drawImage(getImage(), x, y);
+		drawCrosshair(graphics);
 	}
 
+	protected void drawCrosshair(Graphics graphics) {
+		graphics.setForegroundColor(org.eclipse.draw2d.ColorConstants.black);
+		graphics.setLineWidth(1);
+		graphics.setLineStyle(SWT.LINE_SOLID);
+		graphics.drawLine(origin[0]-crosshairSize, origin[1], origin[0]+crosshairSize, origin[1]);
+		graphics.drawLine(origin[0], origin[1]-crosshairSize, origin[0], origin[1]+crosshairSize);
+	}
 	
 	protected void __paintFigure(Graphics graphics) {
 		if (img != null) {
@@ -73,5 +84,10 @@ public class BackgroundImageFigure extends FreeformLayer {
 			graphics.drawImage(img, 0, 0, imgBox.width,imgBox.height, targetRect.x, targetRect.y, targetRect.width, targetRect.height);
 		}
 		super.paintFigure(graphics);
+	}
+
+	public void setCrosshair(float[] origin) {
+		this.origin[0] = (int)origin[0];
+		this.origin[1] = (int)origin[1];
 	}
 }

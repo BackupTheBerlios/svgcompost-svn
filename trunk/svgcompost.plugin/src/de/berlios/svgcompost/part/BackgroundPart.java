@@ -16,7 +16,9 @@
 
 package de.berlios.svgcompost.part;
 
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
+import java.awt.geom.Point2D;
 import java.util.List;
 
 import org.apache.batik.bridge.BridgeContext;
@@ -43,8 +45,6 @@ import org.eclipse.ui.views.properties.IPropertySource;
 import org.w3c.dom.Element;
 import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
-import org.w3c.dom.svg.SVGEllipseElement;
-import org.w3c.dom.svg.SVGRectElement;
 
 import de.berlios.svgcompost.figure.BackgroundImageFigure;
 import de.berlios.svgcompost.freetransform.FreeTransformEditPolicy;
@@ -65,6 +65,8 @@ public class BackgroundPart extends AbstractGraphicalEditPart
 implements EventListener  {
 	// TODO: make this class extend RootEditPart
 	
+	private static final float[] origin = new float[] {0,0}; 
+
 	private Element editRoot;
 
 	private BridgeContext ctx;
@@ -81,6 +83,7 @@ implements EventListener  {
 
 	public void setEditRoot(SVGOMElement root) {
 		editRoot = root;
+    	bgFigure.setCrosshair( calcCrosshair() );
 		refreshChildren();
 	}
 
@@ -158,13 +161,14 @@ implements EventListener  {
 
 			});
 	}
-
+	
 	@Override
 	protected IFigure createFigure() {
 		// Background image
     	bgFigure = new BackgroundImageFigure();
     	bgFigure.setOpaque(true);
     	bgFigure.setImage( transcodeImage() );
+    	bgFigure.setCrosshair( calcCrosshair() );
     	FreeformLayer layer = (FreeformLayer) getLayer(SVGScalableFreeformRootEditPart.BACKGROUND_LAYER);
 		layer.add(bgFigure);
 
@@ -178,7 +182,16 @@ implements EventListener  {
 	@Override
 	public void refreshVisuals() {
 		bgFigure.setImage(transcodeImage());
+    	bgFigure.setCrosshair( calcCrosshair() );
 		super.refreshVisuals();
+	}
+	
+	protected float[] calcCrosshair() {
+    	float[] rootOrigin = new float[2];
+    	AffineTransform transform = ctx.getGraphicsNode(editRoot).getGlobalTransform();
+    	System.out.println( "transform = "+transform );
+    	transform.transform(origin, 0, rootOrigin, 0, 1);
+    	return rootOrigin;
 	}
 
 	protected Image transcodeImage() {
