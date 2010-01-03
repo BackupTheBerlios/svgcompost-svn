@@ -1,10 +1,14 @@
 package de.berlios.svgcompost.swf;
 
+import java.awt.geom.AffineTransform;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.zip.DataFormatException;
 
 import javax.xml.XMLConstants;
@@ -27,9 +31,14 @@ import com.flagstone.transform.FSColor;
 import com.flagstone.transform.FSCoordTransform;
 import com.flagstone.transform.FSCurve;
 import com.flagstone.transform.FSDefineMovieClip;
+import com.flagstone.transform.FSDefineShape;
 import com.flagstone.transform.FSDefineShape2;
+import com.flagstone.transform.FSDefineShape3;
+import com.flagstone.transform.FSExport;
 import com.flagstone.transform.FSFillStyle;
 import com.flagstone.transform.FSFrameLabel;
+import com.flagstone.transform.FSGradient;
+import com.flagstone.transform.FSGradientFill;
 import com.flagstone.transform.FSLine;
 import com.flagstone.transform.FSLineStyle;
 import com.flagstone.transform.FSMovie;
@@ -39,6 +48,7 @@ import com.flagstone.transform.FSSetBackgroundColor;
 import com.flagstone.transform.FSShape;
 import com.flagstone.transform.FSShapeStyle;
 import com.flagstone.transform.FSSolidFill;
+import com.flagstone.transform.FSSolidLine;
 import com.flagstone.transform.FSTransformObject;
 import com.flagstone.transform.Transform;
 
@@ -54,18 +64,29 @@ public class SWF2SVG {
 	protected Element currentGroup;
 	protected Element currentSymbol;
 	
+	protected Map<Integer,String> export = new Hashtable<Integer,String>();
+	
+	protected int gradientCount = 0;
+	
 	public static void main(String args[]) throws IOException, DataFormatException {
-		new SWF2SVG().exportSWF2SVG( "D:/workspaces/runtime-workspace/svgtest/lion.swf" );
+		if( args.length < 1 )
+			System.out.println( "Usage: SWF2SVG <path to SWF file>" );
+		else {
+			String outPath = new SWF2SVG().exportSWF2SVG( args[0] );
+			System.out.println( "SWF file written to "+outPath );
+		}
 	}
 	
-	public void exportSWF2SVG( String swfPath ) throws IOException, DataFormatException {
+	public String exportSWF2SVG( String swfPath ) throws IOException, DataFormatException {
 		FSMovie swfMovie = new FSMovie();
 		swfMovie.decodeFromFile(swfPath);
 		Document doc = exportSWF2SVG(swfMovie);
-		OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(swfPath+".svg"), "UTF-8");
+		String outPath = swfPath+".svg";
+		OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(outPath), "UTF-8");
 		DOMUtilities.writeDocument(doc, writer);
 		writer.flush();
         writer.close();
+        return outPath;
 	}
 
 	public Document exportSWF2SVG( FSMovie swfMovie ) {
@@ -74,8 +95,8 @@ public class SWF2SVG {
 		defs = doc.createElementNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_DEFS_TAG);
 		svg = (SVGOMSVGElement) doc.getDocumentElement();
 		svg.setAttributeNS(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, "xmlns:inkscape", INKSCAPE_URI);
-		svg.setAttributeNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_WIDTH_ATTRIBUTE, String.valueOf(swfMovie.getFrameSize().getWidth()/20)+"px");
-		svg.setAttributeNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_HEIGHT_ATTRIBUTE, String.valueOf(swfMovie.getFrameSize().getHeight()/20)+"px");
+		svg.setAttributeNS(null, SVGConstants.SVG_WIDTH_ATTRIBUTE, String.valueOf(swfMovie.getFrameSize().getWidth()/20)+"px");
+		svg.setAttributeNS(null, SVGConstants.SVG_HEIGHT_ATTRIBUTE, String.valueOf(swfMovie.getFrameSize().getHeight()/20)+"px");
 		svg.appendChild(defs);
 		css = (SVGCSSEngine) impl.createCSSEngine((AbstractStylableDocument) doc, new BridgeContext( new UserAgentAdapter() ));
 		
@@ -86,6 +107,11 @@ public class SWF2SVG {
 	}
 
 	protected void parseSymbol(Element symbol, ArrayList<FSMovieObject> swfObjects) {
+		// Parse exports first.
+		for (FSMovieObject object : swfObjects) {
+			if( object.getType() == FSMovieObject.Export )
+				parseExport((FSExport)object);
+		}
 		int frameCount = 0;
 		// Frame element collects all placements.
 		Element frame = createFrame(++frameCount);
@@ -95,9 +121,17 @@ public class SWF2SVG {
 			case FSMovieObject.SetBackgroundColor:
 				parseBackgroundColor((FSSetBackgroundColor)swfObject);
 				break;
-			case FSMovieObject.DefineShape2:
-				Element shape = parseFSDefineShape2((FSDefineShape2)swfObject);
+			case FSMovieObject.DefineShape:
+				Element shape = parseFSDefineShape((FSDefineShape)swfObject);
 				defs.appendChild(shape);
+				break;
+			case FSMovieObject.DefineShape2:
+				Element shape2 = parseFSDefineShape2((FSDefineShape2)swfObject);
+				defs.appendChild(shape2);
+				break;
+			case FSMovieObject.DefineShape3:
+				Element shape3 = parseFSDefineShape3((FSDefineShape3)swfObject);
+				defs.appendChild(shape3);
 				break;
 			case FSMovieObject.DefineMovieClip:
 				FSDefineMovieClip movieClip = (FSDefineMovieClip) swfObject;
@@ -108,6 +142,9 @@ public class SWF2SVG {
 			case FSMovieObject.PlaceObject2:
 				Element use = parsePlaceObject2((FSPlaceObject2)swfObject);
 				frame.appendChild(use);
+				break;
+			case FSMovieObject.Export:
+				// Has already been parsed in advance.
 				break;
 			case FSMovieObject.FrameLabel:
 				FSFrameLabel frameLabel = (FSFrameLabel) swfObject;
@@ -125,10 +162,19 @@ public class SWF2SVG {
 		}
 	}
 
+	protected void parseExport(FSExport export) {
+		Hashtable<Integer,String> table = export.getObjects();
+		this.export.putAll(table);
+	}
+
 	protected Element createSymbol(FSDefineMovieClip movieClip) {
 		Element symbol = doc.createElementNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_G_TAG);
-		symbol.setAttributeNS(null, "id", String.valueOf(movieClip.getIdentifier()));
+		symbol.setAttributeNS(null, "id", getExportedId(movieClip.getIdentifier()));
 		return symbol;
+	}
+	
+	protected String getExportedId(int identifier) {
+		return export.containsKey(identifier) ? export.get(identifier) : String.valueOf(identifier);
 	}
 
 	protected Element createFrame(int frameCount) {
@@ -143,8 +189,9 @@ public class SWF2SVG {
 		int id = placeObject.getIdentifier();
 		FSCoordTransform transform = placeObject.getTransform();
 		Element use = doc.createElementNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_USE_TAG); 
-		if( isSet( id ) )
-			use.setAttributeNS(XLinkSupport.XLINK_NAMESPACE_URI, "xlink:href", "#"+String.valueOf(id));
+		if( isSet( id ) ) {
+			use.setAttributeNS(XLinkSupport.XLINK_NAMESPACE_URI, "xlink:href", "#"+getExportedId(id));
+		}
 		if( transform != null )
 			use.setAttributeNS(SVGConstants.SVG_TRANSFORM_ATTRIBUTE, SVGConstants.SVG_TRANSFORM_ATTRIBUTE, parseTransform(transform));
 		return use;
@@ -158,8 +205,15 @@ public class SWF2SVG {
 	}
 
 	protected String parseColor(FSColor color) {
-		String hex = "#"+Integer.toHexString(color.getRed())+Integer.toHexString(color.getGreen())+Integer.toHexString(color.getBlue());
+		String hex = "#"+hex2digits(color.getRed())+hex2digits(color.getGreen())+hex2digits(color.getBlue());
 		return hex;
+	}
+	
+	protected String hex2digits( int i ) {
+		if( i < 16 )
+			return "0"+Integer.toHexString(i);
+		else
+			return Integer.toHexString(i).substring(0,2);
 	}
 
 	protected String parseTransform(FSCoordTransform transform) {
@@ -172,30 +226,80 @@ public class SWF2SVG {
 		return string;
 	}
 
+	protected AffineTransform parseAffineTransform(FSCoordTransform transform) {
+		float[][] m = transform.getMatrix();
+		AffineTransform affineTransform = new AffineTransform(m[0][0],m[1][0],m[0][1],m[1][1],m[0][2],m[1][2]);
+		return affineTransform;
+	}
+
+	protected Element parseFSDefineShape(FSDefineShape defineShape) {
+		ArrayList<FSFillStyle> fillStyles = defineShape.getFillStyles();
+		ArrayList<FSLineStyle> lineStyles = defineShape.getLineStyles();
+		FSShape shape = defineShape.getShape();
+		Element shapeElement = parseShapeDefinition(fillStyles, lineStyles, shape);
+		String id = getExportedId(defineShape.getIdentifier());
+		shapeElement.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, id);
+		return shapeElement;
+	}
+	
 	protected Element parseFSDefineShape2(FSDefineShape2 defineShape2) {
-		// TODO: Implement line styles.
-		// TODO: implement gradient fills.
 		ArrayList<FSFillStyle> fillStyles = defineShape2.getFillStyles();
 		ArrayList<FSLineStyle> lineStyles = defineShape2.getLineStyles();
+		FSShape shape = defineShape2.getShape();
+		Element shapeElement = parseShapeDefinition(fillStyles, lineStyles, shape);
+		String id = getExportedId(defineShape2.getIdentifier());
+		shapeElement.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, id);
+		return shapeElement;
+	}
+	
+	protected Element parseFSDefineShape3(FSDefineShape3 defineShape3) {
+		ArrayList<FSFillStyle> fillStyles = defineShape3.getFillStyles();
+		ArrayList<FSLineStyle> lineStyles = defineShape3.getLineStyles();
+		FSShape shape = defineShape3.getShape();
+		Element shapeElement = parseShapeDefinition(fillStyles, lineStyles, shape);
+		String id = getExportedId(defineShape3.getIdentifier());
+		shapeElement.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, id);
+		return shapeElement;
+	}
+	
+	protected Element parseShapeDefinition(List<FSFillStyle> fillStyles, List<FSLineStyle> lineStyles, FSShape shape) {
 		Element[] fillPaths = new Element[fillStyles.size()];
-		Element[] linePaths = new Element[fillStyles.size()];
 		String[] dfill = new String[fillStyles.size()];
+		Element[] linePaths = new Element[lineStyles.size()];
 		String[] dline = new String[lineStyles.size()];
+		boolean[] hasActualStroke = new boolean[lineStyles.size()];
 		int fillStyle = 0;
 		int altFillStyle = 0;
 		int lineStyle = 0;
-		FSShape shape = defineShape2.getShape();
+		int x = 0;
+		int y = 0;
 		for (int i = 0; i < fillPaths.length; i++) {
 			fillPaths[i] = doc.createElementNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_PATH_TAG);
 			dfill[i] = new String();
-			String fill = null;
 			if( fillStyles.get(i) instanceof FSSolidFill ) {
 				FSColor color = ((FSSolidFill)fillStyles.get(i)).getColor();
-				fill = parseColor( color );
-				fillPaths[i].setAttributeNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_FILL_ATTRIBUTE, fill);
+				String fill = parseColor( color );
+				fillPaths[i].setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, fill);
 				if( isSet( color.getAlpha() ) )
-					fillPaths[i].setAttributeNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_OPACITY_ATTRIBUTE, String.valueOf(color.getAlpha()/256.0));
+					fillPaths[i].setAttributeNS(null, SVGConstants.SVG_OPACITY_ATTRIBUTE, String.valueOf(color.getAlpha()/255.0));
 			}
+			else if( fillStyles.get(i) instanceof FSGradientFill ) {
+				Element gradient = parseGradient((FSGradientFill)fillStyles.get(i));
+				String gradientId = "gradient"+(++gradientCount);
+				gradient.setAttributeNS(null,"id",gradientId);
+				defs.appendChild(gradient);
+				fillPaths[i].setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, "url(#"+gradientId+")");
+			}
+		}
+		for (int i = 0; i < linePaths.length; i++) {
+			linePaths[i] = doc.createElementNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_PATH_TAG);
+			dline[i] = new String();
+			FSSolidLine solidLine = (FSSolidLine) lineStyles.get(i);
+			linePaths[i].setAttributeNS(null, SVGConstants.SVG_STROKE_ATTRIBUTE, parseColor( solidLine.getColor() ));
+			linePaths[i].setAttributeNS(null, SVGConstants.SVG_STROKE_WIDTH_ATTRIBUTE, String.valueOf( solidLine.getWidth()*0.05f ));
+			linePaths[i].setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, SVGConstants.SVG_NONE_VALUE);
+			linePaths[i].setAttributeNS(null, SVGConstants.SVG_STROKE_LINEJOIN_ATTRIBUTE, SVGConstants.SVG_ROUND_VALUE);
+			linePaths[i].setAttributeNS(null, SVGConstants.SVG_STROKE_LINECAP_ATTRIBUTE, SVGConstants.SVG_ROUND_VALUE);
 		}
 		ArrayList<FSTransformObject> shapeObjects = shape.getObjects();
 		for (Iterator<FSTransformObject> iterator = shapeObjects.iterator(); iterator.hasNext();) {
@@ -207,16 +311,24 @@ public class SWF2SVG {
 					fillStyle = style.getFillStyle();
 				if( isSet(style.getAltFillStyle()) )
 					altFillStyle = style.getAltFillStyle();
+				if( isSet(style.getLineStyle()) )
+					lineStyle = style.getLineStyle();
 				if( isSet(style.getMoveX()) && isSet(style.getMoveY()) ) {
 					int moveX = style.getMoveX();
 					int moveY = style.getMoveY();
 					String pathMove = " M "+moveX*0.05f+","+moveY*0.05f;
-					if( fillStyle != 0 )
-						dfill[fillStyle-1] += pathMove;
-					if( altFillStyle != 0 )
-						dfill[altFillStyle-1] += pathMove;
-					if( lineStyle != 0 )
-						dfill[lineStyle-1] += pathMove;
+					x = moveX;
+					y = moveY;
+					for (int i = 0; i < dfill.length; i++)
+						dfill[i] += pathMove;
+					for (int i = 0; i < dline.length; i++)
+						dline[i] += pathMove;
+//					if( fillStyle != 0 )
+//						dfill[fillStyle-1] += pathMove;
+//					if( altFillStyle != 0 )
+//						dfill[altFillStyle-1] += pathMove;
+//					if( lineStyle != 0 )
+//						dline[lineStyle-1] += pathMove;
 				}
 			}
 			else if( transformObject instanceof FSLine ) {
@@ -224,12 +336,28 @@ public class SWF2SVG {
 				int lineX = line.getX();
 				int lineY = line.getY();
 				String pathLine = " l "+lineX*0.05f+","+lineY*0.05f;
-				if( fillStyle != 0 )
-					dfill[fillStyle-1] += pathLine;
-				if( altFillStyle != 0 )
-					dfill[altFillStyle-1] += pathLine;
-				if( lineStyle != 0 )
-					dfill[lineStyle-1] += pathLine;
+				x += lineX;
+				y += lineY;
+				String pathMove = " M "+x*0.05f+","+y*0.05f;
+				for (int i = 0; i < dfill.length; i++)
+					if( fillStyle-1 == i || altFillStyle-1 == i )
+						dfill[i] += pathLine;
+					else
+						dfill[i] += pathMove;
+				for (int i = 0; i < dline.length; i++)
+					if( lineStyle-1 == i ) {
+						dline[i] += pathLine;
+						hasActualStroke[i] = true;
+					}
+					else
+						dline[i] += pathMove;
+
+//				if( fillStyle != 0 )
+//					dfill[fillStyle-1] += pathLine;
+//				if( altFillStyle != 0 )
+//					dfill[altFillStyle-1] += pathLine;
+//				if( lineStyle != 0 )
+//					dline[lineStyle-1] += pathLine;
 			}
 			else if( transformObject instanceof FSCurve ) {
 				FSCurve curve = (FSCurve) transformObject;
@@ -238,31 +366,91 @@ public class SWF2SVG {
 				int anchorX = curve.getAnchorX();
 				int anchorY = curve.getAnchorY();
 				String pathCurve = " q "+controlX*0.05f+","+controlY*0.05f+" "+(controlX+anchorX)*0.05f+","+(controlY+anchorY)*0.05f;
-				if( fillStyle != 0 )
-					dfill[fillStyle-1] += pathCurve;
-				if( altFillStyle != 0 )
-					dfill[altFillStyle-1] += pathCurve;
-				if( lineStyle != 0 )
-					dfill[lineStyle-1] += pathCurve;
+				x += controlX+anchorX;
+				y += controlY+anchorY;
+				String pathMove = " M "+x*0.05f+","+y*0.05f;
+				for (int i = 0; i < dfill.length; i++)
+					if( fillStyle-1 == i || altFillStyle-1 == i )
+						dfill[i] += pathCurve;
+					else
+						dfill[i] += pathMove;
+				for (int i = 0; i < dline.length; i++)
+					if( lineStyle-1 == i ) {
+						dline[i] += pathCurve;
+						hasActualStroke[i] = true;
+					}
+					else
+						dline[i] += pathMove;
+//				if( fillStyle != 0 )
+//					dfill[fillStyle-1] += pathCurve;
+//				if( altFillStyle != 0 )
+//					dfill[altFillStyle-1] += pathCurve;
+//				if( lineStyle != 0 )
+//					dline[lineStyle-1] += pathCurve;
 			}
 		}
 		for (int i = 0; i < fillPaths.length; i++) {
+			dfill[i] += " Z";
 			fillPaths[i].setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE, dfill[i]);
 		}
-		String id =  String.valueOf(defineShape2.getIdentifier());
-		if( fillPaths.length == 1 ) {
-			fillPaths[0].setAttributeNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_ID_ATTRIBUTE, id);
+		for (int i = 0; i < linePaths.length; i++) {
+			linePaths[i].setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE, dline[i]);
+		}
+		if( linePaths.length == 1 && fillPaths.length <= 1 ) {
+			// Only 1 stroke and at most 1 fill.
+			if( fillPaths.length == 1 ) {
+				linePaths[0].setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, fillPaths[0].getAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE) );
+			}
+			return linePaths[0];
+		}
+		if( linePaths.length == 0 && fillPaths.length == 1 ) {
+			// Only 1 fill and no stroke.
 			return fillPaths[0];
 		}
 		else {
+			// More than 1 fill and / or more than 1 stroke.
 			Element g = doc.createElementNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_G_TAG);
-			g.setAttributeNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_ID_ATTRIBUTE, id);
 			for (int i = 0; i < fillPaths.length; i++)
 				g.appendChild(fillPaths[i]);
+			for (int i = 0; i < linePaths.length; i++)
+				if( hasActualStroke[i] )
+					g.appendChild(linePaths[i]);
 			return g;
 		}
 	}
-
+	
+	public Element parseGradient(FSGradientFill gradientFill) {
+		int type = gradientFill.getType();
+		Element gradient = null;
+		if( type == FSGradientFill.Linear ) {
+			gradient = doc.createElementNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_LINEAR_GRADIENT_TAG);
+		}
+		else if( type == FSGradientFill.Radial ) {
+			gradient = doc.createElementNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_RADIAL_GRADIENT_TAG);
+		}
+		// TODO: Gradient transform doesn't work.
+//		int[] left = gradientFill.getTransform().transformPoint(-16384, 0);
+//		int[] right = gradientFill.getTransform().transformPoint(16384, 0);
+//		gradient.setAttributeNS(null, SVGConstants.SVG_X1_ATTRIBUTE, String.valueOf(left[0]*0.05));
+//		gradient.setAttributeNS(null, SVGConstants.SVG_Y1_ATTRIBUTE, String.valueOf(left[1]*0.05));
+//		gradient.setAttributeNS(null, SVGConstants.SVG_X2_ATTRIBUTE, String.valueOf(right[0]*0.05));
+//		gradient.setAttributeNS(null, SVGConstants.SVG_Y2_ATTRIBUTE, String.valueOf(right[1]*0.05));
+//		System.out.println( "gradient transform = "+gradientFill.getTransform() );
+//		gradient.setAttributeNS(null, SVGConstants.SVG_GRADIENT_TRANSFORM_ATTRIBUTE, parseTransform(gradientFill.getTransform()));
+		List<FSGradient> gradients = gradientFill.getGradients();
+		for (FSGradient grad : gradients) {
+			FSColor color = grad.getColor();
+			int ratio = grad.getRatio();
+			Element stop = doc.createElementNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_STOP_TAG);
+			stop.setAttributeNS(null, SVGConstants.SVG_STOP_COLOR_ATTRIBUTE, parseColor(color));
+			if( isSet(color.getAlpha()) )
+				stop.setAttributeNS(null, SVGConstants.SVG_STOP_OPACITY_ATTRIBUTE, String.valueOf(color.getAlpha()/255.0));
+			stop.setAttributeNS(null, SVGConstants.SVG_OFFSET_ATTRIBUTE, String.valueOf(ratio/255.0));
+			gradient.appendChild(stop);
+		}
+		return gradient;
+	}
+		
 	public static boolean isSet( int value ) {
 		return value != Transform.VALUE_NOT_SET;
 	}
