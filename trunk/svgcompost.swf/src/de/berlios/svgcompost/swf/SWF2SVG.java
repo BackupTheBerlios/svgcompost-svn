@@ -54,7 +54,7 @@ import com.flagstone.transform.Transform;
 
 public class SWF2SVG {
 	
-	public static final String INKSCAPE_URI = "http://www.inkscape.org/namespaces/inkscape";
+	public static final String INKSCAPE_NAMESPACE_URI = "http://www.inkscape.org/namespaces/inkscape";
 	
 	protected SVGDOMImplementation impl;
 	protected AbstractDocument doc;
@@ -94,7 +94,7 @@ public class SWF2SVG {
 		doc = (AbstractDocument) impl.createDocument(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_SVG_TAG, null);
 		defs = doc.createElementNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_DEFS_TAG);
 		svg = (SVGOMSVGElement) doc.getDocumentElement();
-		svg.setAttributeNS(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, "xmlns:inkscape", INKSCAPE_URI);
+		svg.setAttributeNS(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, "xmlns:inkscape", INKSCAPE_NAMESPACE_URI);
 		svg.setAttributeNS(null, SVGConstants.SVG_WIDTH_ATTRIBUTE, String.valueOf(swfMovie.getFrameSize().getWidth()/20)+"px");
 		svg.setAttributeNS(null, SVGConstants.SVG_HEIGHT_ATTRIBUTE, String.valueOf(swfMovie.getFrameSize().getHeight()/20)+"px");
 		svg.appendChild(defs);
@@ -112,6 +112,7 @@ public class SWF2SVG {
 			if( object.getType() == FSMovieObject.Export )
 				parseExport((FSExport)object);
 		}
+		ArrayList<DisplayItem> displayList = new ArrayList<DisplayItem>();
 		int frameCount = 0;
 		// Frame element collects all placements.
 		Element frame = createFrame(++frameCount);
@@ -140,8 +141,8 @@ public class SWF2SVG {
 				defs.appendChild(innerSymbol);
 				break;
 			case FSMovieObject.PlaceObject2:
-				Element use = parsePlaceObject2((FSPlaceObject2)swfObject);
-				frame.appendChild(use);
+				// Set a new item on the display list.
+				parsePlaceObject2((FSPlaceObject2)swfObject,displayList);
 				break;
 			case FSMovieObject.Export:
 				// Has already been parsed in advance.
@@ -151,6 +152,7 @@ public class SWF2SVG {
 				frame.setAttributeNS(null, "id", frameLabel.getLabel());
 				break;
 			case FSMovieObject.ShowFrame:
+				showFrame(frame, displayList);
 				symbol.appendChild(frame);
 				frame = createFrame(++frameCount);
 				break;
@@ -164,7 +166,9 @@ public class SWF2SVG {
 
 	protected void parseExport(FSExport export) {
 		Hashtable<Integer,String> table = export.getObjects();
-		this.export.putAll(table);
+		for( Integer id : table.keySet() ) {
+			this.export.put(id, table.get(id).replace(" ","_"));
+		}
 	}
 
 	protected Element createSymbol(FSDefineMovieClip movieClip) {
@@ -179,22 +183,68 @@ public class SWF2SVG {
 
 	protected Element createFrame(int frameCount) {
 		Element frame = doc.createElementNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_G_TAG);
-		frame.setAttributeNS(INKSCAPE_URI, "inkscape:label", "frame"+frameCount);
+		frame.setAttributeNS(INKSCAPE_NAMESPACE_URI, "inkscape:label", "frame"+frameCount);
 		if( frameCount > 1 )
 			frame.setAttributeNS(null, "visibility", "hidden");
 		return frame;
 	}
 
-	protected Element parsePlaceObject2(FSPlaceObject2 placeObject) {
-		int id = placeObject.getIdentifier();
-		FSCoordTransform transform = placeObject.getTransform();
+//	protected Element parsePlaceObject2(FSPlaceObject2 placeObject) {
+//	int id = placeObject.getIdentifier();
+//	FSCoordTransform transform = placeObject.getTransform();
+//	Element use = doc.createElementNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_USE_TAG); 
+//	if( isSet( id ) ) {
+//		use.setAttributeNS(XLinkSupport.XLINK_NAMESPACE_URI, "xlink:href", "#"+getExportedId(id));
+//	}
+//	if( transform != null )
+//		use.setAttributeNS(SVGConstants.SVG_TRANSFORM_ATTRIBUTE, SVGConstants.SVG_TRANSFORM_ATTRIBUTE, parseTransform(transform));
+//	return use;
+//}
+
+	protected Element createUseElement(DisplayItem item) {
+		int id = item.getIdentifier();
+		FSCoordTransform transform = item.getFSCoordTransform();
+		String name = item.getName();
 		Element use = doc.createElementNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_USE_TAG); 
-		if( isSet( id ) ) {
+		if( isSet( id ) )
 			use.setAttributeNS(XLinkSupport.XLINK_NAMESPACE_URI, "xlink:href", "#"+getExportedId(id));
-		}
 		if( transform != null )
 			use.setAttributeNS(SVGConstants.SVG_TRANSFORM_ATTRIBUTE, SVGConstants.SVG_TRANSFORM_ATTRIBUTE, parseTransform(transform));
+		if( name != null )
+			use.setAttributeNS(SWF2SVG.INKSCAPE_NAMESPACE_URI,"inkscape:label",name);
 		return use;
+	}
+
+	protected void parsePlaceObject2(FSPlaceObject2 placeObject, ArrayList<DisplayItem> displayList) {
+
+//		int type = placeObject.getPlaceType();
+		int layer = placeObject.getLayer();
+		int id = placeObject.getIdentifier();
+		String name = placeObject.getName();
+		FSCoordTransform transform = placeObject.getTransform();
+
+		DisplayItem item = new DisplayItem( displayList.size() <= layer ? null : displayList.get(layer) );
+
+		if( isSet( id ) )
+			item.setIdentifier(id);
+		if( transform != null )
+			item.setTransform(transform);
+		if( name != null )
+			item.setName(name);
+
+		if( displayList.size() < layer+1 ) {
+			for (int i = displayList.size(); i < layer+1; i++)
+				displayList.add(null);
+		}
+		displayList.set(layer,item);
+	}
+	
+	protected void showFrame(Element frame, ArrayList<DisplayItem> displayList) {
+		for(int i=0; i<displayList.size(); i++) {
+			DisplayItem item = displayList.get(i);
+			if(item != null)
+				frame.appendChild(createUseElement(item));
+		}
 	}
 
 	protected void parseBackgroundColor(FSSetBackgroundColor setBackground) {
@@ -216,7 +266,7 @@ public class SWF2SVG {
 			return Integer.toHexString(i).substring(0,2);
 	}
 
-	protected String parseTransform(FSCoordTransform transform) {
+	protected static String parseTransform(FSCoordTransform transform) {
 		float[][] m = transform.getMatrix();
 		String string;
 		if( m[0][0] == 1 && m[0][1] == 0 && m[1][0] == 0 && m[1][1] == 1 )
