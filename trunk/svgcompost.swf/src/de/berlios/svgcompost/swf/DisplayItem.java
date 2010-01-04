@@ -10,10 +10,11 @@ import com.flagstone.transform.FSCoordTransform;
 import com.flagstone.transform.FSMovieObject;
 import com.flagstone.transform.FSPlaceObject2;
 import com.flagstone.transform.FSRemoveObject2;
+import com.flagstone.transform.Transform;
 
 public class DisplayItem {
 
-	protected Integer id = -1;
+	protected Integer id = Transform.VALUE_NOT_SET;
 	protected String characterID;
 	protected String name;
 	protected AffineTransform transform = new AffineTransform();
@@ -111,6 +112,8 @@ public class DisplayItem {
 		this.characterID = characterID;
 	}
 	public void setIdentifier( int id ) {
+		if( id == 0 )
+			throw new NullPointerException();
 		this.id = id;
 	}
 

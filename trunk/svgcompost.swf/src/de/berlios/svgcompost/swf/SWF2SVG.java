@@ -44,6 +44,7 @@ import com.flagstone.transform.FSLineStyle;
 import com.flagstone.transform.FSMovie;
 import com.flagstone.transform.FSMovieObject;
 import com.flagstone.transform.FSPlaceObject2;
+import com.flagstone.transform.FSRemoveObject2;
 import com.flagstone.transform.FSSetBackgroundColor;
 import com.flagstone.transform.FSShape;
 import com.flagstone.transform.FSShapeStyle;
@@ -144,6 +145,10 @@ public class SWF2SVG {
 				// Set a new item on the display list.
 				parsePlaceObject2((FSPlaceObject2)swfObject,displayList);
 				break;
+			case FSMovieObject.RemoveObject2:
+				// Remove an item from the display list.
+				displayList.set(((FSRemoveObject2)swfObject).getLayer(), null);
+				break;
 			case FSMovieObject.Export:
 				// Has already been parsed in advance.
 				break;
@@ -206,8 +211,12 @@ public class SWF2SVG {
 		FSCoordTransform transform = item.getFSCoordTransform();
 		String name = item.getName();
 		Element use = doc.createElementNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_USE_TAG); 
-		if( isSet( id ) )
+		if( isSet( id ) ) {
 			use.setAttributeNS(XLinkSupport.XLINK_NAMESPACE_URI, "xlink:href", "#"+getExportedId(id));
+//			System.out.println( "id = "+id );
+//			System.out.println( "exported id = "+getExportedId(id) );
+//			System.out.println( "unset = "+Transform.VALUE_NOT_SET );
+		}
 		if( transform != null )
 			use.setAttributeNS(SVGConstants.SVG_TRANSFORM_ATTRIBUTE, SVGConstants.SVG_TRANSFORM_ATTRIBUTE, parseTransform(transform));
 		if( name != null )
@@ -217,7 +226,7 @@ public class SWF2SVG {
 
 	protected void parsePlaceObject2(FSPlaceObject2 placeObject, ArrayList<DisplayItem> displayList) {
 
-//		int type = placeObject.getPlaceType();
+		int type = placeObject.getPlaceType();
 		int layer = placeObject.getLayer();
 		int id = placeObject.getIdentifier();
 		String name = placeObject.getName();
@@ -225,7 +234,7 @@ public class SWF2SVG {
 
 		DisplayItem item = new DisplayItem( displayList.size() <= layer ? null : displayList.get(layer) );
 
-		if( isSet( id ) )
+		if( isSet( id ) && id != 0 )
 			item.setIdentifier(id);
 		if( transform != null )
 			item.setTransform(transform);
