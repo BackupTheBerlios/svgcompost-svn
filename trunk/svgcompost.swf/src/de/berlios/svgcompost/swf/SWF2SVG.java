@@ -56,6 +56,8 @@ import com.flagstone.transform.Transform;
 public class SWF2SVG {
 	
 	public static final String INKSCAPE_NAMESPACE_URI = "http://www.inkscape.org/namespaces/inkscape";
+	public static final String TIMELINE = "timeline";
+	public static final String FRAME = "frame";
 	
 	protected SVGDOMImplementation impl;
 	protected AbstractDocument doc;
@@ -81,6 +83,7 @@ public class SWF2SVG {
 	public String exportSWF2SVG( String swfPath ) throws IOException, DataFormatException {
 		FSMovie swfMovie = new FSMovie();
 		swfMovie.decodeFromFile(swfPath);
+
 		Document doc = exportSWF2SVG(swfMovie);
 		String outPath = swfPath+".svg";
 		OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(outPath), "UTF-8");
@@ -98,6 +101,7 @@ public class SWF2SVG {
 		svg.setAttributeNS(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, "xmlns:inkscape", INKSCAPE_NAMESPACE_URI);
 		svg.setAttributeNS(null, SVGConstants.SVG_WIDTH_ATTRIBUTE, String.valueOf(swfMovie.getFrameSize().getWidth()/20)+"px");
 		svg.setAttributeNS(null, SVGConstants.SVG_HEIGHT_ATTRIBUTE, String.valueOf(swfMovie.getFrameSize().getHeight()/20)+"px");
+		svg.setAttributeNS(null, SVGConstants.SVG_CLASS_ATTRIBUTE, TIMELINE);
 		svg.appendChild(defs);
 		css = (SVGCSSEngine) impl.createCSSEngine((AbstractStylableDocument) doc, new BridgeContext( new UserAgentAdapter() ));
 		
@@ -179,6 +183,7 @@ public class SWF2SVG {
 	protected Element createSymbol(FSDefineMovieClip movieClip) {
 		Element symbol = doc.createElementNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_G_TAG);
 		symbol.setAttributeNS(null, "id", getExportedId(movieClip.getIdentifier()));
+		symbol.setAttributeNS(null, SVGConstants.SVG_CLASS_ATTRIBUTE, TIMELINE);
 		return symbol;
 	}
 	
@@ -189,6 +194,7 @@ public class SWF2SVG {
 	protected Element createFrame(int frameCount) {
 		Element frame = doc.createElementNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_G_TAG);
 		frame.setAttributeNS(INKSCAPE_NAMESPACE_URI, "inkscape:label", "frame"+frameCount);
+		frame.setAttributeNS(null, SVGConstants.SVG_CLASS_ATTRIBUTE, FRAME);
 		if( frameCount > 1 )
 			frame.setAttributeNS(null, "visibility", "hidden");
 		return frame;
@@ -225,7 +231,6 @@ public class SWF2SVG {
 	}
 
 	protected void parsePlaceObject2(FSPlaceObject2 placeObject, ArrayList<DisplayItem> displayList) {
-
 		int type = placeObject.getPlaceType();
 		int layer = placeObject.getLayer();
 		int id = placeObject.getIdentifier();
@@ -335,19 +340,27 @@ public class SWF2SVG {
 		for (int i = 0; i < fillPaths.length; i++) {
 			fillPaths[i] = doc.createElementNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_PATH_TAG);
 			dfill[i] = new String();
-			if( fillStyles.get(i) instanceof FSSolidFill ) {
+			switch (fillStyles.get(i).getType()) {
+			case FSFillStyle.Solid:
 				FSColor color = ((FSSolidFill)fillStyles.get(i)).getColor();
 				String fill = parseColor( color );
 				fillPaths[i].setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, fill);
 				if( isSet( color.getAlpha() ) )
 					fillPaths[i].setAttributeNS(null, SVGConstants.SVG_OPACITY_ATTRIBUTE, String.valueOf(color.getAlpha()/255.0));
-			}
-			else if( fillStyles.get(i) instanceof FSGradientFill ) {
+				break;
+
+			case FSFillStyle.Linear:
+			case FSFillStyle.Radial:
 				Element gradient = parseGradient((FSGradientFill)fillStyles.get(i));
 				String gradientId = "gradient"+(++gradientCount);
 				gradient.setAttributeNS(null,"id",gradientId);
 				defs.appendChild(gradient);
 				fillPaths[i].setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, "url(#"+gradientId+")");
+				break;
+
+			default:
+				System.out.println( "Not implemented: "+fillStyles.get(i).getType()+" ("+fillStyles.get(i).getClass()+")" );
+				break;
 			}
 		}
 		for (int i = 0; i < linePaths.length; i++) {

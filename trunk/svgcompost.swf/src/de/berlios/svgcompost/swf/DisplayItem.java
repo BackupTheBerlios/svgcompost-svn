@@ -2,6 +2,7 @@ package de.berlios.svgcompost.swf;
 
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.batik.parser.AWTTransformProducer;
 import org.apache.batik.parser.TransformListParser;
@@ -10,6 +11,7 @@ import com.flagstone.transform.FSCoordTransform;
 import com.flagstone.transform.FSMovieObject;
 import com.flagstone.transform.FSPlaceObject2;
 import com.flagstone.transform.FSRemoveObject2;
+import com.flagstone.transform.FSShowFrame;
 import com.flagstone.transform.Transform;
 
 public class DisplayItem {
@@ -25,6 +27,9 @@ public class DisplayItem {
 //this.id = id;
 //}
 
+	public DisplayItem() {
+	}
+
 	public DisplayItem( DisplayItem item ) {
 		if( item != null )
 			copyFrom( item );
@@ -37,48 +42,103 @@ public class DisplayItem {
 		this.transform = item.transform;
 	}
 
-	public static FSMovieObject createSWFTag( ArrayList<DisplayItem> list1, ArrayList<DisplayItem> list2, int i ) {
+	public static ArrayList<FSMovieObject> createNewTags( List<DisplayItem> list ) {
+		ArrayList<FSMovieObject> placementList = new ArrayList<FSMovieObject>();
+		if( list == null )
+			return placementList;
+		for (int i = 0; i < list.size(); i++) {
+			DisplayItem item = list.get(i);
+			// Place new object.
+			FSPlaceObject2 placeObject = new FSPlaceObject2(i,item.getFSCoordTransform());
+			placeObject.setPlaceType(FSPlaceObject2.New);
+			placeObject.setIdentifier(item.id);
+			placeObject.setName(item.name);
+//			placeObject.setTransform(item.getFSCoordTransform());
+			placeObject.setLayer(i);
+			placementList.add(placeObject);
+		}
+		placementList.add(new FSShowFrame());
+		return placementList;
+	}	
+
+	public static ArrayList<FSMovieObject> createSWFTags( List<DisplayItem> list1, List<DisplayItem> list2 ) {
+		int max;
+		if( list1 == null || list1.size() < list2.size() )
+			max = list2.size();
+		else
+			max = list1.size();
+		ArrayList<FSMovieObject> placementList = new ArrayList<FSMovieObject>();
+		for (int i = 0; i < max; i++) {
+//			FSMovieObject placementTag = createSWFTag(list1, list2, i, placementList);
+			createSWFTag(list1, list2, i, placementList);
+//			if( placementTag != null )
+//				placementList.add(placementTag);
+		}
+		placementList.add(new FSShowFrame());
+		return placementList;
+	}	
+
+	public static void createSWFTag( List<DisplayItem> list1, List<DisplayItem> list2, int i, List<FSMovieObject> placementList ) {
 		if( i>= list1.size() && i >= list2.size() )
 			throw new IndexOutOfBoundsException(String.valueOf(i));
-		DisplayItem item1 = list1.size() > i ? null : list1.get(i);
-		DisplayItem item2 = list2.size() > i ? null : list2.get(i);
+		DisplayItem item1 = list1 == null || i >= list1.size() ? null : list1.get(i);
+		DisplayItem item2 = list2 == null || i >= list2.size() ? null : list2.get(i);
+		// Layer is empty in both frames.
 		if( item1 == null && item2 == null )
-			return null;
+			return;
+		// Same item in both frames.
 		if( equalOrBothNull( item1, item2 ) )
-			return null;
-		if( item1 != null && item2 == null )
-			return new FSRemoveObject2(i);
+			return;
+		// Item in frame1, empty layer in frame2.
+		if( item1 != null && item2 == null ) {
+			placementList.add( new FSRemoveObject2(i) );
+			return;
+		}
 
 		// 2 different items need a place object tag.
 
-		FSPlaceObject2 placeObject = new FSPlaceObject2(i,(FSCoordTransform)null);
-
 		if( item1 == null ) {
 			// Place new object.
-			placeObject.setPlaceType(FSPlaceObject2.New);
-			placeObject.setIdentifier(item2.id);
-			placeObject.setName(item2.name);
-			placeObject.setTransform(item2.getFSCoordTransform());
+			FSPlaceObject2 newObject = new FSPlaceObject2(i,(FSCoordTransform)null);
+			newObject.setPlaceType(FSPlaceObject2.New);
+			newObject.setIdentifier(item2.id);
+			newObject.setName(item2.name);
+			newObject.setTransform(item2.getFSCoordTransform());
+			placementList.add( newObject );
 		}
-		else if( ! item1.id.equals( item2.id ) ) {
+		else if( ! equalOrBothNull( item1.id, item2.id ) ) {
+			
 			// Replace existing object with new object.
-			placeObject.setPlaceType(FSPlaceObject2.Replace);
-			placeObject.setIdentifier(item2.id);
-			if( ! equalOrBothNull( item1.name, item2.name ) )
-				placeObject.setName(item2.name);
-			if( ! equalOrBothNull( item1.transform, item2.transform ) )
-				placeObject.setTransform(item2.getFSCoordTransform());
+			// It seems that the Flash player doesn't accept
+			// replacements of different types (i.e. MovieClip for Shape).
+			// That's why it's safer use Remove and New tags.
+			placementList.add( new FSRemoveObject2(i) );
+			FSPlaceObject2 newObject = new FSPlaceObject2(i,(FSCoordTransform)null);
+			newObject.setPlaceType(FSPlaceObject2.New);
+			newObject.setIdentifier(item2.id);
+			newObject.setName(item2.name);
+			newObject.setTransform(item2.getFSCoordTransform());
+			placementList.add( newObject );
+			
+//			FSPlaceObject2 replaceObject = new FSPlaceObject2(i,(FSCoordTransform)null);
+//			replaceObject.setPlaceType(FSPlaceObject2.Replace);
+//			replaceObject.setIdentifier(item2.id);
+//			if( ! equalOrBothNull( item1.name, item2.name ) )
+//				replaceObject.setName(item2.name);
+//			if( ! equalOrBothNull( item1.transform, item2.transform ) )
+//				replaceObject.setTransform(item2.getFSCoordTransform());
+//			placementList.add( replaceObject );
 		}
 		else {
 			// Modify existing object.
-			placeObject.setPlaceType(FSPlaceObject2.Modify);
+			FSPlaceObject2 modifyObject = new FSPlaceObject2(i,(FSCoordTransform)null);
+			modifyObject.setPlaceType(FSPlaceObject2.Modify);
 			if( ! equalOrBothNull( item1.name, item2.name ) )
-				placeObject.setName(item2.name);
+				modifyObject.setName(item2.name);
 			if( ! equalOrBothNull( item1.transform, item2.transform ) )
-				placeObject.setTransform(item2.getFSCoordTransform());
+				modifyObject.setTransform(item2.getFSCoordTransform());
+			placementList.add( modifyObject );
 		}
-		
-		return placeObject;
 	}
 
 
@@ -153,11 +213,16 @@ public class DisplayItem {
 
 	public FSCoordTransform getFSCoordTransform() {
 		double[] m1 = new double[6];
-		transform.getMatrix(m1);
+		if( transform != null )
+			transform.getMatrix(m1);
+		else {
+			m1[0] = 1;
+			m1[3] = 1;
+		}
 		float[][] m2 = new float[][] {
 				new float[]{(float)m1[0],(float)m1[2],(float)m1[4]*20},
 				new float[]{(float)m1[1],(float)m1[3],(float)m1[5]*20},
-				new float[]{1,1,1}
+				new float[]{0,0,1}
 			};
 		FSCoordTransform coordTransform = new FSCoordTransform();
 		coordTransform.setMatrix(m2);
