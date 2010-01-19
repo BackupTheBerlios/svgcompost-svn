@@ -6,6 +6,7 @@ import java.awt.geom.Point2D;
 import de.berlios.svgcompost.animation.anim.Tweener;
 import de.berlios.svgcompost.animation.canvas.CanvasNode;
 import de.berlios.svgcompost.animation.canvas.PathConverter;
+import de.berlios.svgcompost.animation.util.CatmullRomSpline;
 import de.berlios.svgcompost.animation.util.Polar;
 
 /**
@@ -16,6 +17,7 @@ import de.berlios.svgcompost.animation.util.Polar;
 public class RotationMatrixTweener extends Tweener {
 
 	public AffineTransform[] matrix;
+	protected Point2D.Float[] cat = new Point2D.Float[4];
 	protected Polar[] xAxis;
 	protected Polar[] yAxis;
 	protected Point2D.Float xAxisCart = new Point2D.Float(0,0);
@@ -29,7 +31,7 @@ public class RotationMatrixTweener extends Tweener {
 	
 	protected CanvasNode node;
 
-	public RotationMatrixTweener( AffineTransform matrix1, AffineTransform matrix2, CanvasNode node ) {
+	public RotationMatrixTweener( CanvasNode node ) {
 		this.node = node;
 		matrix = new AffineTransform[2];
 		xAxis = new Polar[2];
@@ -37,15 +39,21 @@ public class RotationMatrixTweener extends Tweener {
 		left = new int[2];
 		xAxisCart = new Point2D.Float(0,0);
 		yAxisCart = new Point2D.Float(0,0);
-		if( ! (matrix1 == null && matrix2 == null) )
-			load( matrix1, matrix2 );
+//		if( ! (matrix1 == null && matrix2 == null) )
+//			load( matrix1, matrix2 );
 	}
 	
-	public void load( AffineTransform matrix1, AffineTransform matrix2 ) {
+	public void load( AffineTransform matrix0, AffineTransform matrix1, AffineTransform matrix2, AffineTransform matrix3 ) {
 //		if( node != null )
 //			log.debug("load( "+matrix1+", "+matrix2+" ) for "+node.getName());
 		matrix[0] = matrix1;
 		matrix[1] = matrix2;
+		if( matrix0 != null )
+			cat[0] = new Point2D.Float( (float)matrix0.getTranslateX(), (float)matrix0.getTranslateY() );
+		cat[1] = new Point2D.Float( (float)matrix1.getTranslateX(), (float)matrix1.getTranslateY() );
+		cat[2] = new Point2D.Float( (float)matrix2.getTranslateX(), (float)matrix2.getTranslateY() );
+		if( matrix3 != null )
+			cat[3] = new Point2D.Float( (float)matrix3.getTranslateX(), (float)matrix3.getTranslateY() ); 
 		nullPointer = false;
 		simpleTweening = false;
 		noTweening = false;
@@ -194,8 +202,11 @@ public class RotationMatrixTweener extends Tweener {
 //		Polar.copyToCartesian( yAxis[0].r*pInv + yAxis[1].r*p, yAxis[0].a*pInv + yAxis[1].a*p, yAxisCart );
 				
 		AffineTransform tween = new AffineTransform();
-		double tx = matrix[0].getTranslateX()*pInv + matrix[1].getTranslateX()*p;
-		double ty = matrix[0].getTranslateY()*pInv + matrix[1].getTranslateY()*p;
+		Point2D.Float catTween = CatmullRomSpline.tween(p,cat[0]==null?cat[1]:cat[0],cat[1],cat[2],cat[3]==null?cat[2]:cat[3]);
+//		double tx = matrix[0].getTranslateX()*pInv + matrix[1].getTranslateX()*p;
+//		double ty = matrix[0].getTranslateY()*pInv + matrix[1].getTranslateY()*p;
+		double tx = catTween.x;
+		double ty = catTween.y;
 //		tween.setTransform( xAxisCart.x, yAxisCart.x, xAxisCart.y, yAxisCart.y, tx, ty );
 
 //		tween.setTransform( yAxisCart.y, yAxisCart.x, xAxisCart.y, xAxisCart.x, tx, ty );

@@ -97,7 +97,12 @@ public class Bone {
 		if( nextBoneKey.getKeyMatrix() == null )
 			calcKeyMatrices(skeletonKey.nextKey());
 		
-		boneKey.getTweener().load( boneKey.getKeyMatrix(), nextBoneKey.getKeyMatrix() );
+		boneKey.getTweener().load(
+				boneKey.previousKey() == null ? null : boneKey.previousKey().getKeyMatrix(),
+				boneKey.getKeyMatrix(),
+				nextBoneKey.getKeyMatrix(),
+				nextBoneKey.nextKey() == null ? null : nextBoneKey.nextKey().getKeyMatrix()
+			);
 		
 		for (Bone bone : children)
 			bone.setupTweening( skeletonKey );

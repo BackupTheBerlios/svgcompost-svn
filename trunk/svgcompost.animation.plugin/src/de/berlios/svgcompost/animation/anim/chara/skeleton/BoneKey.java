@@ -49,7 +49,7 @@ public class BoneKey {
 
 	public RotationMatrixTweener getTweener() {
 		if( tweener == null )
-			tweener = new RotationMatrixTweener( null, null, canvasNode );
+			tweener = new RotationMatrixTweener( canvasNode );
 		return tweener;
 	}
 
