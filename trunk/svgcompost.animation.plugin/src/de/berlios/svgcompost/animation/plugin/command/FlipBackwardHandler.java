@@ -5,7 +5,7 @@ public class FlipBackwardHandler extends FlipForwardHandler {
 
 	@Override
 	protected int getDirection() {
-		return +1;
+		return -1;
 	}
 
 }

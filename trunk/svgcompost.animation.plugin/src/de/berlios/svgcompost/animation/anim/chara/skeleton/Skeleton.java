@@ -23,9 +23,9 @@ public class Skeleton extends Bone {
 		skeleton = this;
 	}
 	
-	public void addConnector( String parent, String child, String target ) {
-		addConnector( new Limb( getBone(parent), getBone(child), getBone(target), this ) );
-	}
+//	public void addConnector( String parent, String child, String target ) {
+//		addConnector( new JointedLimb( getBone(parent), getBone(child), getBone(target), this ) );
+//	}
 	
 	public void addConnector( Limb connector ) {
 		if( connectors == null )
@@ -59,13 +59,13 @@ public class Skeleton extends Bone {
 	}
 
 	public void setupLimbTweening( Keyframe keyframe ) {
-		for(Limb limb : connectors)
-			limb.readRotationPoint(keyframe.getSkeletonKey(this));
+		for(Limb jointedLimb : connectors)
+			jointedLimb.readRotationPoint(keyframe.getSkeletonKey(this));
 	}
 	
 	public void tweenLimbs( SkeletonKey tweeningKeyLink, SkeletonKey activeKeyLink, double percentage ) {
-		for(Limb limb : connectors)
-			limb.tween(tweeningKeyLink, activeKeyLink, percentage);
+		for(Limb jointedLimb : connectors)
+			jointedLimb.tween(tweeningKeyLink, activeKeyLink, percentage);
 	}
 	
 }

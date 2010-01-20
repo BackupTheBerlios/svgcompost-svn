@@ -7,7 +7,10 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
+import de.berlios.svgcompost.animation.canvas.Library;
+import de.berlios.svgcompost.animation.util.xml.Classes;
 import de.berlios.svgcompost.editor.SVGEditor;
 import de.berlios.svgcompost.part.BackgroundPart;
 import de.berlios.svgcompost.util.ElementTraversalHelper;
@@ -22,13 +25,25 @@ public class HideAndShowHandler extends AbstractHandler {
 		BackgroundPart part = FlipForwardHandler.getBackground(editor);
 		if( part == null )
 			return null;
-		Element layer = part.getEditRoot();
-		Element parent = (Element) layer.getParentNode();
-		if( parent == null )
+		Element keyframe = getKeyFrame(part.getEditRoot());
+		if( keyframe == null || keyframe.getParentNode() == null )
 			return null;
-		changeSiblingVisibility(layer, parent, part.getBridgeContext());
+		Element parent = (Element) keyframe.getParentNode();
+		changeSiblingVisibility(keyframe, parent, part.getBridgeContext());
 		part.refresh();
 		return null;
+	}
+
+	public static Element getKeyFrame(Element node) {
+		while( ! Library.hasClass( node, Classes.KEYFRAME ) ) {
+			if( node.getParentNode().getNodeType() == Node.ELEMENT_NODE )
+				node = (Element) node.getParentNode();
+			else
+				node = null;
+			if( node == null )
+				return null;
+		}
+		return node;
 	}
 
 	public static void changeSiblingVisibility(Element layer, Element parent, BridgeContext ctx) {

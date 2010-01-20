@@ -7,22 +7,19 @@ import org.apache.batik.dom.svg.SVGOMElement;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.gef.EditPart;
-import org.eclipse.gef.GraphicalViewer;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.w3c.dom.Element;
 
 import de.berlios.svgcompost.editor.SVGEditor;
 import de.berlios.svgcompost.part.BackgroundPart;
-import de.berlios.svgcompost.part.EditablePart;
 import de.berlios.svgcompost.util.ElementTraversalHelper;
 import de.berlios.svgcompost.util.VisibilityHelper;
 
 public class FlipForwardHandler extends AbstractHandler {
 
 	protected int getDirection() {
-		return -1;
+		return +1;
 	}
 
 	@Override
@@ -33,15 +30,18 @@ public class FlipForwardHandler extends AbstractHandler {
 		if( bgPart == null )
 			return null;
 		BridgeContext ctx = bgPart.getBridgeContext();
-		Element keyframe = bgPart.getEditRoot();
-		Element parent = (Element) keyframe.getParentNode();
-		if( parent == null )
+		Element keyframe = HideAndShowHandler.getKeyFrame(bgPart.getEditRoot());
+		if( keyframe == null || keyframe.getParentNode() == null )
 			return null;
+		Element parent = (Element) keyframe.getParentNode();
 		List<Element> childElements = ElementTraversalHelper.getChildElements(parent);
 		int layerIndex = childElements.indexOf(keyframe);
 		int flipIndex = layerIndex + getDirection();
+		System.out.println("flipIndex = "+flipIndex);
 		if( flipIndex >= 0 && flipIndex < childElements.size() ) {
 			Element nextKeyframe = childElements.get(flipIndex);
+			System.out.println( "keyframe = "+keyframe.getAttribute("id") );
+			System.out.println( "nextKeyframe = "+nextKeyframe.getAttribute("id") );
 			boolean visible = ctx.getGraphicsNode(nextKeyframe) == null ? false : ctx.getGraphicsNode(nextKeyframe).isVisible();
 			if( visible ) {
 				// Next keyframe is already visible.
@@ -51,11 +51,8 @@ public class FlipForwardHandler extends AbstractHandler {
 			}
 			VisibilityHelper.setVisibility(keyframe, false);
 			VisibilityHelper.setVisibility(nextKeyframe, true);
-			GraphicalViewer viewer = (GraphicalViewer) editor.getAdapter(GraphicalViewer.class);
-			EditablePart flipLayerPart = (EditablePart) viewer.getEditPartRegistry().get(nextKeyframe);
-			viewer.setSelection( new StructuredSelection(flipLayerPart) );
 			bgPart.setEditRoot( (SVGOMElement) nextKeyframe );
-			bgPart.refreshVisuals();
+			bgPart.refresh();
 		}
 		return null;
 	}

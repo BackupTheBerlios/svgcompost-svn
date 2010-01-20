@@ -6,13 +6,15 @@ import org.apache.batik.bridge.BridgeContext;
 import org.w3c.dom.Element;
 
 import de.berlios.svgcompost.animation.canvas.CanvasNode;
+import de.berlios.svgcompost.animation.util.xml.Attributes;
+import de.berlios.svgcompost.animation.util.xml.Labels;
 
 public class SkeletonFactory {
 
 	private HashMap<Bone,CanvasNode> bones2nodes = new HashMap<Bone,CanvasNode>();
 	
 	/**
-	 * Creates child bones for a newly created parent bone.
+	 * Creates child bones for a newly created parent jointedLimb.
 	 * @param node
 	 * @param parent
 	 */
@@ -22,7 +24,15 @@ public class SkeletonFactory {
 		for (int i = 0; i < node.getSize(); i++) {
 			CanvasNode mcChild = node.get( i );
 			String childName = mcChild.getName();
-			if( childName != null && ! childName.equals( "" ) && ! childName.equals( mcName ) ) {
+			if( childName != null
+					&& ! childName.equals( "" )
+					&& ! childName.equals( mcName )
+					&& ! childName.equals(Labels.ANCHOR1)
+					&& ! childName.equals(Labels.ANCHOR2)
+					&& ! childName.equals(Labels.ANCHOR3)
+					&& ! childName.equals(Labels.ANCHOR4)
+					&& ! childName.equals(Labels.ANCHOR5)
+					) {
 				Bone child = new Bone( childName );
 				parent.add( child );
 				createChildBones( mcChild, child );
@@ -31,17 +41,26 @@ public class SkeletonFactory {
 	}
 
 	/**
-	 * Processes a bone a second time, after all bones of a skeleton have been created.
+	 * Processes a jointedLimb a second time, after all bones of a skeleton have been created.
 	 * @param node
-	 * @param bone
+	 * @param jointedLimb
 	 */
 	public void processBone(CanvasNode node, Bone bone) {
+		// TODO: Use svgcompost namespace for attributes.
 		BridgeContext ctx = node.getCanvas().getSourceCtx();
 		Element el = ctx.getElement( node.getGraphicsNode() );
-		if( el.hasAttribute("connectWith") && el.hasAttribute("connectTo") ) {
-			String lowerLimb = el.getAttribute("connectWith");
-			String limbTarget = el.getAttribute("connectTo");
-			bone.skeleton.addConnector( node.getName(), lowerLimb, limbTarget );
+		if( el.hasAttribute(Attributes.CONNECT_WITH) && el.hasAttribute(Attributes.CONNECT_TO) ) {
+			String lowerLimb = el.getAttribute(Attributes.CONNECT_WITH);
+			String limbTarget = el.getAttribute(Attributes.CONNECT_TO);
+			Skeleton skeleton = bone.skeleton;
+			skeleton.addConnector( new JointedLimb(bone, skeleton.getBone(lowerLimb), skeleton.getBone(limbTarget), skeleton) );
+//			bone.skeleton.addConnector( node.getName(), lowerLimb, limbTarget );
+		}
+		else if( el.hasAttribute(Attributes.SQUASH_TO) ) {
+			String limbTarget = el.getAttribute(Attributes.SQUASH_TO);
+			Skeleton skeleton = bone.skeleton;
+			skeleton.addConnector( new SquashyLimb(bone, skeleton.getBone(limbTarget)) );
+//			bone.skeleton.addConnector( node.getName(), lowerLimb, limbTarget );
 		}
 	}
 

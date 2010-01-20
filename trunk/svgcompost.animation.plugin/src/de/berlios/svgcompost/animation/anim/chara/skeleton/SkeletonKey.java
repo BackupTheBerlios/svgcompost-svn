@@ -39,8 +39,8 @@ public class SkeletonKey {
 	}
 	
 	/**
-	 * Finds an instance of the given bone in the key frame that this SkeletonLink belongs to.
-	 * @param bone A link to the given bone  in this object's key frame.
+	 * Finds an instance of the given jointedLimb in the key frame that this SkeletonLink belongs to.
+	 * @param jointedLimb A link to the given jointedLimb  in this object's key frame.
 	 * @return
 	 */
 	public BoneKey getBoneKey( Bone bone ) {
@@ -52,8 +52,8 @@ public class SkeletonKey {
 		return keysForNodes.get(node);
 	}
 	
-	public LimbKey getLimbKey( Limb limb ) {
-		return limbKeys.get( limb );
+	public LimbKey getLimbKey( Limb jointedLimb ) {
+		return limbKeys.get( jointedLimb );
 	}
 	
 	public CanvasNode getKeyframeNode() {

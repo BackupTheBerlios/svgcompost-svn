@@ -3,19 +3,19 @@ package de.berlios.svgcompost.animation.anim.chara.skeleton;
 import java.awt.geom.Point2D;
 
 /**
- * Represents a keyframe of a Limb.
+ * Represents a keyframe of a JointedLimb.
  * @author Gerrit Karius
  *
  */
 public class LimbKey {
 
-	protected Limb limb;
+	protected Limb jointedLimb;
 	protected SkeletonKey skeletonKey;
 	
 	protected Point2D.Float limbPoint;
 	
-	public LimbKey(Limb limb, SkeletonKey skeletonKey) {
-		this.limb = limb;
+	public LimbKey(Limb jointedLimb, SkeletonKey skeletonKey) {
+		this.jointedLimb = jointedLimb;
 		this.skeletonKey = skeletonKey;
 	}
 
@@ -29,12 +29,12 @@ public class LimbKey {
 
 	public LimbKey nextKey() {
 		SkeletonKey nextSkeletonKey = skeletonKey.nextKey();
-		return nextSkeletonKey==null?null:nextSkeletonKey.getLimbKey(limb);
+		return nextSkeletonKey==null?null:nextSkeletonKey.getLimbKey(jointedLimb);
 	}
 	
 	public LimbKey previousKey() {
 		SkeletonKey previousSkeletonKey = skeletonKey.previousKey();
-		return previousSkeletonKey==null?null:previousSkeletonKey.getLimbKey(limb);
+		return previousSkeletonKey==null?null:previousSkeletonKey.getLimbKey(jointedLimb);
 	}
 
 }

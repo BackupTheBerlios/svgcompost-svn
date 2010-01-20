@@ -181,7 +181,7 @@ public class RotationMatrixTweener extends Tweener {
 		}
 		// TODO: check for flip, adjust tween according to alignment.
 		// alignment needs to be given externally.
-//		log.debug( node.getPath()+" has bone "+node.getBoneLink().getBone() );
+//		log.debug( node.getPath()+" has jointedLimb "+node.getBoneLink().getBone() );
 //		log.debug(node.getName()+".xAxis[0]: "+xAxis[0]);
 		Polar xAxisTween = new Polar( xAxis[0].r*pInv + xAxis[1].r*p, xAxis[0].a*pInv + xAxis[1].a*p );
 		Polar yAxisTween = new Polar( yAxis[0].r*pInv + yAxis[1].r*p, yAxis[0].a*pInv + yAxis[1].a*p );

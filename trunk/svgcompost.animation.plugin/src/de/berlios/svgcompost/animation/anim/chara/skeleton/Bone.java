@@ -8,8 +8,8 @@ import java.util.List;
 import de.berlios.svgcompost.animation.canvas.CanvasNode;
 
 /**
- * A bone is a part of an animated skeleton.
- * The parent-child relationship within the skeleton's bone tree determines which
+ * A jointedLimb is a part of an animated skeleton.
+ * The parent-child relationship within the skeleton's jointedLimb tree determines which
  * object should animate within the coordinates of another,
  * even when their graphical nodes have no parent-child relationship in the graphics node tree,
  * or change their hierarchy during animation.
@@ -67,15 +67,30 @@ public class Bone {
 	protected void calcKeyMatrices( SkeletonKey skeletonKey ) {
 		
 		CanvasNode keyNode = skeletonKey.getNodeForBone(this);
-		CanvasNode parentKeyNode = parent == null ? null : skeletonKey.getNodeForBone(parent);
+		
+		if( keyNode == null )
+			return;
+		
+		CanvasNode parentKeyNode;
+		if( parent == null || skeletonKey.getNodeForBone(parent) == null )
+			parentKeyNode = keyNode.getParent();
+		else
+			parentKeyNode = skeletonKey.getNodeForBone(parent);
+		
 		AffineTransform keyMatrix = keyNode.getGlobalTransform();
 		
-		if( parent == null )
-			keyMatrix = keyNode.getTransform();
-		else if( parentKeyNode != null )
+//		if( parent == null )
+//			keyMatrix = keyNode.getTransform();
+//		else if( parentKeyNode != null )
 			subtractFromMatrix( parentKeyNode.getGlobalTransform(), keyMatrix );
-		else
-			subtractFromMatrix( skeletonKey.getNodeForBone(skeleton).getGlobalTransform(), keyMatrix );
+//		else
+//			subtractFromMatrix( skeletonKey.getNodeForBone(skeleton).getGlobalTransform(), keyMatrix );
+
+		// Shift to anchor1, if it exists.
+//		CanvasNode anchor1 = keyNode.getChild(Labels.ANCHOR1);
+//		if( anchor1 != null )
+//			shiftKeyMatrix(parentKeyNode, keyNode, anchor1, keyMatrix);
+	
 		skeletonKey.getBoneKey(keyNode).setKeyMatrix(keyMatrix);
 		
 		for (Bone bone : children)
@@ -116,17 +131,26 @@ public class Bone {
 
 		AffineTransform tween = tweeningKey.getBoneKey(this).getTweener().tween( percentage );
 		
-		if( parent != null ) {
+		CanvasNode parentKeyNode;
+		if( parent == null || activeKey.getNodeForBone(parent) == null )
+			parentKeyNode = keyNode.getParent();
+		else
+			parentKeyNode = activeKey.getNodeForBone(parent);
+//		if( parent != null ) {
 			// Add the parent Bone's current CanvasNode matrix, to get a global transform.
-			CanvasNode parentKeyNode = activeKey.getNodeForBone(parent);
+//			CanvasNode parentKeyNode = activeKey.getNodeForBone(parent);
 
-			if( parentKeyNode != null )
+//			if( parentKeyNode != null )
 				tween.preConcatenate( parentKeyNode.getGlobalTransform() );
-			else
-				tween.preConcatenate( activeKey.getNodeForBone(skeleton).getGlobalTransform() );
+//			else
+//				tween.preConcatenate( activeKey.getNodeForBone(skeleton).getGlobalTransform() );
 			// Subtract the Bone's CanvasNode's parent's matrix, to get a local transform.
 			subtractFromMatrix( keyNode.getParent().getGlobalTransform(), tween );
-		}
+//		}
+		// Shift from anchor1, if it exists.
+//		CanvasNode anchor1 = keyNode.getChild(Labels.ANCHOR1);
+//		if( anchor1 != null )
+//			shiftKeyMatrix(parentKeyNode, anchor1, keyNode, tween);
 
 		keyNode.setTransform( tween );
 		
@@ -134,6 +158,13 @@ public class Bone {
 			bone.tween( tweeningKey, activeKey, percentage );
 	}
 	
+	private void shiftKeyMatrix(CanvasNode parentKeyNode, CanvasNode keyNode,
+			CanvasNode anchor1, AffineTransform keyMatrix) {
+		Point2D.Float anchorOnParent = anchor1.projectCenterToLocal(parentKeyNode);
+		Point2D.Float centerOnParent = keyNode.projectCenterToLocal(parentKeyNode);
+		keyMatrix.preConcatenate( AffineTransform.getTranslateInstance(-centerOnParent.x+anchorOnParent.x,-centerOnParent.x+anchorOnParent.y) );
+		// ...or is it concatenate?
+	}
 
 	
 //	/**
@@ -181,8 +212,8 @@ public class Bone {
 	
 
 	/**
-	 * Sets the global position of the bone. All child bones save their position
-	 * on the parent bone and recall that position once the bone has shifted.
+	 * Sets the global position of the jointedLimb. All child bones save their position
+	 * on the parent jointedLimb and recall that position once the jointedLimb has shifted.
 	 * This is done recursively, so that all descendant bones maintain their position
 	 * on the shifted ancestor.
 	 * @param newPosition the position the Bone is shifted to.

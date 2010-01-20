@@ -26,6 +26,8 @@ import de.berlios.svgcompost.animation.anim.easing.Quadratic;
 import de.berlios.svgcompost.animation.timeline.Keyframe;
 import de.berlios.svgcompost.animation.timeline.Layer;
 import de.berlios.svgcompost.animation.timeline.Timeline;
+import de.berlios.svgcompost.animation.util.xml.Attributes;
+import de.berlios.svgcompost.animation.util.xml.Classes;
 import de.berlios.svgcompost.util.VisibilityHelper;
 
 public class Library {
@@ -114,7 +116,7 @@ public class Library {
 		Layer layer = new Layer();
 		for (CanvasNode node : root.getChildren()) {
 			Element element = canvas.getSourceCtx().getElement( node.getGraphicsNode() );
-			if( element != null && hasClass( element, "keyframe" ) ) {
+			if( element != null && hasClass( element, Classes.KEYFRAME ) ) {
 				VisibilityHelper.setDisplayToInline(element);
 				double time = 0;
 				try {
@@ -152,8 +154,8 @@ public class Library {
 		int numberOfKeyframes = keyframes.size();
 		int lastKeyframe = numberOfKeyframes-1;
 		
-		// Set up limb tweening for all keyframes.
-		// The transformation of the feet and body will mess up the the limb positions,
+		// Set up jointedLimb tweening for all keyframes.
+		// The transformation of the feet and body will mess up the the jointedLimb positions,
 		// so they need to be saved in advance.
 		for(Keyframe keyframe : keyframes) {
 			for( Skeleton skeleton : keyframe.getSkeletonKeys().keySet() )
@@ -289,7 +291,7 @@ public class Library {
 		NodeList list = symbolElement.getChildNodes();
 		for (int i=0; i<list.getLength(); i++) {
 			Node node = list.item( i );
-			if( node instanceof Element ) {
+			if( node.getNodeType() == Node.ELEMENT_NODE ) {
 				Element child = (Element) node;
 				if( child.getAttributeNS( INKSCAPE_URI, INKSCAPE_GROUPMODE ).equals( INKSCAPE_LAYER ) ) {
 					layerIds.add( child.getAttribute( "id" ) );
@@ -305,7 +307,7 @@ public class Library {
 	private HashMap<String,Skeleton> extractModelsFromDeclaration( CanvasNode referencingFrame ) {
 		HashMap<String,Skeleton> modelsByName = new HashMap<String,Skeleton>();
 		SVGElement frameElement = (SVGElement) referencingFrame.getCanvas().getSourceDoc().getElementById( referencingFrame.getSymbolId() );
-		String modelReferences = frameElement.getAttribute("model");
+		String modelReferences = frameElement.getAttribute(Attributes.MODEL);
 		if( modelReferences == null || "".equals( modelReferences ) ) {
 			return modelsByName;
 		}
