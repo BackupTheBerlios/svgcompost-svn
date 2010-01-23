@@ -5,10 +5,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.zip.DataFormatException;
 
 import javax.xml.XMLConstants;
@@ -27,6 +29,9 @@ import org.apache.batik.util.SVGConstants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.flagstone.transform.FSAction;
+import com.flagstone.transform.FSActionObject;
+import com.flagstone.transform.FSClipEvent;
 import com.flagstone.transform.FSColor;
 import com.flagstone.transform.FSCoordTransform;
 import com.flagstone.transform.FSCurve;
@@ -34,6 +39,7 @@ import com.flagstone.transform.FSDefineMovieClip;
 import com.flagstone.transform.FSDefineShape;
 import com.flagstone.transform.FSDefineShape2;
 import com.flagstone.transform.FSDefineShape3;
+import com.flagstone.transform.FSDoAction;
 import com.flagstone.transform.FSExport;
 import com.flagstone.transform.FSFillStyle;
 import com.flagstone.transform.FSFrameLabel;
@@ -44,12 +50,15 @@ import com.flagstone.transform.FSLineStyle;
 import com.flagstone.transform.FSMovie;
 import com.flagstone.transform.FSMovieObject;
 import com.flagstone.transform.FSPlaceObject2;
+import com.flagstone.transform.FSPush;
 import com.flagstone.transform.FSRemoveObject2;
 import com.flagstone.transform.FSSetBackgroundColor;
 import com.flagstone.transform.FSShape;
 import com.flagstone.transform.FSShapeStyle;
 import com.flagstone.transform.FSSolidFill;
 import com.flagstone.transform.FSSolidLine;
+import com.flagstone.transform.FSTable;
+import com.flagstone.transform.FSTableIndex;
 import com.flagstone.transform.FSTransformObject;
 import com.flagstone.transform.Transform;
 
@@ -145,6 +154,10 @@ public class SWF2SVG {
 				parseSymbol( innerSymbol, movieClip.getObjects() );
 				defs.appendChild(innerSymbol);
 				break;
+			case FSMovieObject.DoAction:
+				FSDoAction doAction = (FSDoAction) swfObject;
+				parseActions( doAction.getActions() );
+				break;
 			case FSMovieObject.PlaceObject2:
 				// Set a new item on the display list.
 				parsePlaceObject2((FSPlaceObject2)swfObject,displayList);
@@ -167,7 +180,99 @@ public class SWF2SVG {
 				break;
 
 			default:
-				System.out.println( "Not implemented: "+swfObject.getType()+" ("+swfObject.getClass()+")" );
+				System.out.println( "Not implemented: "+swfObject.name() );
+				break;
+			}
+		}
+	}
+
+	protected void parseActions(List<FSActionObject> actions) {
+		FSTable table = null;
+		Stack<Object> stack = new Stack<Object>();
+		String variable = null;
+		for (Iterator<FSActionObject> iterator = actions.iterator(); iterator.hasNext();) {
+			FSActionObject action = (FSActionObject) iterator.next();
+//			System.out.println( "Action type is "+action.name() );
+			switch (action.getType()) {
+			
+			case FSActionObject.Table:
+				table = (FSTable) action;
+				break;
+			case FSActionObject.Push:
+				FSPush push = (FSPush) action;
+				List<Object> pushList = push.getValues();
+				for (Object object : pushList) {
+					if( object instanceof FSTableIndex ) {
+						FSTableIndex index = (FSTableIndex) object;
+						Object value = table.getValues().get(index.getIndex());
+						stack.push(value);
+					}
+					else {
+						stack.push(object);
+					}
+				}
+				break;
+			case FSAction.ExecuteMethod: {
+				String methodName = stack.pop().toString();
+				String variableName = stack.pop().toString();
+				int numArgs = (Integer) stack.pop();
+				Object[] args = new Object[numArgs];
+				for (int i = numArgs-1; i >= 0; i--) {
+					args[i] = stack.pop();
+				}
+				System.out.print( "ExecuteMethod "+variableName+"."+methodName+"(" );
+				for (int i = 0; i < args.length; i++) {
+					System.out.print(args[i]);
+					if( i < args.length-1 )
+						System.out.print(",");
+				}
+				System.out.println(")");
+				// Push result on stack.
+				stack.push(null);
+				break;
+			}
+			case FSAction.NewObject: {
+				Integer numArgs = (Integer) stack.pop();
+				Map<String,Object> args = new HashMap<String,Object>();
+				for (int i = numArgs-1; i >= 0; i--) {
+					Object argValue = stack.pop();
+					String argName = stack.pop().toString();
+					args.put(argName, argValue);
+				}
+				// Invoke constructor.
+				stack.push( args );
+				break;
+			}
+			case FSAction.SetAttribute: {
+				String attributeValue = stack.pop().toString();
+				String attributeName = stack.pop().toString();
+				String variableName = stack.pop().toString();
+				System.out.println("SetAttribute "+variableName+"."+attributeName+" = "+attributeValue);
+				break;
+			}
+			case FSAction.GetVariable:
+				// Pop name from stack and push variable onto stack.
+				// Here, both are the same, since we are not actually executing a script.
+				break;
+			case FSAction.SetVariable:
+				String variableValue = stack.pop().toString();
+				String variableName = stack.pop().toString();
+				System.out.println("SetVariable "+variableName+" = "+variableValue);
+				break;
+			case FSAction.Pop:
+				stack.pop();
+				break;
+			case FSAction.End:
+				// End of actions.
+				break;
+
+			case FSActionObject.Call:
+			case FSActionObject.ExceptionHandler:
+			case FSActionObject.SetTarget:
+			case FSActionObject.With:
+			case FSAction.GetAttribute:
+			default:
+				System.out.println("Not implemented: action type "+action.name());
 				break;
 			}
 		}
@@ -236,6 +341,12 @@ public class SWF2SVG {
 		int id = placeObject.getIdentifier();
 		String name = placeObject.getName();
 		FSCoordTransform transform = placeObject.getTransform();
+		
+		List<FSClipEvent> events = placeObject.getClipEvents();
+		if( events != null ) {
+			for (FSClipEvent clipEvent : events)
+				parseActions(clipEvent.getActions());
+		}
 
 		DisplayItem item = new DisplayItem( displayList.size() <= layer ? null : displayList.get(layer) );
 
