@@ -18,7 +18,6 @@ package de.berlios.svgcompost.part;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
-import java.awt.geom.Point2D;
 import java.util.List;
 
 import org.apache.batik.bridge.BridgeContext;
@@ -189,7 +188,6 @@ implements EventListener  {
 	protected float[] calcCrosshair() {
     	float[] rootOrigin = new float[2];
     	AffineTransform transform = ctx.getGraphicsNode(editRoot).getGlobalTransform();
-    	System.out.println( "transform = "+transform );
     	transform.transform(origin, 0, rootOrigin, 0, 1);
     	return rootOrigin;
 	}

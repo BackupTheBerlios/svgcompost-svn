@@ -55,7 +55,7 @@ public class InsertElementCommand extends Command {
 	@Override
 	public void execute() {
 		if( canExecute() ) {
-			ElementTraversalHelper.insertAt(parent, newChild, newPosition );
+			ElementTraversalHelper.insertNodeAt(parent, newChild, newPosition );
 			((AbstractElement)parent).dispatchEvent(new EditEvent(this, EditEvent.INSERT, null, newChild));
 		}
 	}

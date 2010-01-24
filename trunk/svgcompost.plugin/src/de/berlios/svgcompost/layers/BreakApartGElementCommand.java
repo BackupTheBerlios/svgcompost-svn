@@ -65,13 +65,13 @@ public class BreakApartGElementCommand extends Command {
 				transforms.put(childElement,ElementTraversalHelper.getTransform(childElement));
 				AffineTransform transform = ctx.getGraphicsNode(childElement).getGlobalTransform();
 				node.removeChild(childElement);
-				ElementTraversalHelper.insertAt(parentNode,childElement,indexCount++);
+				ElementTraversalHelper.insertNodeAt(parentNode,childElement,indexCount++);
 				transform.preConcatenate( parentTransformInverse );
 				ElementTraversalHelper.setTransform(childElement,transform,ctx);
 			}
 			else {
 				node.removeChild(childNode);
-				ElementTraversalHelper.insertAt(parentNode,childNode,index++);
+				ElementTraversalHelper.insertNodeAt(parentNode,childNode,index++);
 			}
 		}
 		parentNode.removeChild(node);
@@ -87,7 +87,7 @@ public class BreakApartGElementCommand extends Command {
 		for( Node child : children ) {
 			child.getParentNode().removeChild(child);
 		}
-		ElementTraversalHelper.insertAt(parentNode,node,index);
+		ElementTraversalHelper.insertNodeAt(parentNode,node,index);
 		ElementTraversalHelper.setTransform(node,transform,ctx);
 		for (int i = 0; i < children.size(); i++) {
 			Node child = children.get(i);
@@ -98,7 +98,7 @@ public class BreakApartGElementCommand extends Command {
 		}
 		// FIXME: Has to be removed and added again to make the change visible
 		parentNode.removeChild(node);
-		ElementTraversalHelper.insertAt(parentNode,node,index);
+		ElementTraversalHelper.insertNodeAt(parentNode,node,index);
 		ElementTraversalHelper.setTransform(node, transform, ctx);
 		((AbstractElement)parentNode).dispatchEvent(new EditEvent(this, EditEvent.REMOVE, parentNode, parentNode));
 	}

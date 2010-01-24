@@ -15,7 +15,7 @@ public class ChangeNodeOrderCommand extends Command {
 	
 	public ChangeNodeOrderCommand(Element node, int direction) {
 		this.node = node;
-		oldPosition = ElementTraversalHelper.indexOf( node.getParentNode(), node );
+		oldPosition = ElementTraversalHelper.indexOfNode( node.getParentNode(), node );
 		newPosition = oldPosition + direction;
 	}
 	

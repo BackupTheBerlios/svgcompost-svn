@@ -1,12 +1,15 @@
 package de.berlios.svgcompost.layers;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
+import de.berlios.svgcompost.plugin.SVGCompostPlugin;
+
 public class LowerNodeAction extends RaiseNodeAction {
 
-	public static String LOWER_NODE = "Action.LowerNode";
+	public static String LOWER_NODE = "SVGCompost.LowerNode";
 
 	public LowerNodeAction(IWorkbenchPart part) {
 		super(part);
@@ -15,12 +18,11 @@ public class LowerNodeAction extends RaiseNodeAction {
 	@Override
 	protected void init() {
 		super.init();
-		ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
 		setText("Lower Node");
 		setId(LOWER_NODE);
-		setHoverImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
-		setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
-		setDisabledImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_BACK_DISABLED));
+		setHoverImageDescriptor(ImageDescriptor.createFromURL(SVGCompostPlugin.getDefault().getBundle().getResource("icons/down.gif")));
+		setImageDescriptor(ImageDescriptor.createFromURL(SVGCompostPlugin.getDefault().getBundle().getResource("icons/down.gif")));
+		setDisabledImageDescriptor(ImageDescriptor.createFromURL(SVGCompostPlugin.getDefault().getBundle().getResource("icons/down.gif")));
 		setEnabled(false);
 	}
 	

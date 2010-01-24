@@ -85,9 +85,7 @@ import de.berlios.svgcompost.copy.CopyAction;
 import de.berlios.svgcompost.copy.DeleteAction;
 import de.berlios.svgcompost.copy.PasteAction;
 import de.berlios.svgcompost.layers.BreakApartAction;
-import de.berlios.svgcompost.layers.FlipBackwardAction;
-import de.berlios.svgcompost.layers.FlipForwardAction;
-import de.berlios.svgcompost.layers.HideShowLayersAction;
+import de.berlios.svgcompost.layers.GroupAction;
 import de.berlios.svgcompost.layers.LowerNodeAction;
 import de.berlios.svgcompost.layers.RaiseNodeAction;
 import de.berlios.svgcompost.part.BackgroundPart;
@@ -141,10 +139,11 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette implements IDoub
 		keyHandler.put( KeyStroke.getPressed( SWT.PAGE_DOWN, 0), registry.getAction(LowerNodeAction.LOWER_NODE));
 		keyHandler.put( KeyStroke.getPressed( SWT.PAGE_UP, 0), registry.getAction(RaiseNodeAction.RAISE_NODE));
 		keyHandler.put( KeyStroke.getPressed( SWT.DEL, 0), registry.getAction(ActionFactory.DELETE.getId()));
-		keyHandler.put( KeyStroke.getPressed( 'h', 0x68, 0), registry.getAction(HideShowLayersAction.HIDE_SHOW_LAYERS));
-		keyHandler.put( KeyStroke.getPressed( 'l', 0x6c, 0), registry.getAction(FlipForwardAction.FLIP_FORWARD));
-		keyHandler.put( KeyStroke.getPressed( 'k', 0x6b, 0), registry.getAction(FlipBackwardAction.FLIP_BACKWARD));
+//		keyHandler.put( KeyStroke.getPressed( 'h', 0x68, 0), registry.getAction(HideShowLayersAction.HIDE_SHOW_LAYERS));
+//		keyHandler.put( KeyStroke.getPressed( 'l', 0x6c, 0), registry.getAction(FlipForwardAction.FLIP_FORWARD));
+//		keyHandler.put( KeyStroke.getPressed( 'k', 0x6b, 0), registry.getAction(FlipBackwardAction.FLIP_BACKWARD));
 		keyHandler.put( KeyStroke.getPressed( 'b', 0x62, 0), registry.getAction(BreakApartAction.BREAK_APART));
+		keyHandler.put( KeyStroke.getPressed( 'g', 0x62, 0), registry.getAction(GroupAction.GROUP));
 
 		viewer.setKeyHandler(keyHandler);
 
@@ -173,10 +172,11 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette implements IDoub
 		registerAction( new DeleteAction(this) );
 		registerAction( new RaiseNodeAction(this) );
 		registerAction( new LowerNodeAction(this) );
-		registerAction( new HideShowLayersAction(this) );
-		registerAction( new FlipForwardAction(this) );
-		registerAction( new FlipBackwardAction(this) );
+//		registerAction( new HideShowLayersAction(this) );
+//		registerAction( new FlipForwardAction(this) );
+//		registerAction( new FlipBackwardAction(this) );
 		registerAction( new BreakApartAction(this) );
+		registerAction( new GroupAction(this) );
 		}
 	
 	protected void registerAction( IAction action ) {

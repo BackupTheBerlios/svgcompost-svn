@@ -18,12 +18,18 @@ package de.berlios.svgcompost.provider;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.actions.ActionFactory;
 
 import org.eclipse.gef.ContextMenuProvider;
 import org.eclipse.gef.EditPartViewer;
 import org.eclipse.gef.ui.actions.ActionRegistry;
 import org.eclipse.gef.ui.actions.GEFActionConstants;
+
+import de.berlios.svgcompost.layers.BreakApartAction;
+import de.berlios.svgcompost.layers.GroupAction;
+import de.berlios.svgcompost.layers.LowerNodeAction;
+import de.berlios.svgcompost.layers.RaiseNodeAction;
 
 
 /**
@@ -43,10 +49,15 @@ public class SVGEditorContextMenuProvider extends ContextMenuProvider {
 
 	public void buildContextMenu(IMenuManager menu) {
 		GEFActionConstants.addStandardActionGroups(menu);
+		menu.add(new Separator(GEFActionConstants.GROUP_REORGANIZE));
 
 		menu.appendToGroup( GEFActionConstants.GROUP_UNDO, getAction(ActionFactory.UNDO.getId()));
 		menu.appendToGroup( GEFActionConstants.GROUP_UNDO, getAction(ActionFactory.REDO.getId()));
 		menu.appendToGroup( GEFActionConstants.GROUP_EDIT, getAction(ActionFactory.DELETE.getId()));
+		menu.appendToGroup( GEFActionConstants.GROUP_REORGANIZE, getAction(GroupAction.GROUP));
+		menu.appendToGroup( GEFActionConstants.GROUP_REORGANIZE, getAction(GroupAction.GROUP));
+		menu.appendToGroup( GEFActionConstants.GROUP_REORGANIZE, getAction(RaiseNodeAction.RAISE_NODE));
+		menu.appendToGroup( GEFActionConstants.GROUP_REORGANIZE, getAction(LowerNodeAction.LOWER_NODE));
 	}
 
 	private IAction getAction(String actionId) {

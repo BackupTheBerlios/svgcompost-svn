@@ -17,7 +17,7 @@ import org.w3c.dom.NodeList;
 
 public class ElementTraversalHelper {
 	
-	public static int indexOf( Node parent, Node child ) {
+	public static int indexOfNode( Node parent, Node child ) {
 		NodeList list = parent.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
 			if( list.item(i).equals( child ) )
@@ -26,9 +26,11 @@ public class ElementTraversalHelper {
 		return -1;
 	}
 	
-	public static void insertAt( Element parent, Node child, int index ) {
+	public static void insertNodeAt( Node parent, Node child, int index ) {
 		NodeList list = parent.getChildNodes();
-		if( list.getLength() <= index )
+		if( list.getLength() > index )
+			throw new IndexOutOfBoundsException("Cannot insert XML node at position "+index+" into parent with "+list.getLength()+" child nodes.");
+		else if( list.getLength() == index )
 			parent.appendChild(child);
 		else
 			parent.insertBefore(child, list.item(index));

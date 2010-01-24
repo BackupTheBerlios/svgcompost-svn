@@ -21,7 +21,7 @@ public class DeleteCommand extends Command {
 		if( parent == null )
 			return;
 		list.add(node);
-		indices.add( ElementTraversalHelper.indexOf(parent,node) );
+		indices.add( ElementTraversalHelper.indexOfNode(parent,node) );
 		parents.add(parent);
 	}
 
@@ -51,7 +51,7 @@ public class DeleteCommand extends Command {
 	public void undo() {
 		for (int i = 0; i < list.size(); i++) {
 			Element parent = parents.get(i);
-			ElementTraversalHelper.insertAt( parent, list.get(i), indices.get(i) );
+			ElementTraversalHelper.insertNodeAt( parent, list.get(i), indices.get(i) );
 			((AbstractElement)parent).dispatchEvent(new EditEvent(this, EditEvent.INSERT, parent, parent));
 		}
 	}
