@@ -33,7 +33,7 @@ public class NewKeyframeHandler extends AbstractHandler implements IHandler {
 		SVGGraphicsElement element = (SVGGraphicsElement) keyframe;
 		Element clone = (Element) element.cloneNode(true);
 		LinkHelper.changeIds(clone, element.getOwnerDocument());
-		int index = ElementTraversalHelper.indexOf(layer,keyframe);
+		int index = ElementTraversalHelper.indexOfNode(layer,keyframe);
 //		ElementTraversalHelper.insertAt(layer, clone, index+1);
 		// TODO: use Command
 		Command cmd = new InsertElementCommand(layer,clone,index+1);
