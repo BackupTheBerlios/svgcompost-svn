@@ -47,7 +47,7 @@ public class ElementTraversalHelper {
 //		firePropertyChange(CHANGE_ORDER, oldIndex, newIndex);
 	}
 
-	public static List<Element> getChildElements( Element parent ) {
+	public static List<Element> getChildElements( Node parent ) {
 		List<Element> elements = new ArrayList<Element>();
 		NodeList list = parent.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {

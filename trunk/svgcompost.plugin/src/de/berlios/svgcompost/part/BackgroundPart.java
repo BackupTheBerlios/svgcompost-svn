@@ -18,6 +18,7 @@ package de.berlios.svgcompost.part;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
+import java.awt.geom.Point2D;
 import java.util.List;
 
 import org.apache.batik.bridge.BridgeContext;
@@ -82,6 +83,7 @@ implements EventListener  {
 
 	public void setEditRoot(SVGOMElement root) {
 		editRoot = root;
+		setModel(editRoot);
     	bgFigure.setCrosshair( calcCrosshair() );
 		refreshChildren();
 	}
@@ -89,6 +91,7 @@ implements EventListener  {
 	public BackgroundPart(Element backgroundElement, BridgeContext ctx) {
 		super();
 		this.editRoot = backgroundElement;
+		setModel(editRoot);
 		this.ctx = ctx;
 	}
 
@@ -147,7 +150,11 @@ implements EventListener  {
 			@Override
 			protected Command getCreateCommand(CreateRequest request) {
 				Object childClass = request.getNewObjectType();
+				request.getExtendedData();
 				if ( childClass.equals( Element.class ) ) {
+					return new InsertElementCommand((Element)getHost().getModel(),(Element)request.getNewObject(),(Rectangle)getConstraintFor(request));
+				}
+				else if ( childClass.equals( Point2D.Float.class ) ) {
 					return new InsertElementCommand((Element)getHost().getModel(),(Element)request.getNewObject(),(Rectangle)getConstraintFor(request));
 				}
 				return null;

@@ -30,6 +30,7 @@ import org.w3c.dom.svg.SVGEllipseElement;
 import org.w3c.dom.svg.SVGRectElement;
 
 import de.berlios.svgcompost.freetransform.FreeTransformTool;
+import de.berlios.svgcompost.freetransform.SetOriginTool;
 import de.berlios.svgcompost.plugin.SVGCompostPlugin;
 
 
@@ -54,6 +55,8 @@ public class SVGEditorPaletteFactory {
 				ImageDescriptor.createFromURL(SVGCompostPlugin.getDefault().getBundle().getResource("icons/rectangle16.gif")), 
 				ImageDescriptor.createFromURL(SVGCompostPlugin.getDefault().getBundle().getResource("icons/rectangle16.gif"))); 
 		componentsDrawer.add(component);
+		ToolEntry setOriginEntry = new ToolEntry("Set Origin", "Set a new origin while keeping everything in place", null, null, SetOriginTool.class){};
+		componentsDrawer.add(setOriginEntry);
 		
 		return componentsDrawer;
 	}

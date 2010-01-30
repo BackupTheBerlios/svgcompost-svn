@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.batik.dom.util.XLinkSupport;
+import org.apache.batik.util.SVGConstants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -26,8 +28,9 @@ import de.berlios.svgcompost.animation.anim.easing.Quadratic;
 import de.berlios.svgcompost.animation.timeline.Keyframe;
 import de.berlios.svgcompost.animation.timeline.Layer;
 import de.berlios.svgcompost.animation.timeline.Timeline;
-import de.berlios.svgcompost.animation.util.xml.Attributes;
 import de.berlios.svgcompost.animation.util.xml.Classes;
+import de.berlios.svgcompost.animation.util.xml.SVGCompostElements;
+import de.berlios.svgcompost.util.ElementTraversalHelper;
 import de.berlios.svgcompost.util.VisibilityHelper;
 
 public class Library {
@@ -132,7 +135,7 @@ public class Library {
 	}
 
 	public Parallel createWalkAnim( Layer layer, String modelName, Point2D.Float start, Point2D.Float end ) {
-		Skeleton model = getModel(modelName);
+		Skeleton model = getModel_old(modelName);
 		List<Keyframe> keyframes = layer.getKeyframes();
 		return createWalkAnim(keyframes, model, start, end);
 	}
@@ -260,11 +263,35 @@ public class Library {
 	}
 
 	/**
-	 * Creates a new model skeleton by parsing the hierarchy of a graphics node
-	 * with the specified id.
+	 * Checks a reference to a skeleton.
+	 * If the skeleton is not yet active in the library, it is created
+	 * from the referenced XML element.
 	 * @param modelName The id of the SVG element representing the model.
 	 */
-	public Skeleton getModel( String modelReference ) {
+	public Skeleton getModel( Element useElement ) {
+		String modelReference = null;
+		
+		if( useElement.hasAttributeNS(XLinkSupport.XLINK_NAMESPACE_URI, SVGConstants.SVG_HREF_ATTRIBUTE) )
+			modelReference = useElement.getAttributeNS(XLinkSupport.XLINK_NAMESPACE_URI, SVGConstants.SVG_HREF_ATTRIBUTE);
+		else if( useElement.hasAttributeNS(XLinkSupport.XLINK_NAMESPACE_URI, "xlink:href") )
+			modelReference = useElement.getAttributeNS(XLinkSupport.XLINK_NAMESPACE_URI, "xlink:href");
+		
+		String prefix = useElement.getAttributeNS(null, SVGCompostElements.PREFIX);
+		boolean makeCamelCase = useElement.getAttributeNS(null, SVGCompostElements.MAKECAMELCASE).equals("true");
+		int index = modelReference.indexOf("#"); 
+		String modelName = index == -1 ? modelReference : modelReference.substring(index+1);
+		Skeleton model = models.get( modelName );
+		if( model != null )
+			return model;
+
+		Element modelElement = libraryCanvas.resolve(modelReference, null);
+		model = new SkeletonFactory().createSkeleton( modelElement, prefix, makeCamelCase );
+		
+		models.put(modelName, model);
+		return model;
+	}
+
+	public Skeleton getModel_old( String modelReference ) {
 		int index = modelReference.indexOf("#"); 
 		String modelName = index == -1 ? modelReference : modelReference.substring(index+1);
 		Skeleton model = models.get( modelName );
@@ -307,19 +334,34 @@ public class Library {
 	private HashMap<String,Skeleton> extractModelsFromDeclaration( CanvasNode referencingFrame ) {
 		HashMap<String,Skeleton> modelsByName = new HashMap<String,Skeleton>();
 		SVGElement frameElement = (SVGElement) referencingFrame.getCanvas().getSourceDoc().getElementById( referencingFrame.getSymbolId() );
-		String modelReferences = frameElement.getAttribute(Attributes.MODEL);
-		if( modelReferences == null || "".equals( modelReferences ) ) {
-			return modelsByName;
-		}
-		String[] skeletons = modelReferences.split(" ");
-		
-		for (int i = 0; i < skeletons.length; i++) {
-			String skeletonReference = skeletons[i];
-			Skeleton model = getModel(skeletonReference);
-			modelsByName.put( model.getName(), model );
+		List<Element> childElements = ElementTraversalHelper.getChildElements(frameElement);
+		for (Element element : childElements) {
+			String elementName = element.getLocalName();
+			String namespaceUri = element.getNamespaceURI();
+			if( namespaceUri.equals(SVGCompostElements.SVGCOMPOST_NAMESPACE_URI) && elementName.equals(SVGCompostElements.USESKELETON) ) {
+				Skeleton model = getModel(element);
+				modelsByName.put( model.getName(), model );
+			}
 		}
 		return modelsByName;
 	}
+	
+//	private HashMap<String,Skeleton> extractModelsFromDeclaration_old( CanvasNode referencingFrame ) {
+//		HashMap<String,Skeleton> modelsByName = new HashMap<String,Skeleton>();
+//		SVGElement frameElement = (SVGElement) referencingFrame.getCanvas().getSourceDoc().getElementById( referencingFrame.getSymbolId() );
+//		String modelReferences = frameElement.getAttribute(Attributes.MODEL);
+//		if( modelReferences == null || "".equals( modelReferences ) ) {
+//			return modelsByName;
+//		}
+//		String[] skeletons = modelReferences.split(" ");
+//		
+//		for (int i = 0; i < skeletons.length; i++) {
+//			String skeletonReference = skeletons[i];
+//			Skeleton model = getModel_old(skeletonReference);
+//			modelsByName.put( model.getName(), model );
+//		}
+//		return modelsByName;
+//	}
 	
 	/**
 	 * Adds a new animation sequence for each model to the given parallel animation.

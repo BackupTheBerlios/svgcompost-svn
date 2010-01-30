@@ -55,7 +55,7 @@ public class SVGEditorContextMenuProvider extends ContextMenuProvider {
 		menu.appendToGroup( GEFActionConstants.GROUP_UNDO, getAction(ActionFactory.REDO.getId()));
 		menu.appendToGroup( GEFActionConstants.GROUP_EDIT, getAction(ActionFactory.DELETE.getId()));
 		menu.appendToGroup( GEFActionConstants.GROUP_REORGANIZE, getAction(GroupAction.GROUP));
-		menu.appendToGroup( GEFActionConstants.GROUP_REORGANIZE, getAction(GroupAction.GROUP));
+		menu.appendToGroup( GEFActionConstants.GROUP_REORGANIZE, getAction(BreakApartAction.BREAK_APART));
 		menu.appendToGroup( GEFActionConstants.GROUP_REORGANIZE, getAction(RaiseNodeAction.RAISE_NODE));
 		menu.appendToGroup( GEFActionConstants.GROUP_REORGANIZE, getAction(LowerNodeAction.LOWER_NODE));
 	}
