@@ -95,6 +95,7 @@ import de.berlios.svgcompost.provider.SVGDropTargetListener;
 import de.berlios.svgcompost.provider.SVGEditorContextMenuProvider;
 import de.berlios.svgcompost.provider.SVGEditorPaletteFactory;
 import de.berlios.svgcompost.provider.SVGTreeOutlinePage;
+import de.berlios.svgcompost.util.TransformFlowtextFactory;
 
 
 /**
@@ -316,7 +317,7 @@ public class SVGEditor extends GraphicalEditorWithFlyoutPalette implements IDoub
 		}
 
         String xmlReaderClassName = XMLResourceDescriptor.getXMLParserClassName();
-		SAXSVGDocumentFactory docFactory = new SAXSVGDocumentFactory(xmlReaderClassName);
+		SAXSVGDocumentFactory docFactory = new TransformFlowtextFactory(xmlReaderClassName);
 
 		try {
 			// Parse SVG document.
