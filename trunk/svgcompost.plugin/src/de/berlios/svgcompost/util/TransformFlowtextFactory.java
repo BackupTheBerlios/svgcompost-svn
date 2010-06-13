@@ -37,7 +37,7 @@ public class TransformFlowtextFactory extends SAXSVGDocumentFactory {
 	@Override
 	public void startElement(String uri, String localName, String rawName,
 			Attributes attributes) throws SAXException {
-		System.out.println("TransformFlowtextFactory.startElement("+rawName+")");
+//		System.out.println("TransformFlowtextFactory.startElement("+rawName+")");
 //		
 //		System.out.println("currentNode = "+currentNode);
 		
@@ -97,7 +97,7 @@ public class TransformFlowtextFactory extends SAXSVGDocumentFactory {
 	@Override
 	public void endElement(String uri, String localName, String rawName)
 			throws SAXException {
-		System.out.println("TransformFlowtextFactory.endElement("+rawName+")");
+//		System.out.println("TransformFlowtextFactory.endElement("+rawName+")");
 		
 		if( currentNode != null
 //		&& currentNode.getNodeType() == Node.TEXT_NODE

@@ -21,7 +21,8 @@ Require-Bundle: org.eclipse.ui,
  svgcompost.plugin;bundle-version="0.0.1",
  org.eclipse.gef;bundle-version="3.4.1",
  org.eclipse.ui.views;bundle-version="3.3.0",
- org.eclipse.ui.ide;bundle-version="3.4.1"
+ org.eclipse.ui.ide;bundle-version="3.4.1",
+ svgcompost.swf;bundle-version="0.0.1"
 Bundle-ActivationPolicy: lazy
 Bundle-Version: 0.0.1
 Bundle-Name: AnimPlugin

@@ -143,4 +143,30 @@
             name="SVGCompost">
       </perspective>
    </extension>
+<extension point="org.eclipse.ui.newWizards">
+    <category
+	   id = "org.eclipse.ui.examples.svgcompost"
+	   parentCategory="org.eclipse.ui.Examples"
+	   name="SVG">
+	</category>
+  <wizard
+        category="org.eclipse.ui.Examples/org.eclipse.ui.examples.svgcompost"
+        class="org.eclipse.emf.common.ui.wizard.ExampleInstallerWizard"
+        icon="icons/svg.gif"
+        id="svgcompost.example.wizard"
+        name="SVG Examples"
+        project="true">
+    <description>sample SVG files</description>
+    
+  </wizard>
+</extension>
+<extension point="org.eclipse.emf.common.ui.examples">
+  <example wizardID="svgcompost.example.wizard"
+           pageImage="icons/svg.gif">
+    <projectDescriptor name="svglogo"
+           contentURI="res/svglogo.zip" 
+           description="The SVG logo"/>
+  </example>
+</extension>
+
 </plugin>

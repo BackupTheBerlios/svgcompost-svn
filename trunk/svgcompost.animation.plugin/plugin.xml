@@ -5,7 +5,7 @@
 		<objectContribution
 			adaptable="true"
 			objectClass="org.eclipse.core.resources.IResource"
-			id="com.ibm.scm.docuengine.popupBuild">
+			id="de.berlios.svgcompost.popupBuild">
 		<visibility>
 		<and>
 			<objectClass name="org.eclipse.core.resources.IFile"/>
@@ -19,6 +19,25 @@
 			enablesFor="1"
 			icon="icons/sample.gif"
 			id="de.berlios.svgcompost.animation.plugin.SWFBuildAction">
+		</action>
+		</objectContribution>
+		<objectContribution
+			adaptable="true"
+			objectClass="org.eclipse.core.resources.IResource"
+			id="de.berlios.svgcompost.popupBuild">
+		<visibility>
+		<and>
+			<objectClass name="org.eclipse.core.resources.IFile"/>
+			<objectState name="extension" value="swf"/>
+		</and>
+		</visibility>
+		<action
+			label="Build SVG File"
+			class="de.berlios.svgcompost.animation.plugin.SWF2SVGBuildAction"
+			menubarPath="swf"
+			enablesFor="1"
+			icon="icons/sample.gif"
+			id="de.berlios.svgcompost.animation.plugin.SWF2SVGBuildAction">
 		</action>
 		</objectContribution>
 	</extension>
