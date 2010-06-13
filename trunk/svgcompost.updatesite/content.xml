@@ -3,9 +3,9 @@
 <repository name='file:/D:/workspaces/workspace-modeling/svgcompost.updatesite/ - metadata' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1.0.0'>
   <properties size='2'>
     <property name='p2.compressed' value='false'/>
-    <property name='p2.timestamp' value='1260025854890'/>
+    <property name='p2.timestamp' value='1276464312750'/>
   </properties>
-  <units size='10'>
+  <units size='11'>
     <unit id='tooling.source.default' version='1.0.0' singleton='false'>
       <hostRequirements size='1'>
         <required namespace='org.eclipse.equinox.p2.eclipse.type' name='source' range='0.0.0' optional='true' multiple='true' greedy='false'/>
@@ -423,6 +423,51 @@
         <provided namespace='java.package' name='org.xml.sax.helpers' version='0.0.0'/>
       </provides>
       <touchpoint id='org.eclipse.equinox.p2.native' version='1.0.0'/>
+    </unit>
+    <unit id='svgcompost.swf' version='0.0.1' singleton='false'>
+      <update id='svgcompost.swf' range='[0.0.0,0.0.1)' severity='0'/>
+      <properties size='1'>
+        <property name='org.eclipse.equinox.p2.name' value='SWF Import and Export for SVG'/>
+      </properties>
+      <provides size='4'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='svgcompost.swf' version='0.0.1'/>
+        <provided namespace='osgi.bundle' name='svgcompost.swf' version='0.0.1'/>
+        <provided namespace='java.package' name='de.berlios.svgcompost.swf' version='0.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='20'>
+        <required namespace='osgi.bundle' name='org.apache.batik.bridge' range='1.6.0'/>
+        <required namespace='osgi.bundle' name='org.apache.batik.css' range='1.6.0'/>
+        <required namespace='osgi.bundle' name='org.apache.batik.dom' range='1.6.0'/>
+        <required namespace='osgi.bundle' name='org.apache.batik.dom.svg' range='1.6.0'/>
+        <required namespace='osgi.bundle' name='org.apache.batik.parser' range='1.6.0'/>
+        <required namespace='osgi.bundle' name='org.apache.batik.svggen' range='1.6.0'/>
+        <required namespace='osgi.bundle' name='org.apache.batik.transcoder' range='1.6.0'/>
+        <required namespace='osgi.bundle' name='org.apache.batik.util' range='1.6.0'/>
+        <required namespace='osgi.bundle' name='org.apache.batik.xml' range='1.6.0'/>
+        <required namespace='osgi.bundle' name='org.apache.batik.ext.awt' range='1.6.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.resources' range='3.4.1'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='3.4.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jface' range='3.4.1'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui' range='3.4.1'/>
+        <required namespace='osgi.bundle' name='com.flagstone.transform' range='0.0.1'/>
+        <required namespace='osgi.bundle' name='org.w3c.dom.svg' range='1.1.0'/>
+        <required namespace='osgi.bundle' name='org.w3c.css.sac' range='1.3.0'/>
+        <required namespace='osgi.bundle' name='org.apache.xml.serializer' range='2.7.1'/>
+        <required namespace='osgi.bundle' name='org.apache.xerces' range='2.9.0'/>
+        <required namespace='osgi.bundle' name='org.apache.xml.resolver' range='1.2.0'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='svgcompost.swf' version='0.0.1'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-ManifestVersion: 2&#xA;Bundle-Version: 0.0.1&#xA;Export-Package: de.berlios.svgcompost.swf&#xA;Require-Bundle: org.apache.batik.bridge;bundle-version=&quot;1.6.0&quot;,org.apache.batik.css;bundle-version=&quot;1.6.0&quot;,org.apache.batik.dom;bundle-version=&quot;1.6.0&quot;,org.apache.batik.dom.svg;bundle-version=&quot;1.6.0&quot;,org.apache.batik.parser;bundle-version=&quot;1.6.0&quot;,org.apache.batik.svggen;bundle-version=&quot;1.6.0&quot;,org.apache.batik.transcoder;bundle-version=&quot;1.6.0&quot;,org.apache.batik.util;bundle-version=&quot;1.6.0&quot;,org.apache.batik.xml;bundle-version=&quot;1.6.0&quot;,org.apache.batik.ext.awt;bundle-version=&quot;1.6.0&quot;,org.eclipse.core.resources;bundle-version=&quot;3.4.1&quot;,org.eclipse.core.runtime;bundle-version=&quot;3.4.0&quot;,org.eclipse.jface;bundle-version=&quot;3.4.1&quot;,org.eclipse.ui;bundle-version=&quot;3.4.1&quot;,com.flagstone.transform;bundle-version=&quot;0.0.1&quot;,org.w3c.dom.svg;bundle-version=&quot;1.1.0&quot;,org.w3c.css.sac;bundle-version=&quot;1.3.0&quot;,org.apache.xml.serializer;bundle-version=&quot;2.7.1&quot;,org.apache.xerces;bundle-version=&quot;2.9.0&quot;,org.apache.xml.resolver;bundle-version=&quot;1.2.0&quot;&#xA;Manifest-Version: 1.0&#xA;Bundle-SymbolicName: svgcompost.swf&#xA;Bundle-Name: SWF Import and Export for SVG&#xA;Bundle-RequiredExecutionEnvironment: JavaSE-1.6&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
     </unit>
   </units>
 </repository>
