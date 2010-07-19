@@ -1,4 +1,4 @@
-package de.berlios.svgcompost.animation.util.xml;
+package de.berlios.svgcompost.xmlconstants;
 
 public class Labels {
 

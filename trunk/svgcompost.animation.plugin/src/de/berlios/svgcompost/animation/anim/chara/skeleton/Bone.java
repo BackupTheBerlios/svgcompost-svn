@@ -106,6 +106,8 @@ public class Bone {
 		if( boneKey == null )
 			throw new NullPointerException("Bone "+getSkeleton().getName()+"."+name+" is not present in keyframe "+skeletonKey.getKeyframeNode().getName());
 		BoneKey nextBoneKey = boneKey.nextKey();
+		if( nextBoneKey == null )
+			throw new NullPointerException("Bone "+getSkeleton().getName()+"."+name+" is not present in keyframe "+skeletonKey.nextKey().getKeyframeNode().getName());
 		
 		if( boneKey.getKeyMatrix() == null )
 			calcKeyMatrices(skeletonKey);

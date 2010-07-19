@@ -29,7 +29,7 @@ public class BoneKey {
 	public BoneKey nextKey() {
 		SkeletonKey nextSkeletonKey = skeletonKey.nextKey();
 		if( nextSkeletonKey == null || nextSkeletonKey.getBoneKey(bone) == null ) {
-			System.out.println( "no key for jointedLimb "+bone+" in "+nextSkeletonKey );
+//			System.out.println( "no key for jointedLimb "+bone+" in "+nextSkeletonKey );
 		}
 		return nextSkeletonKey==null?null:nextSkeletonKey.getBoneKey(bone);
 	}

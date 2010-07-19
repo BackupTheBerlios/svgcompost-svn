@@ -24,14 +24,19 @@ import de.berlios.svgcompost.animation.anim.chara.skeleton.SkeletonKey;
 import de.berlios.svgcompost.animation.anim.composite.Parallel;
 import de.berlios.svgcompost.animation.anim.composite.Scene;
 import de.berlios.svgcompost.animation.anim.composite.Sequence;
+import de.berlios.svgcompost.animation.anim.easing.Cubic;
+import de.berlios.svgcompost.animation.anim.easing.Easing;
+import de.berlios.svgcompost.animation.anim.easing.Linear;
 import de.berlios.svgcompost.animation.anim.easing.Quadratic;
+import de.berlios.svgcompost.animation.anim.easing.Sine;
 import de.berlios.svgcompost.animation.timeline.Keyframe;
 import de.berlios.svgcompost.animation.timeline.Layer;
 import de.berlios.svgcompost.animation.timeline.Timeline;
-import de.berlios.svgcompost.animation.util.xml.Classes;
-import de.berlios.svgcompost.animation.util.xml.SVGCompostElements;
 import de.berlios.svgcompost.util.ElementTraversalHelper;
 import de.berlios.svgcompost.util.VisibilityHelper;
+import de.berlios.svgcompost.xmlconstants.Attributes;
+import de.berlios.svgcompost.xmlconstants.Classes;
+import de.berlios.svgcompost.xmlconstants.Elements;
 
 public class Library {
 	
@@ -61,35 +66,44 @@ public class Library {
 	public Parallel createAnimsForLayer( Layer layer ) {
 		List<Keyframe> keyframes = layer.getKeyframes();
 		
+		// Extract skeleton definitions from 1st frame.
+		HashMap<String,Skeleton> skeletons = extractModelsFromDeclaration( keyframes.get(0).getNode() ); 
+		
+		// Apply skeletons to all frames, so that nodes are assigned to the skeletons as bones.
 		Map<Skeleton,SkeletonKey> skeletonKeys = null;
 		for(Keyframe keyframe : keyframes) {
-			for(Skeleton skeleton : extractModelsFromDeclaration( keyframe.getNode() ).values() )
+			for(Skeleton skeleton : skeletons.values() )
 				keyframe.applySkeleton(skeleton,skeletonKeys);
 			skeletonKeys = keyframe.getSkeletonKeys();
 		}
 
-		for(Keyframe keyframe : keyframes) {
-			for( Skeleton skeleton : keyframe.getSkeletonKeys().keySet() ) {
-				skeleton.setupTweening(keyframe.getSkeletonKey(skeleton));
-				skeleton.setupLimbTweening(keyframe);
-			}
-		}
+//		for(Keyframe keyframe : keyframes) {
+//			for( Skeleton skeleton : keyframe.getSkeletonKeys().keySet() ) {
+//				skeleton.setupTweening(keyframe.getSkeletonKey(skeleton));
+//				skeleton.setupLimbTweening(keyframe);
+//			}
+//		}
 
+		// Create an animation sequence for every skeleton,
+		// and have these sequences run in parallel.
 		Parallel par = new Parallel();
 		HashMap<String,Skeleton> modelsByName = extractModelsFromDeclaration( keyframes.get( 0 ).getNode() );
 		HashMap<Skeleton,Sequence> seqsByModel = addSequencesForModels( par, modelsByName.values() );
 		
-		for(Keyframe frame : keyframes)
-			for( Skeleton skeleton : frame.getSkeletonKeys().keySet() )
-				skeleton.setupTweening(frame.getSkeletonKey(skeleton));
+		// Set up the tweening for all animation sequences.
+		for(Keyframe keyframe : keyframes)
+			for( Skeleton skeleton : keyframe.getSkeletonKeys().keySet() )
+				skeleton.setupTweening(keyframe.getSkeletonKey(skeleton));
 
 		for(Keyframe keyframe : keyframes)
 			if( keyframe.hasNext() )
 				for(Skeleton skeleton : modelsByName.values())
 					seqsByModel.get(skeleton).addAnim( createTweeningAnim( skeleton, keyframe, keyframe.nextKey() ) );
 	
-		for(Keyframe keyframe : keyframes)
+		for(Keyframe keyframe : keyframes) {
+			VisibilityHelper.setVisibility( stage.getSourceCtx().getElement( keyframe.getNode().getGraphicsNode() ), true );
 			keyframe.getNode().setVisible(false);
+		}
 		
 		return par;
 	}
@@ -101,6 +115,11 @@ public class Library {
 		timeline.setCanvas(libraryCanvas);
 		for (CanvasNode node : root.getChildren()) {
 			Element element = canvas.getSourceCtx().getElement( node.getGraphicsNode() );
+			if( element != null && hasClass(element, Classes.FRAME) ) {
+				Layer layer = createLayer( root );
+				timeline.addLayer(layer);
+				break;
+			}
 			if( element != null && hasClass(element, "layer") ) {
 				VisibilityHelper.setDisplayToInline(element);
 //			if( element != null && element.getAttributeNS( INKSCAPE_URI, INKSCAPE_GROUPMODE ).equals( INKSCAPE_LAYER ) ) {
@@ -117,15 +136,17 @@ public class Library {
 	public static Layer createLayer( CanvasNode root ) {
 		Canvas canvas = root.getCanvas();
 		Layer layer = new Layer();
+		double time = 0;
 		for (CanvasNode node : root.getChildren()) {
 			Element element = canvas.getSourceCtx().getElement( node.getGraphicsNode() );
-			if( element != null && hasClass( element, Classes.KEYFRAME ) ) {
+			if( element != null && hasClass( element, Classes.FRAME ) ) {
 				VisibilityHelper.setDisplayToInline(element);
-				double time = 0;
+//				double time = 0;
 				try {
-					time = Double.parseDouble(element.getAttribute("time"));
+					double duration = Double.parseDouble(element.getAttributeNS(Elements.SVGCOMPOST_NAMESPACE_URI, Elements.SVGCOMPOST_DURATION));
+					time += duration;
 				}catch (Exception e) {
-					time = 1000;
+//					time = 1000;
 				}
 				Keyframe keyframe = new Keyframe( node, time );
 				layer.addKeyframe(keyframe);
@@ -222,18 +243,56 @@ public class Library {
 	 */
 	private static KeyframeAnim createTweeningAnim(Skeleton model, Keyframe keyframe1, Keyframe keyframe2) {
 		KeyframeAnim tweenAnim = new KeyframeAnim( model, keyframe1, keyframe2 );
-		SVGElement frameElement = (SVGElement) keyframe1.getNode().getCanvas().getSourceDoc().getElementById( keyframe1.getNode().getSymbolId() );
-		String duration = frameElement.getAttribute( "duration" );
+		SVGElement frameElement = (SVGElement) keyframe1.getNode().getSourceElement(); // getCanvas().getSourceCtx().getElement( keyframe1.getNode().getGraphicsNode() );
+		// Why was this done with IDs?
+//		SVGElement frameElement = (SVGElement) keyframe1.getNode().getCanvas().getSourceDoc().getElementById( keyframe1.getNode().getSymbolId() );
+		
+		// Set duration.
+		String duration = frameElement.getAttributeNS( Elements.SVGCOMPOST_NAMESPACE_URI, Elements.SVGCOMPOST_DURATION );
 		if( duration == null || duration.equals( "" ) )
 			tweenAnim.setDurationInSeconds( 1 );
 		else
 			tweenAnim.setDurationInSeconds( Double.parseDouble( duration ) );
-		String easing = frameElement.getAttribute( "easing" );
-		if( easing == null || easing.equals( "" ) )
-			tweenAnim.setEasing( Quadratic._inOut );
-		else
-			tweenAnim.setEasing( Quadratic._inOut );
+
+		Easing easing = parseEasing(frameElement);
+		tweenAnim.setEasing(easing);
 		return tweenAnim;
+	}
+	
+	public static Easing parseEasing( Element frame ) {
+		Element easingElement = ElementTraversalHelper.getFirstChildElementNS(frame, Elements.SVGCOMPOST_NAMESPACE_URI, Elements.EASING);
+		if(easingElement == null)
+			return null;
+		String easingType = easingElement.getAttribute(Attributes.TYPE);
+		Easing easing = null;
+		if( easingType == null )
+			easing = Quadratic._inOut;
+		else {
+			if( easingType.equals("linear") )
+				easing = new Linear();
+			else if( easingType.equals("quadratic") )
+				easing = new Quadratic(Easing.EASE_IN_OUT);
+			else if( easingType.equals("cubic") )
+				easing = new Cubic(Easing.EASE_IN_OUT);
+			else if( easingType.equals("sine") )
+				easing = new Sine();
+			else
+				easing = new Quadratic(Easing.EASE_IN_OUT);
+		}
+		String align = easingElement.getAttribute(Attributes.ALIGN);
+		if( align.equals("in") )
+			easing.setAlign(Easing.EASE_IN);
+		else if( align.equals("out") )
+			easing.setAlign(Easing.EASE_OUT);
+		else if( align.equals("inout") )
+			easing.setAlign(Easing.EASE_IN_OUT);
+		else
+			easing.setAlign(Easing.EASE_IN_OUT);
+//		try {
+//			int power = Integer.parseInt(easingElement.getAttribute(Attributes.POWER));
+//		} catch (Exception e) {
+//		}
+		return easing;
 	}
 
 	public static AffineTransform skewYbyXscaleX( Point2D.Float a_old, Point2D.Float a_new, Point2D.Float b_old, Point2D.Float b_new ) {
@@ -266,7 +325,7 @@ public class Library {
 	 * Checks a reference to a skeleton.
 	 * If the skeleton is not yet active in the library, it is created
 	 * from the referenced XML element.
-	 * @param modelName The id of the SVG element representing the model.
+	 * @param useElement The useSkeleton element referencing the skeleton.
 	 */
 	public Skeleton getModel( Element useElement ) {
 		String modelReference = null;
@@ -276,9 +335,9 @@ public class Library {
 		else if( useElement.hasAttributeNS(XLinkSupport.XLINK_NAMESPACE_URI, "xlink:href") )
 			modelReference = useElement.getAttributeNS(XLinkSupport.XLINK_NAMESPACE_URI, "xlink:href");
 		
-		String prefix = useElement.getAttributeNS(null, SVGCompostElements.PREFIX);
-		boolean makeCamelCase = useElement.getAttributeNS(null, SVGCompostElements.MAKECAMELCASE).equals("true");
-		int index = modelReference.indexOf("#"); 
+		String prefix = useElement.getAttributeNS(null, Elements.PREFIX);
+		boolean makeCamelCase = useElement.getAttributeNS(null, Elements.MAKECAMELCASE).equals("true");
+		int index = modelReference.indexOf("#");
 		String modelName = index == -1 ? modelReference : modelReference.substring(index+1);
 		Skeleton model = models.get( modelName );
 		if( model != null )
@@ -333,18 +392,38 @@ public class Library {
 	 */
 	private HashMap<String,Skeleton> extractModelsFromDeclaration( CanvasNode referencingFrame ) {
 		HashMap<String,Skeleton> modelsByName = new HashMap<String,Skeleton>();
-		SVGElement frameElement = (SVGElement) referencingFrame.getCanvas().getSourceDoc().getElementById( referencingFrame.getSymbolId() );
-		List<Element> childElements = ElementTraversalHelper.getChildElements(frameElement);
+//		SVGElement frameElement = (SVGElement) referencingFrame.getCanvas().getSourceDoc().getElementById( referencingFrame.getSymbolId() );
+		Element frame = referencingFrame.getCanvas().getSourceCtx().getElement(referencingFrame.getGraphicsNode());
+		List<Element> childElements = ElementTraversalHelper.getChildElements(frame);
 		for (Element element : childElements) {
 			String elementName = element.getLocalName();
 			String namespaceUri = element.getNamespaceURI();
-			if( namespaceUri.equals(SVGCompostElements.SVGCOMPOST_NAMESPACE_URI) && elementName.equals(SVGCompostElements.USESKELETON) ) {
-				Skeleton model = getModel(element);
+			if( namespaceUri.equals(Elements.SVGCOMPOST_NAMESPACE_URI) && elementName.equals(Elements.SKELETON) ) {
+				String prefix = element.getAttributeNS(null, Elements.PREFIX);
+				boolean makeCamelCase = element.getAttributeNS(null, Elements.MAKECAMELCASE).equals("true");
+				Skeleton model = new SkeletonFactory().createSkeleton( element, prefix, makeCamelCase ); 
+//					getModel(element);
+//				System.out.println( "model = "+model );
 				modelsByName.put( model.getName(), model );
 			}
 		}
 		return modelsByName;
 	}
+	
+//	private HashMap<String,Skeleton> extractModelsFromDeclaration( CanvasNode referencingFrame ) {
+//		HashMap<String,Skeleton> modelsByName = new HashMap<String,Skeleton>();
+//		SVGElement frameElement = (SVGElement) referencingFrame.getCanvas().getSourceDoc().getElementById( referencingFrame.getSymbolId() );
+//		List<Element> childElements = ElementTraversalHelper.getChildElements(frameElement);
+//		for (Element element : childElements) {
+//			String elementName = element.getLocalName();
+//			String namespaceUri = element.getNamespaceURI();
+//			if( namespaceUri.equals(Elements.SVGCOMPOST_NAMESPACE_URI) && elementName.equals(Elements.USESKELETON) ) {
+//				Skeleton model = getModel(element);
+//				modelsByName.put( model.getName(), model );
+//			}
+//		}
+//		return modelsByName;
+//	}
 	
 //	private HashMap<String,Skeleton> extractModelsFromDeclaration_old( CanvasNode referencingFrame ) {
 //		HashMap<String,Skeleton> modelsByName = new HashMap<String,Skeleton>();

@@ -10,10 +10,12 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Stack;
 import java.util.zip.DataFormatException;
 
 import javax.xml.XMLConstants;
+import javax.xml.transform.OutputKeys;
 
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.UserAgentAdapter;
@@ -26,6 +28,10 @@ import org.apache.batik.dom.util.DOMUtilities;
 import org.apache.batik.dom.util.XLinkSupport;
 import org.apache.batik.util.CSSConstants;
 import org.apache.batik.util.SVGConstants;
+import org.apache.xml.serializer.DOMSerializer;
+import org.apache.xml.serializer.OutputPropertiesFactory;
+import org.apache.xml.serializer.Serializer;
+import org.apache.xml.serializer.SerializerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -62,11 +68,14 @@ import com.flagstone.transform.FSTableIndex;
 import com.flagstone.transform.FSTransformObject;
 import com.flagstone.transform.Transform;
 
+import de.berlios.svgcompost.xmlconstants.Classes;
+import de.berlios.svgcompost.xmlconstants.Elements;
+
 public class SWF2SVG {
 	
 	public static final String INKSCAPE_NAMESPACE_URI = "http://www.inkscape.org/namespaces/inkscape";
 	public static final String TIMELINE = "timeline";
-	public static final String FRAME = "frame";
+//	public static final String FRAME = "frame";
 	
 	protected SVGDOMImplementation impl;
 	protected AbstractDocument doc;
@@ -85,11 +94,31 @@ public class SWF2SVG {
 			System.out.println( "Usage: SWF2SVG <path to SWF file>" );
 		else {
 			String outPath = new SWF2SVG().exportSWF2SVG( args[0] );
-			System.out.println( "SWF file written to "+outPath );
+			System.out.println( "SVG file written to "+outPath );
 		}
 	}
 	
 	public String exportSWF2SVG( String swfPath ) throws IOException, DataFormatException {
+		FSMovie swfMovie = new FSMovie();
+		swfMovie.decodeFromFile(swfPath);
+
+		Document doc = exportSWF2SVG(swfMovie);
+		String outPath = swfPath+".svg";
+		
+		OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(outPath), "UTF-8");
+		
+    	Properties props = OutputPropertiesFactory.getDefaultMethodProperties("xml");
+    	props.setProperty(OutputKeys.INDENT, "yes");
+    	props.setProperty(OutputPropertiesFactory.S_KEY_INDENT_AMOUNT, "1");
+    	
+		Serializer serializer = SerializerFactory.getSerializer(props);
+		serializer.asDOMSerializer();
+		serializer.setWriter(writer);
+		((DOMSerializer) serializer).serialize(doc);
+			
+        return outPath;
+	}
+	public String _exportSWF2SVG( String swfPath ) throws IOException, DataFormatException {
 		FSMovie swfMovie = new FSMovie();
 		swfMovie.decodeFromFile(swfPath);
 
@@ -105,12 +134,14 @@ public class SWF2SVG {
 	public Document exportSWF2SVG( FSMovie swfMovie ) {
 		impl = (SVGDOMImplementation) SVGDOMImplementation.getDOMImplementation();
 		doc = (AbstractDocument) impl.createDocument(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_SVG_TAG, null);
-		defs = doc.createElementNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_DEFS_TAG);
 		svg = (SVGOMSVGElement) doc.getDocumentElement();
 		svg.setAttributeNS(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, "xmlns:inkscape", INKSCAPE_NAMESPACE_URI);
+		svg.setAttributeNS(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, "xmlns:xlink", XLinkSupport.XLINK_NAMESPACE_URI);
+		svg.setAttributeNS(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, "xmlns:svgcompost", Elements.SVGCOMPOST_NAMESPACE_URI);
 		svg.setAttributeNS(null, SVGConstants.SVG_WIDTH_ATTRIBUTE, String.valueOf(swfMovie.getFrameSize().getWidth()/20)+"px");
 		svg.setAttributeNS(null, SVGConstants.SVG_HEIGHT_ATTRIBUTE, String.valueOf(swfMovie.getFrameSize().getHeight()/20)+"px");
 		svg.setAttributeNS(null, SVGConstants.SVG_CLASS_ATTRIBUTE, TIMELINE);
+		defs = doc.createElementNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_DEFS_TAG);
 		svg.appendChild(defs);
 		css = (SVGCSSEngine) impl.createCSSEngine((AbstractStylableDocument) doc, new BridgeContext( new UserAgentAdapter() ));
 		
@@ -156,7 +187,7 @@ public class SWF2SVG {
 				break;
 			case FSMovieObject.DoAction:
 				FSDoAction doAction = (FSDoAction) swfObject;
-				parseActions( doAction.getActions() );
+				parseActions( frame, doAction.getActions() );
 				break;
 			case FSMovieObject.PlaceObject2:
 				// Set a new item on the display list.
@@ -186,7 +217,7 @@ public class SWF2SVG {
 		}
 	}
 
-	protected void parseActions(List<FSActionObject> actions) {
+	protected void parseActions(Element frame, List<FSActionObject> actions) {
 		FSTable table = null;
 		Stack<Object> stack = new Stack<Object>();
 		String variable = null;
@@ -221,14 +252,25 @@ public class SWF2SVG {
 					args[i] = stack.pop();
 				}
 				System.out.print( "ExecuteMethod "+variableName+"."+methodName+"(" );
-				for (int i = 0; i < args.length; i++) {
+				for (int i = args.length-1; i >= 0; i--) {
 					System.out.print(args[i]);
-					if( i < args.length-1 )
+					if( i > 0 )
 						System.out.print(",");
 				}
 				System.out.println(")");
 				// Push result on stack.
 				stack.push(null);
+				
+				// Create XML elements for ExecuteMethod action.
+//				Element executeMethod = doc.createElementNS(Elements.SVGCOMPOST_NAMESPACE_URI, Elements.ACTIONSCRIPT_EXECUTEMETHOD);
+//				frame.appendChild(executeMethod);
+//				executeMethod.setAttribute(Elements.OBJECT, variableName);
+//				executeMethod.setAttribute(Elements.NAME, methodName);
+//				for (int i = args.length-1; i >= 0; i--) {
+//					Element param = doc.createElementNS(Elements.SVGCOMPOST_NAMESPACE_URI, Elements.ACTIONSCRIPT_PARAM);
+//					executeMethod.appendChild(param);
+//					param.setAttribute(Elements.VALUE, args[i].toString());
+//				}
 				break;
 			}
 			case FSAction.NewObject: {
@@ -239,8 +281,9 @@ public class SWF2SVG {
 					String argName = stack.pop().toString();
 					args.put(argName, argValue);
 				}
-				// Invoke constructor.
+				// Script would invoke generic object constructor here.
 				stack.push( args );
+				System.out.println("NewObject "+args);
 				break;
 			}
 			case FSAction.SetAttribute: {
@@ -248,17 +291,34 @@ public class SWF2SVG {
 				String attributeName = stack.pop().toString();
 				String variableName = stack.pop().toString();
 				System.out.println("SetAttribute "+variableName+"."+attributeName+" = "+attributeValue);
+				
+				// Create XML elements for SetAttribute action.
+//				Element setAttribute = doc.createElementNS(Elements.SVGCOMPOST_NAMESPACE_URI, Elements.ACTIONSCRIPT_SETATTRIBUTE);
+//				frame.appendChild(setAttribute);
+//				setAttribute.setAttribute(Elements.OBJECT, variableName);
+//				setAttribute.setAttribute(Elements.NAME, attributeName);
+//				setAttribute.setAttribute(Elements.VALUE, attributeValue);
 				break;
 			}
-			case FSAction.GetVariable:
+			case FSAction.GetVariable: {
 				// Pop name from stack and push variable onto stack.
 				// Here, both are the same, since we are not actually executing a script.
+				String variableName = stack.peek().toString();
+				System.out.println("GetVariable "+variableName);
+			}
 				break;
-			case FSAction.SetVariable:
+			case FSAction.SetVariable: {
 				String variableValue = stack.pop().toString();
 				String variableName = stack.pop().toString();
 				System.out.println("SetVariable "+variableName+" = "+variableValue);
+				
+				// Include variables definitions starting with SVGCompost prefix as XML attributes.
+				if(variableName.startsWith(Elements.SVGCOMPOST_AS_PREFIX)) {
+					String name = variableName.substring(Elements.SVGCOMPOST_AS_PREFIX.length());
+					frame.setAttributeNS(Elements.SVGCOMPOST_NAMESPACE_URI, Elements.SVGCOMPOST_XMLNS_PREFIX+name, variableValue);
+				}
 				break;
+			}
 			case FSAction.Pop:
 				stack.pop();
 				break;
@@ -266,19 +326,95 @@ public class SWF2SVG {
 				// End of actions.
 				break;
 
+			case FSAction.GetAttribute:
+				String attributName = stack.pop().toString();
+				String objectName = stack.pop().toString();
+				System.out.println("GetAttribute "+objectName+"."+attributName);
+				stack.push(objectName+"."+attributName);
+				break;
+			case FSAction.NamedObject: {
+				String type = (String) stack.pop();
+				Integer numArgs = Integer.parseInt(stack.pop().toString());
+				Object[] args = new Object[numArgs];
+				for (int i = numArgs-1; i >= 0; i--) {
+					args[i] = stack.pop();
+				}
+//				String name = (String) stack.pop();
+//				stack.push(name);
+				// Script would invoke object class constructor here.
+				stack.push(args); // Push value on stack.
+				System.out.print( "NamedObject:" );
+				System.out.print(" type="+type);
+				System.out.print(" numArgs="+numArgs);
+//				System.out.print(" name="+name);
+				System.out.println();
+				
+				// Include object definitions starting with SVGCompost prefix as XML elements.
+				if(type.startsWith(Elements.SVGCOMPOST_AS_PREFIX)) {
+					String name = type.substring(Elements.SVGCOMPOST_AS_PREFIX.length());
+					addSVGCompostProperty(frame, args[0], name);
+				}
+
+//				Element svgcompostElement = doc.createElementNS(Elements.SVGCOMPOST_NAMESPACE_URI, Elements.SVGCOMPOST_XMLNS_PREFIX+name);
+//				frame.appendChild(svgcompostElement);
+//				for (int i = 0; i < args.length; i++) {
+//					addSVGCompostProperty(svgcompostElement, args[i], type);
+//				}
+
+				break;
+			}
+			case FSAction.NewArray: {
+				Integer numArgs = Integer.parseInt(stack.pop().toString());
+				Object[] args = new Object[numArgs];
+				for (int i = numArgs-1; i >= 0; i--) {
+					args[i] = stack.pop();
+				}
+				stack.push(args); // Push value on stack.
+				System.out.print( "NewArray:" );
+				System.out.print(" numArgs="+numArgs);
+				for (int i = 0; i < numArgs; i++) {
+					System.out.print(" "+args[i].getClass()+" args["+i+"] = "+args[i]);
+				}
+				System.out.println();
+				break;
+			}
 			case FSActionObject.Call:
 			case FSActionObject.ExceptionHandler:
 			case FSActionObject.SetTarget:
 			case FSActionObject.With:
-			case FSAction.GetAttribute:
 			default:
-				System.out.println("Not implemented: action type "+action.name());
+				System.out.println("Not implemented: action type "+action.name()+" ("+action.getType()+")");
 				break;
 			}
 		}
 	}
+	
+	protected void addSVGCompostProperty(Element element, Object object, String name) {
+		if( object instanceof Object[] ) {
+			Object[] array = (Object[]) object;
+			if(name.endsWith(Elements.SET))
+				name = name.substring(0,name.length()-Elements.SET.length());
+			for (int i = 0; i < array.length; i++) {
+				addSVGCompostProperty( element, array[i], name );
+			}
+		}
+		else if( object instanceof HashMap ) {
+			Element childElement = doc.createElementNS(Elements.SVGCOMPOST_NAMESPACE_URI, Elements.SVGCOMPOST_XMLNS_PREFIX+name);
+			element.appendChild(childElement);
+			HashMap<String,Object> map = (HashMap<String,Object>) object;
+			for (String key : map.keySet()) {
+				addSVGCompostProperty( childElement, map.get(key), key );
+			}
+		}
+		else if( object instanceof String ) {
+			element.setAttribute(name, object.toString());
+		}
+	}
 
 	protected void parseExport(FSExport export) {
+		// In the Flash 5 editor, it seems that all exported (i.e. named) symbols
+		// are exported and defined three times.
+		// This is a Flash bug, not a Flagstone bug.
 		Hashtable<Integer,String> table = export.getObjects();
 		for( Integer id : table.keySet() ) {
 			this.export.put(id, table.get(id).replace(" ","_"));
@@ -299,7 +435,7 @@ public class SWF2SVG {
 	protected Element createFrame(int frameCount) {
 		Element frame = doc.createElementNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_G_TAG);
 		frame.setAttributeNS(INKSCAPE_NAMESPACE_URI, "inkscape:label", "frame"+frameCount);
-		frame.setAttributeNS(null, SVGConstants.SVG_CLASS_ATTRIBUTE, FRAME);
+		frame.setAttributeNS(null, SVGConstants.SVG_CLASS_ATTRIBUTE, Classes.FRAME);
 		if( frameCount > 1 )
 			frame.setAttributeNS(null, "visibility", "hidden");
 		return frame;
@@ -321,17 +457,23 @@ public class SWF2SVG {
 		int id = item.getIdentifier();
 		FSCoordTransform transform = item.getFSCoordTransform();
 		String name = item.getName();
-		Element use = doc.createElementNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_USE_TAG); 
+		List<FSClipEvent> events = item.getEvents();
+		// Element use = doc.createElementNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_USE_TAG);
+		// Hack: Don't use the proper namespace to prevent the use element to be cluttered with useless attributes.
+		Element use = doc.createElement(SVGConstants.SVG_USE_TAG);
 		if( isSet( id ) ) {
 			use.setAttributeNS(XLinkSupport.XLINK_NAMESPACE_URI, "xlink:href", "#"+getExportedId(id));
-//			System.out.println( "id = "+id );
-//			System.out.println( "exported id = "+getExportedId(id) );
-//			System.out.println( "unset = "+Transform.VALUE_NOT_SET );
 		}
 		if( transform != null )
 			use.setAttributeNS(SVGConstants.SVG_TRANSFORM_ATTRIBUTE, SVGConstants.SVG_TRANSFORM_ATTRIBUTE, parseTransform(transform));
 		if( name != null )
 			use.setAttributeNS(SWF2SVG.INKSCAPE_NAMESPACE_URI,"inkscape:label",name);
+		if( events != null ) {
+			for (FSClipEvent clipEvent : events)
+				// Parse onLoad actions only.
+				if( clipEvent.getEvent() == FSClipEvent.Load )
+					parseActions(use, clipEvent.getActions());
+		}
 		return use;
 	}
 
@@ -343,10 +485,10 @@ public class SWF2SVG {
 		FSCoordTransform transform = placeObject.getTransform();
 		
 		List<FSClipEvent> events = placeObject.getClipEvents();
-		if( events != null ) {
-			for (FSClipEvent clipEvent : events)
-				parseActions(clipEvent.getActions());
-		}
+//		if( events != null ) {
+//			for (FSClipEvent clipEvent : events)
+//				parseActions(null, clipEvent.getActions());
+//		}
 
 		DisplayItem item = new DisplayItem( displayList.size() <= layer ? null : displayList.get(layer) );
 
@@ -356,6 +498,8 @@ public class SWF2SVG {
 			item.setTransform(transform);
 		if( name != null )
 			item.setName(name);
+		if( events != null )
+			item.setEvents( events );
 
 		if( displayList.size() < layer+1 ) {
 			for (int i = displayList.size(); i < layer+1; i++)

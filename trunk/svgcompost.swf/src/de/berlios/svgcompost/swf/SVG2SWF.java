@@ -52,6 +52,8 @@ import com.flagstone.transform.FSSolidLine;
 import com.flagstone.transform.FSTransformObject;
 import com.flagstone.transform.util.FSShapeConstructor;
 
+import de.berlios.svgcompost.xmlconstants.Classes;
+
 public class SVG2SWF {
 	
 	protected int framesPerSecond = 12;
@@ -201,7 +203,7 @@ public class SVG2SWF {
 			if( frames.item(f).getNodeType() != Node.ELEMENT_NODE )
 				continue;
 			Element frame = (Element) frames.item(f);
-			if( ! hasClass(frame, SWF2SVG.FRAME) ) {
+			if( ! hasClass(frame, Classes.FRAME) ) {
 				if( frame.getLocalName().equals( SVGConstants.SVG_DEFS_TAG ) ) {
 					// Child element is a defs tag, not a frame.
 					parseGroup( frame );

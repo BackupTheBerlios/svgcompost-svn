@@ -10,11 +10,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import de.berlios.svgcompost.animation.canvas.Library;
-import de.berlios.svgcompost.animation.util.xml.Classes;
 import de.berlios.svgcompost.editor.SVGEditor;
 import de.berlios.svgcompost.part.BackgroundPart;
 import de.berlios.svgcompost.util.ElementTraversalHelper;
 import de.berlios.svgcompost.util.VisibilityHelper;
+import de.berlios.svgcompost.xmlconstants.Classes;
 
 public class HideAndShowHandler extends AbstractHandler {
 
@@ -35,7 +35,7 @@ public class HideAndShowHandler extends AbstractHandler {
 	}
 
 	public static Element getKeyFrame(Element node) {
-		while( ! Library.hasClass( node, Classes.KEYFRAME ) ) {
+		while( ! Library.hasClass( node, Classes.FRAME ) ) {
 			if( node.getParentNode().getNodeType() == Node.ELEMENT_NODE )
 				node = (Element) node.getParentNode();
 			else

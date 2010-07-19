@@ -16,7 +16,7 @@ import de.berlios.svgcompost.animation.timeline.Keyframe;
 public class Skeleton extends Bone {
 
 	private HashMap<String,Bone> bones = new HashMap<String,Bone>();
-	protected ArrayList<Limb> connectors;
+	protected ArrayList<Limb> connectors = new ArrayList<Limb>();
 	
 	public Skeleton( String name ) {
 		super( name );

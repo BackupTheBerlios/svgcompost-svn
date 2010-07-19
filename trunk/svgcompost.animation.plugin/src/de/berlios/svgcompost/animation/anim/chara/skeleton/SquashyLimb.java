@@ -4,7 +4,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 
 import de.berlios.svgcompost.animation.canvas.CanvasNode;
-import de.berlios.svgcompost.animation.util.xml.Labels;
+import de.berlios.svgcompost.xmlconstants.Labels;
 
 public class SquashyLimb implements Limb {
 	

@@ -24,4 +24,5 @@ Require-Bundle: org.apache.batik.bridge;bundle-version="1.6.0",
  org.apache.xml.serializer;bundle-version="2.7.1",
  org.apache.xerces;bundle-version="2.9.0",
  org.apache.xml.resolver;bundle-version="1.2.0"
-Export-Package: de.berlios.svgcompost.swf
+Export-Package: de.berlios.svgcompost.swf,
+ de.berlios.svgcompost.xmlconstants

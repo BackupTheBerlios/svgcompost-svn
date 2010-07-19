@@ -7,10 +7,10 @@ import org.apache.batik.bridge.BridgeContext;
 import org.w3c.dom.Element;
 
 import de.berlios.svgcompost.animation.canvas.CanvasNode;
-import de.berlios.svgcompost.animation.util.xml.Attributes;
-import de.berlios.svgcompost.animation.util.xml.Labels;
-import de.berlios.svgcompost.animation.util.xml.SVGCompostElements;
 import de.berlios.svgcompost.util.ElementTraversalHelper;
+import de.berlios.svgcompost.xmlconstants.Attributes;
+import de.berlios.svgcompost.xmlconstants.Labels;
+import de.berlios.svgcompost.xmlconstants.Elements;
 
 public class SkeletonFactory {
 
@@ -91,9 +91,9 @@ public class SkeletonFactory {
 	}
 
 	public Skeleton createSkeleton(Element skeletonElement, String prefix, boolean makeCamelCase) {
-		if( ! skeletonElement.hasAttributeNS(null, SVGCompostElements.NAME) )
+		if( ! skeletonElement.hasAttributeNS(null, Elements.NAME) )
 			return null;
-		Skeleton skeleton = new Skeleton( skeletonElement.getAttributeNS(null, SVGCompostElements.NAME) );
+		Skeleton skeleton = new Skeleton( skeletonElement.getAttributeNS(null, Elements.NAME) );
 		skeleton.registerBone(skeleton.getName(), skeleton);
 		processSkeleton( skeletonElement, skeleton, prefix, makeCamelCase );
 		return skeleton;
@@ -103,25 +103,25 @@ public class SkeletonFactory {
 		List<Element> children = ElementTraversalHelper.getChildElements(parentElement);
 		for (Element element : children) {
 			String elementname = element.getLocalName();
-			if( elementname.equals(SVGCompostElements.BONE) ) {
-				String name = element.getAttributeNS(null, SVGCompostElements.NAME);
+			if( elementname.equals(Elements.BONE) ) {
+				String name = element.getAttributeNS(null, Elements.NAME);
 				Bone bone = new Bone(name);
 				parentBone.add(bone);
 				Skeleton skeleton = parentBone.getSkeleton();
 				skeleton.registerBone(prefix+(makeCamelCase?name.substring(0,1).toUpperCase()+name.substring(1):name), bone);
 				processSkeleton(element, bone, prefix, makeCamelCase);
 			}
-			else if( elementname.equals(SVGCompostElements.JOINTLIMB) ) {
-				String upperLimb = element.getAttributeNS(null, SVGCompostElements.UPPERLIMB);
-				String lowerLimb = element.getAttributeNS(null, SVGCompostElements.LOWERLIMB);
-				String appendage = element.getAttributeNS(null, SVGCompostElements.APPENDAGE);
+			else if( elementname.equals(Elements.JOINTLIMB) ) {
+				String upperLimb = element.getAttributeNS(null, Elements.UPPERLIMB);
+				String lowerLimb = element.getAttributeNS(null, Elements.LOWERLIMB);
+				String appendage = element.getAttributeNS(null, Elements.APPENDAGE);
 				Skeleton skeleton = parentBone.getSkeleton();
 				Limb limb = new JointedLimb(skeleton.getBone(upperLimb), skeleton.getBone(lowerLimb), skeleton.getBone(appendage), skeleton);
 				skeleton.addConnector(limb);
 			}
-			else if( elementname.equals(SVGCompostElements.SQUASHYLIMB) ) {
-				String limbBone = element.getAttributeNS(null, SVGCompostElements.LIMB);
-				String appendage = element.getAttributeNS(null, SVGCompostElements.APPENDAGE);
+			else if( elementname.equals(Elements.SQUASHYLIMB) ) {
+				String limbBone = element.getAttributeNS(null, Elements.LIMB);
+				String appendage = element.getAttributeNS(null, Elements.APPENDAGE);
 				Skeleton skeleton = parentBone.getSkeleton();
 				Limb limb = new SquashyLimb(skeleton.getBone(limbBone), skeleton.getBone(appendage));
 				skeleton.addConnector(limb);

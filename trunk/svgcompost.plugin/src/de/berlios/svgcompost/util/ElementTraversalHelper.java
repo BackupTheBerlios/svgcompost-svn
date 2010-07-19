@@ -99,5 +99,20 @@ public class ElementTraversalHelper {
         parser.parse(value);
         return tp.getAffineTransform();
 	}
+	
+	public static Element getFirstChildElementNS( Node parent, String namespaceUri, String localName ) {
+		NodeList list = parent.getChildNodes();
+		for (int i = 0; i < list.getLength(); i++) {
+			if( list.item(i) instanceof Element ) {
+				Element element = (Element) list.item(i);
+				if( element.getNamespaceURI().equals( namespaceUri )
+					&& element.getLocalName().equals( localName ))
+				return element;
+			}
+		}
+		return null;
+	}
+	
+
 
 }

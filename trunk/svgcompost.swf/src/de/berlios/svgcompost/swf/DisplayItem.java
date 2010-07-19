@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.batik.parser.AWTTransformProducer;
 import org.apache.batik.parser.TransformListParser;
 
+import com.flagstone.transform.FSClipEvent;
 import com.flagstone.transform.FSCoordTransform;
 import com.flagstone.transform.FSMovieObject;
 import com.flagstone.transform.FSPlaceObject2;
@@ -20,6 +21,8 @@ public class DisplayItem {
 	protected String characterID;
 	protected String name;
 	protected AffineTransform transform = new AffineTransform();
+	
+	protected List<FSClipEvent> events;
 
 	protected TransformListParser parser;
 
@@ -151,7 +154,8 @@ public class DisplayItem {
 		return
 		equalOrBothNull( id, item.id ) &&
 		equalOrBothNull( name, item.name ) &&
-		equalOrBothNull( transform, item.transform );
+		equalOrBothNull( transform, item.transform ) &&
+		equalOrBothNull( events, item.events );
 	}
 
 	private static boolean equalOrBothNull(Object x, Object y) { 
@@ -242,6 +246,14 @@ public class DisplayItem {
 	
 	public AffineTransform getAWTTransform() {
 		return transform;
+	}
+
+	public void setEvents(List<FSClipEvent> events) {
+		this.events = events;
+	}
+
+	public List<FSClipEvent> getEvents() {
+		return events;
 	}
 
 }

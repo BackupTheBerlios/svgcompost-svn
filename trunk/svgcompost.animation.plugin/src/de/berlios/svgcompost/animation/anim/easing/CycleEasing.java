@@ -3,7 +3,6 @@ package de.berlios.svgcompost.animation.anim.easing;
 
 public class CycleEasing extends Easing{
 	
-	public static CycleEasing standard = new CycleEasing( Easing.getStandard(), Easing.getStandard(), 0.5, 0 );
 	public static CycleEasing flyQuad = new CycleEasing( Quadratic._out, Quadratic._in, 0.5, 0 );
 	public static CycleEasing flyCubic = new CycleEasing( Cubic._out, Cubic._in, 0.5, 0 );
 	public static CycleEasing flyQuint = new CycleEasing( Quintic._out, Quintic._in, 0.5, 0 );

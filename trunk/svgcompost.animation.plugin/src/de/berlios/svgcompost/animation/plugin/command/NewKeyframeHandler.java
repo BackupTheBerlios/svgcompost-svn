@@ -11,12 +11,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import de.berlios.svgcompost.animation.canvas.Library;
-import de.berlios.svgcompost.animation.util.xml.Classes;
 import de.berlios.svgcompost.editor.SVGEditor;
 import de.berlios.svgcompost.layers.InsertElementCommand;
 import de.berlios.svgcompost.part.BackgroundPart;
 import de.berlios.svgcompost.util.ElementTraversalHelper;
 import de.berlios.svgcompost.util.LinkHelper;
+import de.berlios.svgcompost.xmlconstants.Classes;
 
 public class NewKeyframeHandler extends AbstractHandler implements IHandler {
 

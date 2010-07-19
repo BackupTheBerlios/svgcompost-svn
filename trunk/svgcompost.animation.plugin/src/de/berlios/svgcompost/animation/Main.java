@@ -9,6 +9,7 @@ import de.berlios.svgcompost.animation.anim.composite.Scene;
 import de.berlios.svgcompost.animation.canvas.Canvas;
 import de.berlios.svgcompost.animation.export.Export;
 import de.berlios.svgcompost.animation.export.binary.FlagstoneExport;
+import de.berlios.svgcompost.animation.timeline.Layer;
 import de.berlios.svgcompost.animation.timeline.Timeline;
 
 public class Main {
@@ -29,20 +30,50 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-
-		BridgeContext ctx = GraphicsBuilder.readLibrary(infile);
-
+		
+		
+		BridgeContext ctx = GraphicsBuilder.readLibrary( args[0] );
 		Canvas canvas = new Canvas( ctx );
 		canvas.setLibrary( ctx );
+		int foundKeyframes = 0;
+		Timeline timeline = canvas.getLibrary().createTimeline();
+		for( Layer layer : timeline.getLayers() )
+			foundKeyframes += layer.getKeyframes().size();
 		Export capture = new FlagstoneExport( ctx );
+		
+		
+		if( foundKeyframes == 0 ) {
+			// no keyframes, export as static SWF
+			System.out.println( "No keyframes, export as static SWF." );
+			canvas.renderDocument(canvas.getSourceDoc());
+			capture.captureFrame();
+		}
+		else {
+			Scene scene = canvas.getLibrary().createAnimsForTimeline(timeline);
+//			scene.setDurationInSeconds(10);
+			System.out.println("duration = "+scene.getDurationInSeconds());
+			AnimControl ctrl = new AnimControl( scene );
+			ctrl.setCapture( capture );
+			while( ctrl.nextFrame() ) {
+			}
+		}
+		capture.end();
+		capture.writeOutput( args[1] );
+
+//		BridgeContext ctx = GraphicsBuilder.readLibrary(args[0]);
+//
+//		Canvas canvas = new Canvas( ctx );
+//		canvas.setLibrary( ctx );
+//		Export capture = new FlagstoneExport( ctx );
+		
 //		SwfmlBasicExport capture = new SwfmlBasicExport( canvas );
 //		SwfmlShapeImport shapeImport = new SwfmlShapeImport(importFile);
 //		capture.setShapeImport( shapeImport );
 		
 //		ArrayList<String> layerIds = SvgDocumentParser.parseSvgDocument(doc);
 		
-		Timeline timeline = canvas.getLibrary().createTimeline();
-		Scene scene = canvas.getLibrary().createAnimsForTimeline(timeline);
+//		Timeline timeline = canvas.getLibrary().createTimeline();
+//		Scene scene = canvas.getLibrary().createAnimsForTimeline(timeline);
 		
 		
 //		Scene scene = new Scene( canvas );
@@ -64,24 +95,24 @@ public class Main {
 		
 //		ArrayList<String> keyframeIds = canvas.getLibrary().getFrameIds( "elfyWalkPoses" );
 		
-		Point2D.Float start = new Point2D.Float(-50,-200);
-		Point2D.Float end = new Point2D.Float(50,-200);
+//		Point2D.Float start = new Point2D.Float(-50,-200);
+//		Point2D.Float end = new Point2D.Float(50,-200);
 //		Parallel par = canvas.getLibrary().createWalkAnim(canvas.getRoot(), "elfyWalkPoses", "elfy", start, end);
 //		Parallel par = canvas.getLibrary().createWalkAnim(timeline.getLayers().get(0), "elfy", start, end);
 //		scene.addAnim(par);
-		scene.setDurationInSeconds(10);
+//		scene.setDurationInSeconds(10);
 		
 //		Walk.placeSteps(canvas, "steps", start, end);
 //		scene.addAnim( new Wait(10) );
 		
 
-		AnimControl ctrl = new AnimControl( scene );
-		ctrl.setCapture( capture );
-
-		
-		int frame = 1;
-		while( ctrl.nextFrame() ) {
-		}
+//		AnimControl ctrl = new AnimControl( scene );
+//		ctrl.setCapture( capture );
+//
+//		
+//		int frame = 1;
+//		while( ctrl.nextFrame() ) {
+//		}
 		
 //		CompositeGraphicsNode canvasRoot = canvas.getRoot();
 //		GraphicsNode gNodeA = canvas.symbolNode( canvasRoot, "elfyPose1", "A" );
@@ -132,8 +163,8 @@ public class Main {
 //		capture.captureFrame();
 //		capture.captureShapes();
 		
-		capture.end();
-		capture.writeOutput( outfile );
+//		capture.end();
+//		capture.writeOutput( args[1] );
 	}
 
 	public static void subtractFromMatrix( AffineTransform sourceMatrix, AffineTransform targetMatrix ) {

@@ -39,7 +39,11 @@ public class KeyframeAnim extends Anim {
 
 	@Override
 	public void prepare() {
-		switch( Easing.getAlign(easing) ) {
+		if( easing == null ) {
+			setActiveFrame( true );
+			return;
+		}
+		switch( easing.getAlign() ) {
 		case Easing.EASE_IN:
 			setActiveFrame( true );
 			break;
@@ -55,7 +59,6 @@ public class KeyframeAnim extends Anim {
 
 	@Override
 	protected void animate( double percentage ) {
-//		log.debug( "KeyTweening.animate: "+percentage );
 
 		if( switchActiveFrame ) {
 			setActiveFrame( percentage < 0.5 );
