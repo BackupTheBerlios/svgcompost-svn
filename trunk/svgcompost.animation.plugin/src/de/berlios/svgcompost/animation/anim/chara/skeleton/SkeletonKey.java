@@ -19,8 +19,7 @@ public class SkeletonKey {
 	protected SkeletonKey previousKey;
 	protected SkeletonKey nextKey;
 	
-	protected Map<Bone,CanvasNode> nodesForBones = new HashMap<Bone,CanvasNode>();
-	protected Map<CanvasNode,BoneKey> keysForNodes = new HashMap<CanvasNode,BoneKey>();
+	protected Map<Bone,BoneKey> keysForBones = new HashMap<Bone,BoneKey>();
 	protected Map<Limb,LimbKey> limbKeys = new HashMap<Limb,LimbKey>();
 	protected Skeleton skeleton;
 	
@@ -34,22 +33,13 @@ public class SkeletonKey {
 		}
 	}
 	
-	public CanvasNode getNodeForBone( Bone bone ) {
-		return nodesForBones.get(bone);
+	public CanvasNode getCanvasNode( Bone forBone ) {
+		BoneKey key = keysForBones.get(forBone);
+		return key == null ? null : key.getCanvasNode();
 	}
 	
-	/**
-	 * Finds an instance of the given jointedLimb in the key frame that this SkeletonLink belongs to.
-	 * @param jointedLimb A link to the given jointedLimb  in this object's key frame.
-	 * @return
-	 */
-	public BoneKey getBoneKey( Bone bone ) {
-		CanvasNode node = getNodeForBone( bone );
-		return getBoneKey(node);
-	}
-	
-	public BoneKey getBoneKey( CanvasNode node ) {
-		return keysForNodes.get(node);
+	public BoneKey getBoneKey( Bone forBone ) {
+		return keysForBones.get(forBone);
 	}
 	
 	public LimbKey getLimbKey( Limb jointedLimb ) {
@@ -66,8 +56,7 @@ public class SkeletonKey {
 		if( skeleton.containsBone( nodeName ) ) {
 			Bone bone = skeleton.getBone( nodeName );
 			BoneKey key = new BoneKey(bone, node, this);
-			nodesForBones.put(bone, node);
-			keysForNodes.put(node, key);
+			keysForBones.put(bone, key);
 		}
 
 		for( int i = 0; i < node.getSize(); i++ )

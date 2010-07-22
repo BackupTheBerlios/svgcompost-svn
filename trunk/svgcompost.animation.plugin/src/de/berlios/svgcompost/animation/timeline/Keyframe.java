@@ -7,7 +7,7 @@ import de.berlios.svgcompost.animation.anim.chara.skeleton.Skeleton;
 import de.berlios.svgcompost.animation.anim.chara.skeleton.SkeletonKey;
 import de.berlios.svgcompost.animation.canvas.CanvasNode;
 
-public class Keyframe implements Comparable<Keyframe> {
+public class Keyframe /*implements Comparable<Keyframe>*/ {
 	
 	protected CanvasNode node;
 	protected double time;
@@ -17,29 +17,33 @@ public class Keyframe implements Comparable<Keyframe> {
 		this.node = node;
 	}
 	
-	protected double durationToNextFrame;
+	public Keyframe(CanvasNode node) {
+		this.node = node;
+	}
 	
-	public double getDuration() {
-		return durationToNextFrame;
-	}
-
-	public double getTime() {
-		return time;
-	}
-
+//	protected double durationToNextFrame;
+//	
+//	public double getDuration() {
+//		return durationToNextFrame;
+//	}
+//
+//	public double getTime() {
+//		return time;
+//	}
+//
+//	@Override
+//	public int compareTo(Keyframe keyframe) {
+//		if( keyframe.getTime() < time )
+//			return -1;
+//		if( keyframe.getTime() > time )
+//			return 1;
+//		return 0;
+//	}
+	
 	public CanvasNode getNode() {
 		return node;
 	}
 
-	@Override
-	public int compareTo(Keyframe keyframe) {
-		if( keyframe.getTime() < time )
-			return -1;
-		if( keyframe.getTime() > time )
-			return 1;
-		return 0;
-	}
-	
 	protected Map<Skeleton,SkeletonKey> skeletonKeys = new HashMap<Skeleton,SkeletonKey>();
 	
 	public SkeletonKey getSkeletonKey( Skeleton forSkeleton ) {

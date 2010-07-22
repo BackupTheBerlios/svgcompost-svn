@@ -1,6 +1,7 @@
 package de.berlios.svgcompost.animation.anim.chara.skeleton;
 
 import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +32,6 @@ public class Bone {
 	}
 
 	public void add(Bone child) {
-		if( children == null )
-			children = new ArrayList<Bone>();
 		children.add(child);
 		child.parent = this;
 		child.skeleton = skeleton;
@@ -40,17 +39,13 @@ public class Bone {
 		skeleton.registerBone( child.name, child );
 	}
 	
-	public Bone get(int index) {
-		if( children == null )
-			return null;
-		return (Bone) children.get(index);
-	}
+//	public Bone get(int index) {
+//		return children.get(index);
+//	}
 	
-	public int size() {
-		if( children == null )
-			return 0;
-		return children.size();
-	}
+//	public int size() {
+//		return children.size();
+//	}
 	
 	public List<Bone> getBones() {
 		return children;
@@ -64,62 +59,67 @@ public class Bone {
 		return skeleton;
 	}
 	
-	protected void calcKeyMatrices( SkeletonKey skeletonKey ) {
-		
-		CanvasNode keyNode = skeletonKey.getNodeForBone(this);
-		
-		if( keyNode == null )
-			return;
-		
-		CanvasNode parentKeyNode;
-		if( parent == null || skeletonKey.getNodeForBone(parent) == null )
-			parentKeyNode = keyNode.getParent();
-		else
-			parentKeyNode = skeletonKey.getNodeForBone(parent);
-		
-		AffineTransform keyMatrix = keyNode.getGlobalTransform();
-		
-//		if( parent == null )
-//			keyMatrix = keyNode.getTransform();
-//		else if( parentKeyNode != null )
-			subtractFromMatrix( parentKeyNode.getGlobalTransform(), keyMatrix );
-//		else
-//			subtractFromMatrix( skeletonKey.getNodeForBone(skeleton).getGlobalTransform(), keyMatrix );
-
-		// Shift to anchor1, if it exists.
-//		CanvasNode anchor1 = keyNode.getChild(Labels.ANCHOR1);
-//		if( anchor1 != null )
-//			shiftKeyMatrix(parentKeyNode, keyNode, anchor1, keyMatrix);
-	
-		skeletonKey.getBoneKey(keyNode).setKeyMatrix(keyMatrix);
-		
-		for (Bone bone : children)
-			bone.calcKeyMatrices( skeletonKey );
+	protected CanvasNode getParentKeyNode( SkeletonKey skeletonKey, CanvasNode keyNode ) {
+		// Start with the parent.
+		Bone ancestor = parent;
+		do {
+			// If there's no ancestor bone, use the graphical parent element.
+			if( ancestor == null )
+				return keyNode.getParent();
+			// If there's an ancestor bone with a key, use it.
+			if( skeletonKey.getCanvasNode(ancestor) != null )
+				return skeletonKey.getCanvasNode(ancestor);
+			// If the ancestor exists, but has no key, try its parent and so on.
+			ancestor = ancestor.parent;
+		} while( true );
 	}
 	
+	protected void calcKeyMatrices( SkeletonKey skeletonKey ) {
+		try {
+			BoneKey key = skeletonKey.getBoneKey(this);
+			CanvasNode keyNode = key.getCanvasNode();
+			// Find a suitable parent node.
+			CanvasNode parentKeyNode = getParentKeyNode(skeletonKey, keyNode);
+			key.setParentNode(parentKeyNode);
+			
+			AffineTransform keyMatrix = keyNode.getGlobalTransform();
+			// Calculate a matrix relative to the virtual parent node.
+			subtractFromMatrix( parentKeyNode.getGlobalTransform(), keyMatrix );
+				
+			skeletonKey.getBoneKey(this).setKeyMatrix(keyMatrix);
+			
+		} catch (NullPointerException e) {
+//			e.printStackTrace();
+		}
+		
+//		for (Bone bone : children)
+//			bone.calcKeyMatrices( skeletonKey );
+	}
+	
+	/**
+	 * Set up the tweening for this Bone and its children on the specified SkeletonKey.
+	 * @param skeletonKey
+	 */
 	public void setupTweening( SkeletonKey skeletonKey ) {
 
-		if( skeletonKey == null || skeletonKey.nextKey() == null )
-			return;
-		
-		BoneKey boneKey = skeletonKey.getBoneKey(this);
-		if( boneKey == null )
-			throw new NullPointerException("Bone "+getSkeleton().getName()+"."+name+" is not present in keyframe "+skeletonKey.getKeyframeNode().getName());
-		BoneKey nextBoneKey = boneKey.nextKey();
-		if( nextBoneKey == null )
-			throw new NullPointerException("Bone "+getSkeleton().getName()+"."+name+" is not present in keyframe "+skeletonKey.nextKey().getKeyframeNode().getName());
-		
-		if( boneKey.getKeyMatrix() == null )
-			calcKeyMatrices(skeletonKey);
-		if( nextBoneKey.getKeyMatrix() == null )
-			calcKeyMatrices(skeletonKey.nextKey());
-		
-		boneKey.getTweener().load(
-				boneKey.previousKey() == null ? null : boneKey.previousKey().getKeyMatrix(),
-				boneKey.getKeyMatrix(),
-				nextBoneKey.getKeyMatrix(),
-				nextBoneKey.nextKey() == null ? null : nextBoneKey.nextKey().getKeyMatrix()
-			);
+		try {
+			BoneKey boneKey = skeletonKey.getBoneKey(this);
+			BoneKey nextBoneKey = boneKey.nextKey();
+			
+			if( boneKey.getKeyMatrix() == null )
+				calcKeyMatrices(skeletonKey);
+			if( nextBoneKey.getKeyMatrix() == null )
+				calcKeyMatrices(skeletonKey.nextKey());
+			
+			boneKey.getTweener().load(
+					boneKey.previousKey() == null ? null : boneKey.previousKey().getKeyMatrix(),
+					boneKey.getKeyMatrix(),
+					nextBoneKey.getKeyMatrix(),
+					nextBoneKey.nextKey() == null ? null : nextBoneKey.nextKey().getKeyMatrix()
+				);
+		} catch (NullPointerException e) {
+//			e.printStackTrace();
+		}
 		
 		for (Bone bone : children)
 			bone.setupTweening( skeletonKey );
@@ -127,64 +127,36 @@ public class Bone {
 	
 	public void tween( SkeletonKey tweeningKey, SkeletonKey activeKey, double percentage ) {
 
-		CanvasNode keyNode = activeKey.getNodeForBone(this);
-		if( keyNode == null )
-			return;
+		try {
+			BoneKey key = activeKey.getBoneKey(this);
+			CanvasNode keyNode = key.getCanvasNode();
+			CanvasNode parentKeyNode = key.getParentNode();
 
-		AffineTransform tween = tweeningKey.getBoneKey(this).getTweener().tween( percentage );
-		
-		CanvasNode parentKeyNode;
-		if( parent == null || activeKey.getNodeForBone(parent) == null )
-			parentKeyNode = keyNode.getParent();
-		else
-			parentKeyNode = activeKey.getNodeForBone(parent);
-//		if( parent != null ) {
+			AffineTransform tween = tweeningKey.getBoneKey(this).getTweener().tween( percentage );
+			
 			// Add the parent Bone's current CanvasNode matrix, to get a global transform.
-//			CanvasNode parentKeyNode = activeKey.getNodeForBone(parent);
-
-//			if( parentKeyNode != null )
-				tween.preConcatenate( parentKeyNode.getGlobalTransform() );
-//			else
-//				tween.preConcatenate( activeKey.getNodeForBone(skeleton).getGlobalTransform() );
+			tween.preConcatenate( parentKeyNode.getGlobalTransform() );
+	
 			// Subtract the Bone's CanvasNode's parent's matrix, to get a local transform.
 			subtractFromMatrix( keyNode.getParent().getGlobalTransform(), tween );
-//		}
-		// Shift from anchor1, if it exists.
-//		CanvasNode anchor1 = keyNode.getChild(Labels.ANCHOR1);
-//		if( anchor1 != null )
-//			shiftKeyMatrix(parentKeyNode, anchor1, keyNode, tween);
-
-		keyNode.setTransform( tween );
+	
+			keyNode.setTransform( tween );
+		} catch (NullPointerException e) {
+//			e.printStackTrace();
+		}
 		
 		for (Bone bone : children)
 			bone.tween( tweeningKey, activeKey, percentage );
 	}
 	
-	private void shiftKeyMatrix(CanvasNode parentKeyNode, CanvasNode keyNode,
-			CanvasNode anchor1, AffineTransform keyMatrix) {
-		Point2D.Float anchorOnParent = anchor1.projectCenterToLocal(parentKeyNode);
-		Point2D.Float centerOnParent = keyNode.projectCenterToLocal(parentKeyNode);
-		keyMatrix.preConcatenate( AffineTransform.getTranslateInstance(-centerOnParent.x+anchorOnParent.x,-centerOnParent.x+anchorOnParent.y) );
-		// ...or is it concatenate?
-	}
-
-	
-//	/**
-//	 * Calculates from matrices source S and target T the relative matrix R so that R.concat(S) == T.
-//	 * Actually, it's S.concat(R) == T...
-//	 * @param sourceMatrix
-//	 * @param targetMatrix
-//	 * @return The relative matrix.
-//	 */
-//	public static AffineTransform calcRelativeMatrix( AffineTransform sourceMatrix, AffineTransform targetMatrix ) {
-//		AffineTransform a = (AffineTransform) sourceMatrix.clone();
-//		AffineTransform c = (AffineTransform) targetMatrix.clone();
-//		try {
-//			a = a.createInverse();
-//		} catch(Exception e){}
-//		c.preConcatenate( a );
-//		return c;
+//	private void shiftKeyMatrix(CanvasNode parentKeyNode, CanvasNode keyNode,
+//			CanvasNode anchor1, AffineTransform keyMatrix) {
+//		Point2D.Float anchorOnParent = anchor1.projectCenterToLocal(parentKeyNode);
+//		Point2D.Float centerOnParent = keyNode.projectCenterToLocal(parentKeyNode);
+//		keyMatrix.preConcatenate( AffineTransform.getTranslateInstance(-centerOnParent.x+anchorOnParent.x,-centerOnParent.x+anchorOnParent.y) );
+//		// ...or is it concatenate?
 //	}
+
 	
 	/**
 	 * Calculates from matrices source S and target T the relative matrix R so that R.concat(S) == T.
@@ -197,7 +169,7 @@ public class Bone {
 //		AffineTransform sourceClone = (AffineTransform) sourceMatrix.clone();
 		try {
 			sourceMatrix = sourceMatrix.createInverse();
-		} catch(Exception e){
+		} catch (NoninvertibleTransformException e) {
 			e.printStackTrace();
 		}
 //		sourceMatrix.invert();
@@ -214,14 +186,11 @@ public class Bone {
 	
 
 	/**
-	 * Sets the global position of the jointedLimb. All child bones save their position
-	 * on the parent jointedLimb and recall that position once the jointedLimb has shifted.
-	 * This is done recursively, so that all descendant bones maintain their position
-	 * on the shifted ancestor.
+	 * Sets the position for this Bone on the specified SkeletonKey.
 	 * @param newPosition the position the Bone is shifted to.
 	 */
-	public void setRecursiveLocalXY( Point2D.Float newPosition, SkeletonKey skeletonKey, CanvasNode local ) {
-		CanvasNode node = skeletonKey.getNodeForBone(this); 
+	public void setGlobalPosition( Point2D.Float newPosition, SkeletonKey skeletonKey, CanvasNode local ) {
+		CanvasNode node = skeletonKey.getCanvasNode(this); 
 		for (Bone child : children)
 			child.savePosition( skeletonKey );
 		node.setLocalXY( newPosition, local );
@@ -233,8 +202,8 @@ public class Bone {
 	private Point2D.Float position;
 	
 	public void savePosition( SkeletonKey skeletonKey ) {
-		CanvasNode node = skeletonKey.getNodeForBone(this); 
-		position = node.getLocalXY( parent != null ? skeletonKey.getNodeForBone(parent) : node.getParent() );
+		CanvasNode node = skeletonKey.getCanvasNode(this); 
+		position = node.getLocalXY( parent != null ? skeletonKey.getCanvasNode(parent) : node.getParent() );
 		if( children == null )
 			return;
 		for (Bone child : children)
@@ -242,8 +211,8 @@ public class Bone {
 	}
 	
 	public void recallPosition( SkeletonKey skeletonKey ) {
-		CanvasNode node = skeletonKey.getNodeForBone(this); 
-		node.setLocalXY( position, parent != null ? skeletonKey.getNodeForBone(parent) : node.getParent() );
+		CanvasNode node = skeletonKey.getCanvasNode(this); 
+		node.setLocalXY( position, parent != null ? skeletonKey.getCanvasNode(parent) : node.getParent() );
 		if( children == null )
 			return;
 		for (Bone child : children)

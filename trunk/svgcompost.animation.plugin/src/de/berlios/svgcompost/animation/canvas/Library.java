@@ -136,19 +136,17 @@ public class Library {
 	public static Layer createLayer( CanvasNode root ) {
 		Canvas canvas = root.getCanvas();
 		Layer layer = new Layer();
-		double time = 0;
+//		double time = 0;
 		for (CanvasNode node : root.getChildren()) {
 			Element element = canvas.getSourceCtx().getElement( node.getGraphicsNode() );
 			if( element != null && hasClass( element, Classes.FRAME ) ) {
 				VisibilityHelper.setDisplayToInline(element);
-//				double time = 0;
-				try {
-					double duration = Double.parseDouble(element.getAttributeNS(Elements.SVGCOMPOST_NAMESPACE_URI, Elements.SVGCOMPOST_DURATION));
-					time += duration;
-				}catch (Exception e) {
-//					time = 1000;
-				}
-				Keyframe keyframe = new Keyframe( node, time );
+//				try {
+//					double duration = Double.parseDouble(element.getAttributeNS(Elements.SVGCOMPOST_NAMESPACE_URI, Attributes.DURATION));
+//					time += duration;
+//				}catch (Exception e) {
+//				}
+				Keyframe keyframe = new Keyframe( node );
 				layer.addKeyframe(keyframe);
 			}
 		}
@@ -196,11 +194,11 @@ public class Library {
 		Point2D.Float xy = null;
 		for(Keyframe keyframe : keyframes) {
 			for( Bone topLevelBone : model.getBones() ) {
-				SkeletonKey frameLink = keyframe.getSkeletonKey(model); 
-				CanvasNode node = frameLink.getNodeForBone(topLevelBone);
+				SkeletonKey skeletonKey = keyframe.getSkeletonKey(model); 
+				CanvasNode node = skeletonKey.getCanvasNode(topLevelBone);
 				xy = node.getLocalXY( keyframe.getNode() );
 				trafo.transform(xy,xy);
-				topLevelBone.setRecursiveLocalXY(xy, frameLink, keyframe.getNode());
+				topLevelBone.setGlobalPosition(xy, skeletonKey, keyframe.getNode());
 			}
 		}
 
@@ -248,7 +246,7 @@ public class Library {
 //		SVGElement frameElement = (SVGElement) keyframe1.getNode().getCanvas().getSourceDoc().getElementById( keyframe1.getNode().getSymbolId() );
 		
 		// Set duration.
-		String duration = frameElement.getAttributeNS( Elements.SVGCOMPOST_NAMESPACE_URI, Elements.SVGCOMPOST_DURATION );
+		String duration = frameElement.getAttributeNS( Elements.SVGCOMPOST_NAMESPACE_URI, Attributes.DURATION );
 		if( duration == null || duration.equals( "" ) )
 			tweenAnim.setDurationInSeconds( 1 );
 		else
@@ -264,20 +262,21 @@ public class Library {
 		if(easingElement == null)
 			return null;
 		String easingType = easingElement.getAttribute(Attributes.TYPE);
+		System.out.println("Library.parseEasing() easingType = "+easingType);
 		Easing easing = null;
 		if( easingType == null )
-			easing = Quadratic._inOut;
+			easing = new Quadratic();
 		else {
 			if( easingType.equals("linear") )
 				easing = new Linear();
 			else if( easingType.equals("quadratic") )
-				easing = new Quadratic(Easing.EASE_IN_OUT);
+				easing = new Quadratic();
 			else if( easingType.equals("cubic") )
-				easing = new Cubic(Easing.EASE_IN_OUT);
+				easing = new Cubic();
 			else if( easingType.equals("sine") )
 				easing = new Sine();
 			else
-				easing = new Quadratic(Easing.EASE_IN_OUT);
+				easing = new Quadratic();
 		}
 		String align = easingElement.getAttribute(Attributes.ALIGN);
 		if( align.equals("in") )
@@ -288,10 +287,11 @@ public class Library {
 			easing.setAlign(Easing.EASE_IN_OUT);
 		else
 			easing.setAlign(Easing.EASE_IN_OUT);
-//		try {
-//			int power = Integer.parseInt(easingElement.getAttribute(Attributes.POWER));
-//		} catch (Exception e) {
-//		}
+		try {
+			double power = Double.parseDouble(easingElement.getAttribute(Attributes.POWER));
+			easing.setPower(power);
+		} catch (Exception e) {
+		}
 		return easing;
 	}
 
@@ -312,7 +312,7 @@ public class Library {
 		float x = 0;
 		float y = 0;
 		for (Bone bone : bones) {
-			Point2D.Float xy = frame.getSkeletonKey(bone.getSkeleton()).getNodeForBone(bone).getLocalXY( system );
+			Point2D.Float xy = frame.getSkeletonKey(bone.getSkeleton()).getCanvasNode(bone).getLocalXY( system );
 			x += xy.x;
 			y += xy.y;
 		}

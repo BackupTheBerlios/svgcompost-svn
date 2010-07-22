@@ -1,7 +1,6 @@
 package de.berlios.svgcompost.animation.timeline;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Layer {
@@ -22,28 +21,30 @@ public class Layer {
 		return keyframes;
 	}
 	
-	public Keyframe getKeyframeAt( double time ) {
-		int index = Collections.binarySearch(keyframes, new Keyframe(null,time));
-		if( index == -1 )
-			return null;
-		if( index < - keyframes.size() )
-			return null;
-		if( index < 0 )
-			index = - index - 1;
-		return keyframes.get(index);
-	}
+//	public Keyframe getKeyframeAt( double time ) {
+//		int index = Collections.binarySearch(keyframes, new Keyframe(null,time));
+//		if( index == -1 )
+//			return null;
+//		if( index < - keyframes.size() )
+//			return null;
+//		if( index < 0 )
+//			index = - index - 1;
+//		return keyframes.get(index);
+//	}
 	
 	public int addKeyframe( Keyframe keyframe ) {
-		int index = Collections.binarySearch(keyframes, keyframe);
-		if( index >= 0 ) {
-			while( index < keyframes.size() && keyframes.get(index).getTime() <= keyframe.getTime() )
-				index ++;
-		}
-		else {
-			index = - index - 1;
-		}
-		insertKeyframe(index, keyframe);
-		return index;
+//		int index = Collections.binarySearch(keyframes, keyframe);
+//		if( index >= 0 ) {
+//			while( index < keyframes.size() && keyframes.get(index).getTime() <= keyframe.getTime() )
+//				index ++;
+//		}
+//		else {
+//			index = - index - 1;
+//		}
+//		insertKeyframe(index, keyframe);
+//		return index;
+		insertKeyframe(keyframes.size(), keyframe);
+		return keyframes.size();
 	}
 	
 	protected void insertKeyframe( int index, Keyframe keyframe ) {

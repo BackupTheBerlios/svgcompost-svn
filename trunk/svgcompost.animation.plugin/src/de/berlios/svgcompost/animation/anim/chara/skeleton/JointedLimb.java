@@ -31,8 +31,8 @@ public class JointedLimb implements Limb {
 		
 		LimbKey limbKey = keyframeLink.getLimbKey(this);
 		
-		CanvasNode child = keyframeLink.getNodeForBone(mChild);
-		CanvasNode target = keyframeLink.getNodeForBone(mTarget);
+		CanvasNode child = keyframeLink.getCanvasNode(mChild);
+		CanvasNode target = keyframeLink.getCanvasNode(mTarget);
 		
 		Point2D.Float rotPointOnChild = target.projectCenterToLocal( child );
 		
@@ -48,10 +48,10 @@ public class JointedLimb implements Limb {
 		// TODO: optimize, once it works
 		
 		// Keys with wrong positions. Only parent position is correct.
-		CanvasNode parent = activeKeyLink.getNodeForBone(mParent);
-		CanvasNode child = activeKeyLink.getNodeForBone(mChild);
-		CanvasNode target = activeKeyLink.getNodeForBone(mTarget);
-		CanvasNode system = activeKeyLink.getNodeForBone(mSystem);
+		CanvasNode parent = activeKeyLink.getCanvasNode(mParent);
+		CanvasNode child = activeKeyLink.getCanvasNode(mChild);
+		CanvasNode target = activeKeyLink.getCanvasNode(mTarget);
+		CanvasNode system = activeKeyLink.getCanvasNode(mSystem);
 		
 		// TODO: test: target should also be mapped onto system coord space
 		Point2D.Float shoulderPoint = parent.projectCenterToLocal( system );

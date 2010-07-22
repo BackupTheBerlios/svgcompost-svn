@@ -15,5 +15,6 @@ public class Attributes {
 	public static final String TYPE = "type";
 	public static final String ALIGN = "align";
 	public static final String POWER = "power";
+	public static final String DURATION = "duration";
 
 }

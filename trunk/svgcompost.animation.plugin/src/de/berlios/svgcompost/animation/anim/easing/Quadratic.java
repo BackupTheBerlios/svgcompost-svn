@@ -2,15 +2,14 @@ package de.berlios.svgcompost.animation.anim.easing;
 
 public class Quadratic extends Easing {
 
-	public static Quadratic _in = new Quadratic( Easing.EASE_IN );
-	public static Quadratic _out = new Quadratic( Easing.EASE_OUT );
-	public static Quadratic _inOut = new Quadratic( Easing.EASE_IN_OUT );
-	
-	public double easeIn(double percentage) {
+	@Override
+	protected double easeIn(double percentage) {
 		return percentage * percentage;
 	}
 
-	public Quadratic( int align ) {
-		this.align = align;
+	@Override
+	protected double easeOut(double percentage) {
+		return Math.sqrt( percentage );
 	}
+
 }

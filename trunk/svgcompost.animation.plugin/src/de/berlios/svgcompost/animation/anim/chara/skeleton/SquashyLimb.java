@@ -18,8 +18,8 @@ public class SquashyLimb implements Limb {
 	 * @param percentage The percentage of tweening.
 	 */
 	public void tween( SkeletonKey tweeningKeyLink, SkeletonKey activeKeyLink, double percentage ) {
-		CanvasNode keyNode = activeKeyLink.getNodeForBone(limb);
-		skewSquashAlignWithPoint( keyNode, keyNode.getChild(Labels.ANCHOR2), activeKeyLink.getNodeForBone(target) );
+		CanvasNode keyNode = activeKeyLink.getCanvasNode(limb);
+		skewSquashAlignWithPoint( keyNode, keyNode.getChild(Labels.ANCHOR2), activeKeyLink.getCanvasNode(target) );
 				
 	}
 

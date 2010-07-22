@@ -14,7 +14,8 @@ public class BoneKey {
 //	private static Logger log = Logger.getLogger(BoneKey.class);
 
 	protected Bone bone;
-	private CanvasNode canvasNode;
+	protected CanvasNode canvasNode;
+	protected CanvasNode parentNode;
 	protected SkeletonKey skeletonKey;
 	
 	protected AffineTransform keyMatrix;
@@ -61,5 +62,16 @@ public class BoneKey {
 		return skeletonKey;
 	}
 
+	public CanvasNode getCanvasNode() {
+		return canvasNode;
+	}
+
+	public CanvasNode getParentNode() {
+		return parentNode;
+	}
+
+	public void setParentNode(CanvasNode parentNode) {
+		this.parentNode = parentNode;
+	}
 
 }

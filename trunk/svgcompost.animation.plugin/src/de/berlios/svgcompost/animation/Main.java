@@ -1,7 +1,6 @@
 package de.berlios.svgcompost.animation;
 
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
 
 import org.apache.batik.bridge.BridgeContext;
 
@@ -31,7 +30,11 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		
-		
+		System.out.println("Main.main()");
+		for (int i = 0; i < args.length; i++) {
+			System.out.println("args["+i+"] = "+args[i]);
+		}
+
 		BridgeContext ctx = GraphicsBuilder.readLibrary( args[0] );
 		Canvas canvas = new Canvas( ctx );
 		canvas.setLibrary( ctx );
@@ -51,7 +54,7 @@ public class Main {
 		else {
 			Scene scene = canvas.getLibrary().createAnimsForTimeline(timeline);
 //			scene.setDurationInSeconds(10);
-			System.out.println("duration = "+scene.getDurationInSeconds());
+//			System.out.println("duration = "+scene.getDurationInSeconds());
 			AnimControl ctrl = new AnimControl( scene );
 			ctrl.setCapture( capture );
 			while( ctrl.nextFrame() ) {
