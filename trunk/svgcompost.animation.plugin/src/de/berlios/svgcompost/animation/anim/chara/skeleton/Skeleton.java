@@ -67,5 +67,11 @@ public class Skeleton extends Bone {
 		for(Limb jointedLimb : connectors)
 			jointedLimb.tween(tweeningKeyLink, activeKeyLink, percentage);
 	}
+
+	public void setupTweening( Keyframe keyframe ) {
+		SkeletonKey skeletonKey = keyframe.getSkeletonKey(skeleton);
+		setupTweening(skeletonKey);
+	}
+
 	
 }

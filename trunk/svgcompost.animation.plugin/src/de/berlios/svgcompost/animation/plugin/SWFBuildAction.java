@@ -22,6 +22,7 @@ import de.berlios.svgcompost.animation.AnimControl;
 import de.berlios.svgcompost.animation.GraphicsBuilder;
 import de.berlios.svgcompost.animation.anim.composite.Scene;
 import de.berlios.svgcompost.animation.canvas.Canvas;
+import de.berlios.svgcompost.animation.canvas.Library;
 import de.berlios.svgcompost.animation.export.Export;
 import de.berlios.svgcompost.animation.export.binary.FlagstoneExport;
 import de.berlios.svgcompost.animation.timeline.Layer;
@@ -92,9 +93,9 @@ public class SWFBuildAction implements IWorkbenchWindowActionDelegate {
 
 		BridgeContext ctx = GraphicsBuilder.readLibrary(svgPath);
 		Canvas canvas = new Canvas( ctx );
-		canvas.setLibrary( ctx );
+		Library library = new Library(canvas);
 		int foundKeyframes = 0;
-		Timeline timeline = canvas.getLibrary().createTimeline();
+		Timeline timeline = library.createTimeline();
 		for( Layer layer : timeline.getLayers() )
 			foundKeyframes += layer.getKeyframes().size();
 		Export capture = new FlagstoneExport( ctx );
@@ -106,7 +107,7 @@ public class SWFBuildAction implements IWorkbenchWindowActionDelegate {
 			capture.captureFrame();
 		}
 		else {
-			Scene scene = canvas.getLibrary().createAnimsForTimeline(timeline);
+			Scene scene = library.createAnimsForTimeline(timeline);
 			scene.setDurationInSeconds(10);
 			AnimControl ctrl = new AnimControl( scene );
 			ctrl.setCapture( capture );

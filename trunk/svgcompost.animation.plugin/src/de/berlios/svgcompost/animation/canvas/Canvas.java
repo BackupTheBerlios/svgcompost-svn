@@ -1,22 +1,17 @@
 package de.berlios.svgcompost.animation.canvas;
 
-import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
 import java.util.List;
 
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
-import org.apache.batik.bridge.URIResolver;
 import org.apache.batik.bridge.UnitProcessor;
 import org.apache.batik.dom.svg.SVGOMDocument;
 import org.apache.batik.gvt.CanvasGraphicsNode;
 import org.apache.batik.gvt.CompositeGraphicsNode;
 import org.apache.batik.gvt.GraphicsNode;
-import org.apache.batik.gvt.RootGraphicsNode;
 import org.w3c.dom.Element;
 import org.w3c.dom.svg.SVGDocument;
-import org.w3c.dom.svg.SVGRect;
 
 
 /**
@@ -27,12 +22,6 @@ import org.w3c.dom.svg.SVGRect;
  *
  */
 public class Canvas {
-	
-	public int width = 400;
-	public int height = 300;
-	
-	protected static final double[] matrixDummy = new double[6];
-	protected static final Point2D.Float pointDummy = new Point2D.Float();
 	
 	public static final LabelKey KEY_SYMBOL_ID = new LabelKey(1024);
 	public static final LabelKey KEY_LABEL = new LabelKey(1025);
@@ -47,15 +36,7 @@ public class Canvas {
 	private BridgeContext sourceCtx;
 	private GVTBuilder sourceBld;
 	
-	private URIResolver uriResolver;
-
-	RootGraphicsNode rootNode;
-	CanvasGraphicsNode canvasNode;
-	
-	String inkscapeNamespaceURI;
-	String inkspaceLabel;
-	
-	protected Library library;
+	private CanvasGraphicsNode canvasNode;
 	
 	public Canvas( BridgeContext sourceCtx ) {
 		this.sourceCtx = sourceCtx;
@@ -64,85 +45,63 @@ public class Canvas {
 			sourceDoc = (SVGDocument) sourceCtx.getDocument();
 			sourceBld = sourceCtx.getGVTBuilder();
 			
-			uriResolver = new URIResolver(sourceDoc, sourceCtx.getDocumentLoader());
-			
 			Element svgEl = sourceDoc.getRootElement();
 			UnitProcessor.Context upCtx = UnitProcessor.createContext( sourceCtx, svgEl );
-			width = (int) UnitProcessor.svgHorizontalCoordinateToObjectBoundingBox( svgEl.getAttribute( "width" ), "width", upCtx );
-			height = (int) UnitProcessor.svgVerticalCoordinateToObjectBoundingBox( svgEl.getAttribute( "height" ), "height", upCtx );
+//			width = (int) UnitProcessor.svgHorizontalCoordinateToObjectBoundingBox( svgEl.getAttribute( "width" ), "width", upCtx );
+//			height = (int) UnitProcessor.svgVerticalCoordinateToObjectBoundingBox( svgEl.getAttribute( "height" ), "height", upCtx );
 		}
 		
 		canvasNode = new CanvasGraphicsNode(); // (CanvasGraphicsNode) rootNode.get( 0 );
 		canvasNode.setRenderingHint( KEY_LABEL, "canvas" );
 
-		SVGRect bounds = sourceDoc.getRootElement().getBBox();
-		width = (int) bounds.getWidth();
-		height = (int) bounds.getWidth();
+//		SVGRect bounds = sourceDoc.getRootElement().getBBox();
+//		width = (int) bounds.getWidth();
+//		height = (int) bounds.getWidth();
 	}
 	
 	public SVGDocument getSourceDoc() {
 		return sourceDoc;
 	}
 	
-	public BridgeContext getSourceCtx() {
-		return sourceCtx;
-	}
-	
-	public GVTBuilder getSourceBld() {
-		return sourceBld;
-	}
-
 	public CanvasNode getRoot() {
 		return CanvasNode.getCanvasNode( canvasNode, this );
 	}
 	
-	public Library getLibrary() {
-		return library;
+	public Element getElement(CanvasNode node) {
+		return sourceCtx.getElement( node.getGraphicsNode() );
 	}
 
-	public int getWidth() {
-		return width;
-	}
-
-	public int getHeight() {
-		return height;
-	}
-
-	public void setLibrary( BridgeContext sourceCtx ) {
-		library = new Library( this, new Canvas( sourceCtx ) );
-	}
+//	public static GraphicsNode getChild( GraphicsNode parent, String name ) {
+//		if( parent == null || ! (parent instanceof CompositeGraphicsNode) )
+//			return null;
+//		CompositeGraphicsNode group = (CompositeGraphicsNode) parent;
+//		List<GraphicsNode> children = group.getChildren();
+//		for (int i = 0; i < children.size(); i++) {
+//			GraphicsNode child = children.get(i);
+//			RenderingHints hints = child.getRenderingHints();
+//			if( hints == null || hints.get( KEY_LABEL ) == null )
+//				continue;
+//			if( hints.get( KEY_LABEL ).equals( name ) ) {
+//				return child;
+//			}
+//		}
+//		return null;
+//	}
 	
-	public static GraphicsNode getChild( GraphicsNode parent, String name ) {
-		if( parent == null || ! (parent instanceof CompositeGraphicsNode) )
-			return null;
-		CompositeGraphicsNode group = (CompositeGraphicsNode) parent;
-		List<GraphicsNode> children = group.getChildren();
-		for (int i = 0; i < children.size(); i++) {
-			GraphicsNode child = children.get(i);
-			RenderingHints hints = child.getRenderingHints();
-			if( hints == null || hints.get( KEY_LABEL ) == null )
-				continue;
-			if( hints.get( KEY_LABEL ).equals( name ) ) {
-				return child;
-			}
-		}
-		return null;
-	}
+//	public static CompositeGraphicsNode getParent( GraphicsNode gNode ) {
+//		if( gNode == null ) {
+//			return null;
+//		}
+//		return gNode.getParent();
+//	}
 	
-	public static CompositeGraphicsNode getParent( GraphicsNode gNode ) {
-		if( gNode == null ) {
-			return null;
-		}
-		return gNode.getParent();
-	}
-	
-	public static void removeNode( GraphicsNode gNode ) {
-		if( gNode == null || gNode.getParent() == null ) {
-			return;
-		}
-		CompositeGraphicsNode group = (CompositeGraphicsNode) gNode.getParent();
-		group.remove( gNode );
-	}
+//	public static void removeNode( GraphicsNode gNode ) {
+//		if( gNode == null || gNode.getParent() == null ) {
+//			return;
+//		}
+//		CompositeGraphicsNode group = (CompositeGraphicsNode) gNode.getParent();
+//		group.remove( gNode );
+//	}
 	
 	public static CanvasNode insertGroupNode( CanvasNode cNode, String name ) {
 		GraphicsNode parent = cNode.getGraphicsNode();
@@ -173,7 +132,7 @@ public class Canvas {
 		return insertSymbolNode(cNode, element, name);
 	}
 	
-	protected CanvasNode insertSymbolNode( CanvasNode cNode, Element element, String name ) {
+	private CanvasNode insertSymbolNode( CanvasNode cNode, Element element, String name ) {
 		GraphicsNode parent = cNode.getGraphicsNode();
 		if( parent == null ) {
 			return null;
@@ -199,7 +158,7 @@ public class Canvas {
 		return null;
 	}
 	
-	protected void setChildLabels( GraphicsNode parent, Element element ) {
+	private void setChildLabels( GraphicsNode parent, Element element ) {
 		if( ! (parent instanceof CompositeGraphicsNode) )
 			return;
 		List<GraphicsNode> childGNodes = ((CompositeGraphicsNode)parent).getChildren();
@@ -231,14 +190,17 @@ public class Canvas {
 		}
 	}
 	
-	protected GraphicsNode cutUseNode( GraphicsNode gNode ) {
+	private GraphicsNode cutUseNode( GraphicsNode gNode ) {
 		if( gNode == null || ! (gNode instanceof CompositeGraphicsNode) )
 			return null;
 		CompositeGraphicsNode useNode = (CompositeGraphicsNode) gNode;
 		GraphicsNode child = (GraphicsNode)useNode.get(0);
 		CompositeGraphicsNode parent = useNode.getParent();
-		AffineTransform transform = getTransform( child );
-		transform.concatenate( useNode.getTransform() );
+		AffineTransform transform = child.getTransform();
+		if( transform == null )
+			transform = useNode.getTransform();
+		else
+			transform.concatenate( useNode.getTransform() );
 		child.setTransform( transform );
 		useNode.remove(0);
 		parent.add( parent.indexOf( useNode ), child );
@@ -246,17 +208,17 @@ public class Canvas {
 		return child;
 	}
 	
-	public static AffineTransform getTransform( GraphicsNode node ) {
-		if( node == null ) {
-			return null;
-		}
-		if( node.getTransform() == null ) {
-			return new AffineTransform();
-		}
-		return (AffineTransform) node.getTransform().clone();
-	}
+//	public static AffineTransform getTransform( GraphicsNode node ) {
+//		if( node == null ) {
+//			return null;
+//		}
+//		if( node.getTransform() == null ) {
+//			return new AffineTransform();
+//		}
+//		return (AffineTransform) node.getTransform().clone();
+//	}
 	
-	public Element resolve( String reference, Element fromElement ) {
+	private Element resolve( String reference, Element fromElement ) {
 		int index = reference.indexOf("#");
 		if( fromElement == null )
 			fromElement = sourceDoc.getDocumentElement();

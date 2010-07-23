@@ -17,7 +17,7 @@ public class Timeline {
 	
 	public void addLayer( Layer layer ) {
 		layers.add(layer);
-		layer.setTimeline(this);
+//		layer.setTimeline(this);
 	}
 	
 	public void setCanvas( Canvas canvas ) {

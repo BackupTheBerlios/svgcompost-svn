@@ -3,14 +3,13 @@ package de.berlios.svgcompost.animation.anim.chara.skeleton;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.batik.bridge.BridgeContext;
 import org.w3c.dom.Element;
 
 import de.berlios.svgcompost.animation.canvas.CanvasNode;
 import de.berlios.svgcompost.util.ElementTraversalHelper;
 import de.berlios.svgcompost.xmlconstants.Attributes;
-import de.berlios.svgcompost.xmlconstants.Labels;
 import de.berlios.svgcompost.xmlconstants.Elements;
+import de.berlios.svgcompost.xmlconstants.Labels;
 
 public class SkeletonFactory {
 
@@ -50,8 +49,7 @@ public class SkeletonFactory {
 	 */
 	public void processBone(CanvasNode node, Bone bone) {
 		// TODO: Use svgcompost namespace for attributes.
-		BridgeContext ctx = node.getCanvas().getSourceCtx();
-		Element el = ctx.getElement( node.getGraphicsNode() );
+		Element el = node.getCanvas().getElement( node );
 		if( el.hasAttribute(Attributes.CONNECT_WITH) && el.hasAttribute(Attributes.CONNECT_TO) ) {
 			String lowerLimb = el.getAttribute(Attributes.CONNECT_WITH);
 			String limbTarget = el.getAttribute(Attributes.CONNECT_TO);

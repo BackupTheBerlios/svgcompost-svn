@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.berlios.svgcompost.animation.canvas.CanvasNode;
+import de.berlios.svgcompost.animation.timeline.Keyframe;
 
 /**
  * A jointedLimb is a part of an animated skeleton.
@@ -100,7 +101,7 @@ public class Bone {
 	 * Set up the tweening for this Bone and its children on the specified SkeletonKey.
 	 * @param skeletonKey
 	 */
-	public void setupTweening( SkeletonKey skeletonKey ) {
+	protected void setupTweening( SkeletonKey skeletonKey ) {
 
 		try {
 			BoneKey boneKey = skeletonKey.getBoneKey(this);

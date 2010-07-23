@@ -6,6 +6,7 @@ import org.apache.batik.bridge.BridgeContext;
 
 import de.berlios.svgcompost.animation.anim.composite.Scene;
 import de.berlios.svgcompost.animation.canvas.Canvas;
+import de.berlios.svgcompost.animation.canvas.Library;
 import de.berlios.svgcompost.animation.export.Export;
 import de.berlios.svgcompost.animation.export.binary.FlagstoneExport;
 import de.berlios.svgcompost.animation.timeline.Layer;
@@ -37,9 +38,9 @@ public class Main {
 
 		BridgeContext ctx = GraphicsBuilder.readLibrary( args[0] );
 		Canvas canvas = new Canvas( ctx );
-		canvas.setLibrary( ctx );
+		Library library = new Library(canvas);
 		int foundKeyframes = 0;
-		Timeline timeline = canvas.getLibrary().createTimeline();
+		Timeline timeline = library.createTimeline();
 		for( Layer layer : timeline.getLayers() )
 			foundKeyframes += layer.getKeyframes().size();
 		Export capture = new FlagstoneExport( ctx );
@@ -52,7 +53,7 @@ public class Main {
 			capture.captureFrame();
 		}
 		else {
-			Scene scene = canvas.getLibrary().createAnimsForTimeline(timeline);
+			Scene scene = library.createAnimsForTimeline(timeline);
 //			scene.setDurationInSeconds(10);
 //			System.out.println("duration = "+scene.getDurationInSeconds());
 			AnimControl ctrl = new AnimControl( scene );

@@ -2,7 +2,7 @@ package de.berlios.svgcompost.xmlconstants;
 
 public interface Elements {
 	
-	public static String SVGCOMPOST_NAMESPACE_URI = "http://svgcompost.berlios.de/namespace";
+	public static String SVGCOMPOST_NS = "http://svgcompost.berlios.de/namespace";
 	public static String SVGCOMPOST = "svgcompost";
 	public static String XMLNS_SVGCOMPOST = "xmlns:svgcompost";
 	

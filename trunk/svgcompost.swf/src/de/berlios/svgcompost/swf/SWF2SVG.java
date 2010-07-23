@@ -137,7 +137,7 @@ public class SWF2SVG {
 		svg = (SVGOMSVGElement) doc.getDocumentElement();
 		svg.setAttributeNS(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, "xmlns:inkscape", INKSCAPE_NAMESPACE_URI);
 		svg.setAttributeNS(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, "xmlns:xlink", XLinkSupport.XLINK_NAMESPACE_URI);
-		svg.setAttributeNS(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, "xmlns:svgcompost", Elements.SVGCOMPOST_NAMESPACE_URI);
+		svg.setAttributeNS(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, "xmlns:svgcompost", Elements.SVGCOMPOST_NS);
 		svg.setAttributeNS(null, SVGConstants.SVG_WIDTH_ATTRIBUTE, String.valueOf(swfMovie.getFrameSize().getWidth()/20)+"px");
 		svg.setAttributeNS(null, SVGConstants.SVG_HEIGHT_ATTRIBUTE, String.valueOf(swfMovie.getFrameSize().getHeight()/20)+"px");
 		svg.setAttributeNS(null, SVGConstants.SVG_CLASS_ATTRIBUTE, TIMELINE);
@@ -262,12 +262,12 @@ public class SWF2SVG {
 				stack.push(null);
 				
 				// Create XML elements for ExecuteMethod action.
-//				Element executeMethod = doc.createElementNS(Elements.SVGCOMPOST_NAMESPACE_URI, Elements.ACTIONSCRIPT_EXECUTEMETHOD);
+//				Element executeMethod = doc.createElementNS(Elements.SVGCOMPOST_NS, Elements.ACTIONSCRIPT_EXECUTEMETHOD);
 //				frame.appendChild(executeMethod);
 //				executeMethod.setAttribute(Elements.OBJECT, variableName);
 //				executeMethod.setAttribute(Elements.NAME, methodName);
 //				for (int i = args.length-1; i >= 0; i--) {
-//					Element param = doc.createElementNS(Elements.SVGCOMPOST_NAMESPACE_URI, Elements.ACTIONSCRIPT_PARAM);
+//					Element param = doc.createElementNS(Elements.SVGCOMPOST_NS, Elements.ACTIONSCRIPT_PARAM);
 //					executeMethod.appendChild(param);
 //					param.setAttribute(Elements.VALUE, args[i].toString());
 //				}
@@ -293,7 +293,7 @@ public class SWF2SVG {
 				System.out.println("SetAttribute "+variableName+"."+attributeName+" = "+attributeValue);
 				
 				// Create XML elements for SetAttribute action.
-//				Element setAttribute = doc.createElementNS(Elements.SVGCOMPOST_NAMESPACE_URI, Elements.ACTIONSCRIPT_SETATTRIBUTE);
+//				Element setAttribute = doc.createElementNS(Elements.SVGCOMPOST_NS, Elements.ACTIONSCRIPT_SETATTRIBUTE);
 //				frame.appendChild(setAttribute);
 //				setAttribute.setAttribute(Elements.OBJECT, variableName);
 //				setAttribute.setAttribute(Elements.NAME, attributeName);
@@ -315,7 +315,7 @@ public class SWF2SVG {
 				// Include variables definitions starting with SVGCompost prefix as XML attributes.
 				if(variableName.startsWith(Elements.SVGCOMPOST_AS_PREFIX)) {
 					String name = variableName.substring(Elements.SVGCOMPOST_AS_PREFIX.length());
-					frame.setAttributeNS(Elements.SVGCOMPOST_NAMESPACE_URI, Elements.SVGCOMPOST_XMLNS_PREFIX+name, variableValue);
+					frame.setAttributeNS(Elements.SVGCOMPOST_NS, Elements.SVGCOMPOST_XMLNS_PREFIX+name, variableValue);
 				}
 				break;
 			}
@@ -355,7 +355,7 @@ public class SWF2SVG {
 					addSVGCompostProperty(frame, args[0], name);
 				}
 
-//				Element svgcompostElement = doc.createElementNS(Elements.SVGCOMPOST_NAMESPACE_URI, Elements.SVGCOMPOST_XMLNS_PREFIX+name);
+//				Element svgcompostElement = doc.createElementNS(Elements.SVGCOMPOST_NS, Elements.SVGCOMPOST_XMLNS_PREFIX+name);
 //				frame.appendChild(svgcompostElement);
 //				for (int i = 0; i < args.length; i++) {
 //					addSVGCompostProperty(svgcompostElement, args[i], type);
@@ -399,7 +399,7 @@ public class SWF2SVG {
 			}
 		}
 		else if( object instanceof HashMap ) {
-			Element childElement = doc.createElementNS(Elements.SVGCOMPOST_NAMESPACE_URI, Elements.SVGCOMPOST_XMLNS_PREFIX+name);
+			Element childElement = doc.createElementNS(Elements.SVGCOMPOST_NS, Elements.SVGCOMPOST_XMLNS_PREFIX+name);
 			element.appendChild(childElement);
 			HashMap<String,Object> map = (HashMap<String,Object>) object;
 			for (String key : map.keySet()) {
